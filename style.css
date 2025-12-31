@@ -1,11 +1,12 @@
+/* ALAP STÍLUSOK */
 body {
     margin: 0;
     font-family: Arial, sans-serif;
     overflow: hidden;
+    height: 100vh;
 }
 
-
-/* Background split */
+/* HÁTTÉR */
 .split-bg {
     position: fixed;
     top: 0;
@@ -13,10 +14,10 @@ body {
     width: 100%;
     height: 100vh;
     background: linear-gradient(to right, #4f5e94 0%, #4f5e94 50%, #3f4f85 50%, #3f4f85 100%);
+    z-index: 1;
 }
 
-
-/* Middle lightning line */
+/* KÖZÉPSŐ VONAL - FEHÉR HATSZÖG */
 .middle-line {
     position: absolute;
     top: 0;
@@ -29,8 +30,7 @@ body {
     z-index: 2;
 }
 
-
-/* Logo */
+/* LOGO */
 .logo {
     position: absolute;
     left: 50%;
@@ -43,18 +43,17 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 24px;
-    font-weight: bold;
     z-index: 3;
     box-shadow: 0 0 20px rgba(0,0,0,0.4);
 }
+
 .logo img {
     width: 80%;
     height: 80%;
     object-fit: contain;
 }
 
-/* Side clickable areas */
+/* OLDALAK */
 .side {
     position: absolute;
     top: 0;
@@ -64,13 +63,10 @@ body {
     justify-content: center;
     align-items: center;
     color: white;
-    font-size: 40px;
-    font-weight: bold;
     cursor: pointer;
     z-index: 1;
-    text-shadow: 0 0 10px rgba(0,0,0,0.6);
+    transition: background-color 0.3s ease;
 }
-
 
 #left { 
     left: 0; 
@@ -80,91 +76,311 @@ body {
     right: 0; 
 }
 
+/* ZÖLD HOVER EFFECT - MINDKÉT OLDALRA */
 .side:hover {
-    background-color: #35bd5b3f;
-    transform: scale(1.05);
-    transition: 0.3s ease;
+    background-color: rgba(53, 189, 91, 0.25);
 }
 
+/* TARTALOM */
+.side-content {
+    text-align: center;
+    max-width: 320px;
+    padding: 20px;
+}
 
-/* Footer */
+.side-title {
+    font-size: 46px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: white;
+    text-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+/* INFO BOX - LISTÁVAL */
+.info-box {
+    background: rgba(255,255,255,0.15);
+    padding: 15px 25px;
+    border-radius: 14px;
+    backdrop-filter: blur(3px);
+    margin-bottom: 20px;
+    border: 1px solid rgba(255,255,255,0.3);
+    font-size: 18px;
+    color: white;
+}
+
+.info-box ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+}
+
+.info-box li {
+    margin-bottom: 10px;
+    padding-left: 20px;
+    position: relative;
+}
+
+.info-box li:before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: white;
+    font-size: 20px;
+}
+
+/* GOMBOK */
+.side-btn {
+    padding: 12px 28px;
+    border: none;
+    border-radius: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    background: white;
+    color: black;
+    font-weight: bold;
+    transition: all 0.3s;
+    min-width: 150px;
+}
+
+.side-btn:hover {
+    transform: scale(1.1);
+    background: #f0f0f0;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* FOOTER - CSAK AZ ALÁBBI RESZLETET MÓDOSÍTOTTAM */
 .footer-wrapper {
-    width: 100%;
-    height: 60px;
     position: fixed;
     bottom: 0;
     left: 0;
+    width: 100%;
+    height: 20px; /* CSAK EGY VÉKONY CSÍK ALAPBÓL */
     background: #1f2742;
     color: white;
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 10;
     transition: height 0.4s ease;
     overflow: hidden;
     cursor: pointer;
-    z-index: 10;
 }
 
 .footer-wrapper:hover {
-    height: 200px;
+    height: 120px; /* NAGYOBB MAGASSÁG HOVER-RE */
 }
 
 .footer-content {
     text-align: center;
+    width: 100%;
+    padding: 15px;
+}
+
+/* Alapállapotban NEM LÁTSZIK SEMMI SZÖVEG */
+.footer-content p {
     opacity: 0;
-    transition: opacity 0.4s;
+    height: 0;
+    overflow: hidden;
+    margin: 0;
+    font-size: 16px; /* NAGYOBB BETŰMÉRET */
+    line-height: 1.5;
+    transition: all 0.4s ease;
 }
 
-.footer-wrapper:hover .footer-content {
+/* Hover állapotban mindkét sor látszódik */
+.footer-wrapper:hover .footer-content p {
     opacity: 1;
+    height: auto;
 }
 
-.side:hover { 
-    transform: scale(1.03); 
-    filter: brightness(1.2);
-} 
-
-.side-content{
-    text-align:center;
-    max-width:320px;
+.footer-wrapper:hover .footer-content p:first-child {
+    margin-bottom: 15px; /* NAGYOBB TÁVOLSÁG */
+    font-size: 18px; /* MÉG NAGYOBB AZ ELSŐ SOR */
 }
 
-.side-title{
-    font-size:46px;
-    font-weight:bold;
-    margin-bottom:20px;
-    text-shadow:0 0 10px rgba(0,0,0,0.5);
-} 
+.footer-wrapper:hover .footer-content p:last-child {
+    font-size: 16px;
+}
+/* ========== JOBS OLDAL ========== */
+body.jobs-page {
+    background: #4f5e94;
+    min-height: 100vh;
+    margin: 0;
+    overflow-y: auto;
+}
 
-.info-box{
-    background:rgba(255,255,255,0.15);
-    padding:15px 25px;
-    border-radius:14px;
-    backdrop-filter:blur(3px);
-    margin-bottom:20px;
-    border:1px solid rgba(255,255,255,0.3);
-    font-size:18px;
-} 
+body.jobs-page .split-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #4f5e94;
+    z-index: 1;
+}
 
-.info-box ul{
-    list-style:none;
-    padding:0;
-    margin:0;
-} 
+body.jobs-page .middle-line,
+body.jobs-page .logo,
+body.jobs-page .side,
+body.jobs-page .footer-wrapper {
+    display: none !important;
+}
 
-.side-btn{
-    padding:12px 28px;
-    border:none;
-    border-radius:10px;
-    font-size:20px;
-    cursor:pointer;
-    background:white;
-    color:black;
-    font-weight:bold;
-    transition:0.3s;
-} 
+/* JOBS TOPBAR - ABSZOLÚT POZÍCIÓVAL */
+.jobs-topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    z-index: 20;
+    background: rgba(0, 0, 0, 0.2);
+}
 
-.side-btn:hover{
-    transform:scale(1.1);
-    background:#f0f0f0;
+/* HAMBURGER MENÜ - ABSZOLÚT BAL OLDALON */
+.jobs-hamburger {
+    position: absolute;
+    left: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 42px;
+    color: white;
+    cursor: pointer;
+    padding: 8px 12px;
+    transition: all 0.3s;
+    user-select: none;
+}
+
+.jobs-hamburger:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+}
+
+/* PROFIL KÖR - ABSZOLÚT JOBB OLDALON */
+.jobs-profile-circle {
+    position: absolute;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+}
+/* JOBS LISTA */
+.jobs-list {
+    position: relative;
+    margin-top: 100px;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    z-index: 2;
+}
+
+.job-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px 30px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    transition: transform 0.3s ease;
+}
+
+.job-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.3);
+}
+
+.job-card h3 {
+    margin: 0 0 10px 0;
+    color: #333;
+}
+
+.job-card p {
+    margin: 0;
+    color: #666;
+}
+
+/* OLDALSÓ MENÜ - BAL OLDALRA CSÚSSZON */
+.sidebar-menu {
+    position: fixed;
+    top: 0;
+    left: -350px; /* BAL OLDALRA ELREJTVE */
+    width: 300px;
+    height: 100%;
+    background: white;
+    box-shadow: 5px 0 25px rgba(0, 0, 0, 0.5); /* BAL OLDALI ÁRNYÉK */
+    transition: left 0.4s ease; /* LEFT-RE ÁTMENET */
+    z-index: 1000;
+    padding: 25px;
+    overflow-y: auto;
+}
+
+.sidebar-menu.open {
+    left: 0; /* BEJÖN BAL OLDALRÓL */
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px; /* MARAD JOBB OLDALON A BEZÁRÓ GOMB */
+    font-size: 42px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #333;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    padding: 0;
+    transition: all 0.2s;
+}
+
+.close-btn:hover {
+    color: #ff4444;
+    background: #f0f0f0;
+    border-radius: 50%;
+}
+
+/* A TÖBBI CSS VÁLTOZATLAN MARAD */
+
+.sidebar-menu h3 {
+    margin-top: 50px;
+    color: #333;
+    font-size: 26px;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #4f5e94;
+}
+
+.sidebar-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu li {
+    margin-bottom: 15px;
+}
+
+.sidebar-menu a {
+    text-decoration: none;
+    color: #555;
+    font-size: 18px;
+    font-weight: 500;
+    display: block;
+    padding: 12px 15px;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+.sidebar-menu a:hover {
+    background: #f0f0f0;
+    color: #4f5e94;
+    transform: translateX(5px);
 }

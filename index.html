@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hu">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,7 +10,7 @@
 
 <div class="split-bg"></div>
 <div class="middle-line"></div>
-<div class="logo"><img src="logo.jpg" alt=""></div>
+<div class="logo"><img src="logo.jpg" alt="WorkConnect Logo"></div>
 
 <div class="side" id="left">
     <div class="side-content">
@@ -46,6 +46,31 @@
         <p>Links | Privacy | Terms</p>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const buttons = document.querySelectorAll('.side-btn');
+    buttons.forEach(button => {
+        button.addEventListener('click', function() {
+            window.location.href = 'jobs.html';
+        });
+    });
+    
+    const leftSide = document.getElementById('left');
+    leftSide.addEventListener('click', function(e) {
+        if (e.target === leftSide) {
+            window.location.href = 'jobs.html';
+        }
+    });
+    
+    const rightSide = document.getElementById('right');
+    rightSide.addEventListener('click', function(e) {
+        if (e.target === rightSide) {
+            window.location.href = 'jobs.html';
+        }
+    });
+});
+</script>
 
 </body>
 </html>

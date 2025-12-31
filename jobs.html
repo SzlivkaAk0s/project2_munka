@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>Álláshirdetések</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="jobs-page">
+
+<div class="split-bg"></div>
+
+<div class="jobs-topbar">
+    <div class="jobs-profile-circle"></div>
+    <div class="jobs-hamburger">☰</div>
+</div>
+
+<div class="sidebar-menu">
+    <button class="close-btn">×</button>
+    <h3>Menü</h3>
+    <ul>
+        <li><a href="index.html">Főoldal</a></li>
+        <li><a href="#">Profil</a></li>
+        <li><a href="#">Beállítások</a></li>
+        <li><a href="#">Kijelentkezés</a></li>
+    </ul>
+</div>
+
+<div class="jobs-list">
+    <div class="job-card">
+        <h3>Frontend fejlesztő</h3>
+        <p>Budapest • Full-time</p>
+    </div>
+    <div class="job-card">
+        <h3>Backend fejlesztő</h3>
+        <p>Remote • Junior</p>
+    </div>
+    <div class="job-card">
+        <h3>UI / UX Designer</h3>
+        <p>Szeged • Hybrid</p>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const hamburger = document.querySelector('.jobs-hamburger');
+    const sidebar = document.querySelector('.sidebar-menu');
+    const closeBtn = document.querySelector('.close-btn');
+    
+    hamburger.addEventListener('click', function() {
+        sidebar.classList.add('open');
+    });
+    
+    closeBtn.addEventListener('click', function() {
+        sidebar.classList.remove('open');
+    });
+    
+    document.addEventListener('click', function(e) {
+        if (!sidebar.contains(e.target) && e.target !== hamburger) {
+            sidebar.classList.remove('open');
+        }
+    });
+});
+</script>
+
+</body>
+</html>
