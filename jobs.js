@@ -249,3 +249,134 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+// TIMER KÖD - GLOBÁLIS SCOPE-BAN
+let timerInterval = null;
+let timeLeft = 300; // 5 perc = 300 másodperc
+
+const startTimer = () => {
+    // MÓDOSÍTVA: .jobs-timer elemet keresünk, mert az a konténer
+    const timerElement = document.querySelector('.jobs-timer');
+    console.log('Timer elem keresés (.jobs-timer):', timerElement);
+    
+    if (!timerElement) {
+        console.error('HIBA: .jobs-timer elem nem található!');
+        return;
+    }
+    
+    // Ha van .timer-text elem a .jobs-timer-en belül, azt használjuk
+    // Ha nincs, magát a .jobs-timer elemet használjuk
+    const textElement = timerElement.querySelector('.timer-text') || timerElement;
+    
+    console.log('Szöveg elem:', textElement);
+    console.log('Kezdeti tartalom:', textElement.textContent);
+    
+    // Tisztítás, ha már fut egy timer
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+    
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        console.log('Hátralévő idő:', timeLeft, 'másodperc');
+        
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        
+        // Frissítjük a szöveget
+        textElement.textContent = timeString;
+        
+        // Stílus frissítés - direkt a .jobs-timer elemre
+        timerElement.classList.remove('timer-warning', 'timer-critical');
+        if (timeLeft <= 60) {
+            timerElement.classList.add('timer-critical');
+            console.log('CRITICAL stílus hozzáadva');
+        } else if (timeLeft <= 120) {
+            timerElement.classList.add('timer-warning');
+            console.log('WARNING stílus hozzáadva');
+        }
+        
+        // Idő lejárt
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            alert('Az idő lejárt! Visszairányítjuk a főoldalra.');
+            window.location.href = 'index.html';
+        }
+    }, 1000);
+};
+
+// Alap timer indítása
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('=== TIMER INICIALIZÁLÁS ===');
+    
+    // Timer indítása
+    startTimer();
+    
+    // Timer reset - kattintás a timer magára
+    const timerButton = document.querySelector('.jobs-timer');
+    if (timerButton) {
+        timerButton.addEventListener('click', (e) => {
+            console.log('Timer reset kattintás');
+            timeLeft = 300;
+            startTimer();
+            e.stopPropagation();
+        });
+    }
+    
+    // Timer szüneteltetése modal nyitáskor
+    const modal = document.getElementById('jobModal');
+    if (modal) {
+        const observer = new MutationObserver(() => {
+            if (modal.classList.contains('open')) {
+                // Modal nyitva: timer szüneteltetése
+                console.log('Modal nyitva - timer PAUSE');
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                }
+            } else {
+                // Modal zárva: timer újraindítása
+                console.log('Modal zárva - timer RESUME');
+                if (!timerInterval && timeLeft > 0) {
+                    startTimer();
+                }
+            }
+        });
+        
+        observer.observe(modal, { attributes: true, attributeFilter: ['class'] });
+    }
+    
+    // DEBUG: manuális tesztelés a konzolból
+    window.debugTimer = {
+        reset: () => {
+            timeLeft = 300;
+            startTimer();
+        },
+        setTime: (seconds) => {
+            timeLeft = seconds;
+            startTimer();
+        },
+        stop: () => {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        },
+        status: () => {
+            return {
+                timeLeft,
+                timerInterval,
+                element: document.querySelector('.jobs-timer')
+            };
+        }
+    };
+    
+    console.log('Timer debug parancsok:');
+    console.log('- debugTimer.reset() - újraindítás');
+    console.log('- debugTimer.setTime(30) - 30 másodpercre állítás');
+    console.log('- debugTimer.stop() - megállítás');
+    console.log('- debugTimer.status() - státusz információk');
+});
