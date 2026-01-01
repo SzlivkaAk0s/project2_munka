@@ -506,6 +506,19 @@ body.modal-open .job-card {
     background: #4f5e94;
     color: white;
     font-size: 14px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    display: inline-block;
+    margin: 3px;
+    user-select: none;
+    cursor: default;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.modal-tags .tag:hover {
+    background: #3f4f85;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .modal-footer {
