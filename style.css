@@ -661,3 +661,243 @@ body.modal-open {
     background: #f0f0f0;
     color: #4f5e94;
 }
+
+/* JOBB OLDALI SZŰRŐ PANEL */
+.filter-sidebar.right {
+    position: fixed;
+    right: 0;
+    top: 70px;
+    width: 280px;
+    height: calc(100vh - 70px);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(245, 247, 250, 0.98) 100%);
+    backdrop-filter: blur(15px);
+    z-index: 15;
+    padding: 25px;
+    overflow-y: auto;
+    box-shadow: -3px 0 20px rgba(0, 0, 0, 0.08);
+    border-left: 1px solid rgba(79, 94, 148, 0.15);
+}
+
+.filter-header {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #4f5e94;
+    position: relative;
+}
+
+.filter-header h3 {
+    color: #4f5e94;
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filter-header:after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: #35bd5b;
+}
+
+.filter-section {
+    margin-bottom: 30px;
+    background: white;
+    padding: 0;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(79, 94, 148, 0.1);
+    overflow: hidden;
+}
+
+.filter-section-header {
+    padding: 20px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(79, 94, 148, 0.1);
+}
+
+.filter-section-header h4 {
+    color: #2c3e50;
+    margin: 0;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.filter-toggle {
+    font-size: 16px;
+    color: #4f5e94;
+    transition: transform 0.3s ease;
+    user-select: none;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.filter-section.collapsed .filter-toggle {
+    transform: rotate(-90deg);
+}
+
+.filter-section-content {
+    padding: 20px;
+    max-height: 300px;
+    overflow-y: auto;
+    transition: all 0.3s ease;
+}
+
+.filter-section.collapsed .filter-section-content {
+    max-height: 0;
+    padding: 0 20px;
+    overflow: hidden;
+}
+
+.filter-section-header {
+    padding: 20px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.filter-section-header {
+    padding: 15px 20px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(79, 94, 148, 0.1);
+}
+
+.filter-section-header h4 {
+    color: #2c3e50;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    flex-grow: 1;
+}
+
+.filter-toggle {
+    font-size: 14px;
+    color: #4f5e94;
+    transition: transform 0.3s ease;
+    user-select: none;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10px;
+}
+
+.filter-section.collapsed .filter-toggle {
+    transform: rotate(90deg);
+}
+
+.filter-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.filter-checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 10px 12px;
+    border-radius: 8px;
+    transition: all 0.2s;
+    user-select: none;
+    border: 1px solid transparent;
+}
+
+.filter-checkbox:hover {
+    background: rgba(79, 94, 148, 0.08);
+    border-color: rgba(79, 94, 148, 0.2);
+    transform: translateX(3px);
+}
+
+.filter-checkbox input {
+    margin-right: 12px;
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    accent-color: #4f5e94;
+}
+
+.filter-checkbox input:checked {
+    position: relative;
+}
+
+.filter-checkbox input:checked:after {
+    content: '✓';
+    position: absolute;
+    color: white;
+    font-size: 12px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.filter-actions {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(79, 94, 148, 0.1);
+}
+
+.filter-btn {
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 16px;
+    letter-spacing: 0.3px;
+}
+
+.apply-filters {
+    background: linear-gradient(135deg, #4f5e94 0%, #3f4f85 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(79, 94, 148, 0.3);
+}
+
+.apply-filters:hover {
+    background: linear-gradient(135deg, #3f4f85 0%, #2f3f75 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(79, 94, 148, 0.4);
+}
+
+.reset-filters {
+    background: white;
+    color: #4f5e94;
+    border: 2px solid rgba(79, 94, 148, 0.3);
+}
+
+.reset-filters:hover {
+    background: rgba(79, 94, 148, 0.05);
+    border-color: #4f5e94;
+}
+
+.jobs-list {
+    position: relative;
+    margin-top: 90px;
+    width: 90%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    z-index: 2;
+    padding-top: 20px;
+    transform: translateX(-140px);
+}

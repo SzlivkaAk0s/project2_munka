@@ -165,3 +165,87 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// Szűrő funkció
+const filterCards = () => {
+    const locationCheckboxes = document.querySelectorAll('.filter-section:nth-child(2) input:checked');
+    const typeCheckboxes = document.querySelectorAll('.filter-section:nth-child(3) input:checked');
+    const techCheckboxes = document.querySelectorAll('.filter-section:nth-child(4) input:checked');
+    
+    const selectedLocations = Array.from(locationCheckboxes).map(cb => cb.value);
+    const selectedTypes = Array.from(typeCheckboxes).map(cb => cb.value);
+    const selectedTechs = Array.from(techCheckboxes).map(cb => cb.value);
+    
+    jobCards.forEach(card => {
+        const cardText = card.textContent.toLowerCase();
+        let showCard = true;
+        
+        // Hely szűrés
+        if (selectedLocations.length > 0) {
+            const hasLocation = selectedLocations.some(loc => 
+                cardText.includes(loc.toLowerCase())
+            );
+            if (!hasLocation) showCard = false;
+        }
+        
+        // Típus szűrés
+        if (selectedTypes.length > 0 && showCard) {
+            const hasType = selectedTypes.some(type => 
+                cardText.includes(type.toLowerCase())
+            );
+            if (!hasType) showCard = false;
+        }
+        
+        // Tech szűrés
+        if (selectedTechs.length > 0 && showCard) {
+            const hasTech = selectedTechs.some(tech => 
+                cardText.includes(tech.toLowerCase())
+            );
+            if (!hasTech) showCard = false;
+        }
+        
+        // Megjelenítés/elrejtés
+        if (showCard) {
+            card.style.display = 'block';
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 10);
+        } else {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                card.style.display = 'none';
+            }, 300);
+        }
+    });
+};
+
+
+document.querySelector('.apply-filters')?.addEventListener('click', filterCards);
+document.querySelector('.reset-filters')?.addEventListener('click', () => {
+
+    document.querySelectorAll('.filter-checkbox input').forEach(checkbox => {
+        checkbox.checked = true;
+    });
+    filterCards();
+});
+
+
+document.querySelectorAll('.filter-checkbox input').forEach(checkbox => {
+    checkbox.addEventListener('change', filterCards);
+});
+
+// Szűrő section-ok összecsukása/kinyitása
+document.addEventListener('DOMContentLoaded', function() {
+    // ... az előző kód ...
+    
+    // Szűrő toggle-ek
+    document.querySelectorAll('.filter-toggle').forEach(toggle => {
+        toggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const section = this.closest('.filter-section');
+            section.classList.toggle('collapsed');
+        });
+    });
+});
