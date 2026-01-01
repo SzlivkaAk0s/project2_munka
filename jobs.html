@@ -9,11 +9,13 @@
 
 <div class="split-bg"></div>
 
+<!-- felső sáv -->
 <div class="jobs-topbar">
-    <div class="jobs-profile-circle"></div>
     <div class="jobs-hamburger">☰</div>
+    <div class="jobs-profile-circle"></div>
 </div>
 
+<!-- oldalsó menü -->
 <div class="sidebar-menu">
     <button class="close-btn">×</button>
     <h3>Menü</h3>
@@ -25,42 +27,250 @@
     </ul>
 </div>
 
+<!-- hirdetések -->
 <div class="jobs-list">
-    <div class="job-card">
+    <div class="job-card" data-job="1">
         <h3>Frontend fejlesztő</h3>
         <p>Budapest • Full-time</p>
+        <div class="job-tags">
+            <span class="tag">React</span>
+            <span class="tag">JavaScript</span>
+            <span class="tag">CSS</span>
+        </div>
     </div>
-    <div class="job-card">
+
+    <div class="job-card" data-job="2">
         <h3>Backend fejlesztő</h3>
         <p>Remote • Junior</p>
+        <div class="job-tags">
+            <span class="tag">Node.js</span>
+            <span class="tag">Python</span>
+            <span class="tag">MongoDB</span>
+        </div>
     </div>
-    <div class="job-card">
+
+    <div class="job-card" data-job="3">
         <h3>UI / UX Designer</h3>
         <p>Szeged • Hybrid</p>
+        <div class="job-tags">
+            <span class="tag">Figma</span>
+            <span class="tag">Adobe XD</span>
+            <span class="tag">Prototyping</span>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL (RÉSZLETEK) -->
+<div class="job-modal" id="jobModal">
+    <div class="modal-content">
+        <button class="modal-close-btn">×</button>
+        <div class="modal-header">
+            <h2 id="modal-title">Frontend fejlesztő</h2>
+            <p id="modal-location">Budapest • Full-time</p>
+        </div>
+        <div class="modal-body">
+            <div class="modal-section">
+                <h3>Leírás</h3>
+                <p id="modal-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            </div>
+            <div class="modal-section">
+                <h3>Követelmények</h3>
+                <ul id="modal-requirements">
+                    <li>3+ év tapasztalat frontend fejlesztésben</li>
+                    <li>React vagy hasonló keretrendszer ismerete</li>
+                    <li>CSS/SCSS haladó szintű ismerete</li>
+                </ul>
+            </div>
+            <div class="modal-section">
+                <h3>Előnyök</h3>
+                <ul id="modal-benefits">
+                    <li>Home office lehetőség</li>
+                    <li>Bérszámfejtés félévente</li>
+                    <li>Szép kártya</li>
+                </ul>
+            </div>
+            <div class="modal-tags" id="modal-tags">
+                <span class="tag">React</span>
+                <span class="tag">JavaScript</span>
+                <span class="tag">CSS</span>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-apply-btn">Jelentkezem</button>
+        </div>
     </div>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const hamburger = document.querySelector('.jobs-hamburger');
-    const sidebar = document.querySelector('.sidebar-menu');
-    const closeBtn = document.querySelector('.close-btn');
-    
-    hamburger.addEventListener('click', function() {
-        sidebar.classList.add('open');
-    });
-    
-    closeBtn.addEventListener('click', function() {
-        sidebar.classList.remove('open');
-    });
-    
-    document.addEventListener('click', function(e) {
-        if (!sidebar.contains(e.target) && e.target !== hamburger) {
-            sidebar.classList.remove('open');
+    document.addEventListener('DOMContentLoaded', function() {
+        // Hamburger menü
+        const hamburger = document.querySelector('.jobs-hamburger');
+        const sidebar = document.querySelector('.sidebar-menu');
+        const closeBtn = document.querySelector('.close-btn');
+        
+        if (hamburger && sidebar) {
+            hamburger.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                sidebar.classList.toggle('open');
+            });
+            
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function() {
+                    sidebar.classList.remove('open');
+                });
+            }
+            
+            document.addEventListener('click', function(e) {
+                if (sidebar.classList.contains('open') && 
+                    !sidebar.contains(e.target) && 
+                    e.target !== hamburger) {
+                    sidebar.classList.remove('open');
+                }
+            });
+        }
+        
+        // Modal kezelés
+        const modal = document.getElementById('jobModal');
+        const closeModalBtn = document.querySelector('.modal-close-btn');
+        const jobCards = document.querySelectorAll('.job-card');
+        const applyBtn = document.querySelector('.modal-apply-btn');
+        
+        const jobData = {
+            1: {
+                title: "Frontend fejlesztő",
+                location: "Budapest • Full-time",
+                description: "Keresünk kreatív frontend fejlesztőt, aki csatlakozna csapatunkhoz. Feladatod lesz modern webalkalmazások fejlesztése és karbantartása.",
+                requirements: [
+                    "3+ év tapasztalat frontend fejlesztésben",
+                    "React vagy hasonló keretrendszer ismerete",
+                    "CSS/SCSS haladó szintű ismerete",
+                    "Git verziókezelő rendszer ismerete"
+                ],
+                benefits: [
+                    "Home office lehetőség",
+                    "Bérszámfejtés félévente",
+                    "Szép kártya",
+                    "Bővülő szabadság napok"
+                ],
+                tags: ["React", "JavaScript", "CSS", "TypeScript", "Webpack"]
+            },
+            2: {
+                title: "Backend fejlesztő",
+                location: "Remote • Junior",
+                description: "Junior backend fejlesztőt keresünk, aki szeretne tanulni és fejlődni. Kiemelt figyelmet fordítunk a mentorálásra.",
+                requirements: [
+                    "Alapvető programozási ismeretek",
+                    "Node.js vagy Python alapok",
+                    "Adatbázisok alapvető ismerete",
+                    "Angol nyelv középfok"
+                ],
+                benefits: [
+                    "Teljesen remote munkavégzés",
+                    "Mentor program",
+                    "Szakképzési lehetőségek",
+                    "Rugalmas munkaidő"
+                ],
+                tags: ["Node.js", "Python", "MongoDB", "Express", "REST API"]
+            },
+            3: {
+                title: "UI / UX Designer",
+                location: "Szeged • Hybrid",
+                description: "Kreatív UI/UX designer pozíció hibrid munkavégzéssel. Feladatod lesz felhasználóbarát interfészek tervezése és prototípusok készítése.",
+                requirements: [
+                    "2+ év tapasztalat UI/UX tervezésben",
+                    "Figma vagy Adobe XD haladó ismerete",
+                    "Design rendszerek és komponenskönyvtárak ismerete",
+                    "Reszponzív design tapasztalat"
+                ],
+                benefits: [
+                    "Hibrid munkavégzés",
+                    "Modern iroda Szeged belvárosában",
+                    "Design eszközök biztosítása",
+                    "Konferenciákra utazási lehetőség"
+                ],
+                tags: ["Figma", "Adobe XD", "Prototyping", "User Research", "Wireframing"]
+            }
+        };
+        
+        // Kártyák kattinthatósága
+        if (jobCards.length > 0) {
+            jobCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const jobId = this.getAttribute('data-job');
+                    const data = jobData[jobId];
+                    
+                    if (data && modal) {
+                        document.getElementById('modal-title').textContent = data.title;
+                        document.getElementById('modal-location').textContent = data.location;
+                        document.getElementById('modal-description').textContent = data.description;
+                        
+                        const reqList = document.getElementById('modal-requirements');
+                        reqList.innerHTML = '';
+                        data.requirements.forEach(req => {
+                            const li = document.createElement('li');
+                            li.textContent = req;
+                            reqList.appendChild(li);
+                        });
+                        
+                        const benList = document.getElementById('modal-benefits');
+                        benList.innerHTML = '';
+                        data.benefits.forEach(ben => {
+                            const li = document.createElement('li');
+                            li.textContent = ben;
+                            benList.appendChild(li);
+                        });
+                        
+                        const tagsContainer = document.getElementById('modal-tags');
+                        tagsContainer.innerHTML = '';
+                        data.tags.forEach(tag => {
+                            const span = document.createElement('span');
+                            span.className = 'tag';
+                            span.textContent = tag;
+                            tagsContainer.appendChild(span);
+                        });
+                        
+                        modal.classList.add('open');
+                        document.body.classList.add('modal-open');
+                    }
+                });
+            });
+        }
+        
+        // Modal bezárása
+        if (closeModalBtn && modal) {
+            closeModalBtn.addEventListener('click', function() {
+                modal.classList.remove('open');
+                document.body.classList.remove('modal-open');
+            });
+            
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.classList.remove('open');
+                    document.body.classList.remove('modal-open');
+                }
+            });
+            
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && modal.classList.contains('open')) {
+                    modal.classList.remove('open');
+                    document.body.classList.remove('modal-open');
+                }
+            });
+        }
+        
+        // Jelentkezés gomb
+        if (applyBtn) {
+            applyBtn.addEventListener('click', function() {
+                alert('Köszönjük a jelentkezésed! Hamarosan visszajelzünk.');
+                if (modal) {
+                    modal.classList.remove('open');
+                    document.body.classList.remove('modal-open');
+                }
+            });
         }
     });
-});
-</script>
+    </script>
 
 </body>
 </html>
