@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Szűrő funkció
+
 const filterCards = () => {
     const locationCheckboxes = document.querySelectorAll('.filter-section:nth-child(2) input:checked');
     const typeCheckboxes = document.querySelectorAll('.filter-section:nth-child(3) input:checked');
@@ -180,7 +180,7 @@ const filterCards = () => {
         const cardText = card.textContent.toLowerCase();
         let showCard = true;
         
-        // Hely szűrés
+
         if (selectedLocations.length > 0) {
             const hasLocation = selectedLocations.some(loc => 
                 cardText.includes(loc.toLowerCase())
@@ -188,7 +188,7 @@ const filterCards = () => {
             if (!hasLocation) showCard = false;
         }
         
-        // Típus szűrés
+
         if (selectedTypes.length > 0 && showCard) {
             const hasType = selectedTypes.some(type => 
                 cardText.includes(type.toLowerCase())
@@ -196,7 +196,7 @@ const filterCards = () => {
             if (!hasType) showCard = false;
         }
         
-        // Tech szűrés
+
         if (selectedTechs.length > 0 && showCard) {
             const hasTech = selectedTechs.some(tech => 
                 cardText.includes(tech.toLowerCase())
@@ -204,7 +204,7 @@ const filterCards = () => {
             if (!hasTech) showCard = false;
         }
         
-        // Megjelenítés/elrejtés
+
         if (showCard) {
             card.style.display = 'block';
             setTimeout(() => {
@@ -236,11 +236,11 @@ document.querySelectorAll('.filter-checkbox input').forEach(checkbox => {
     checkbox.addEventListener('change', filterCards);
 });
 
-// Szűrő section-ok összecsukása/kinyitása
+
 document.addEventListener('DOMContentLoaded', function() {
-    // ... az előző kód ...
+
     
-    // Szűrő toggle-ek
+
     document.querySelectorAll('.filter-toggle').forEach(toggle => {
         toggle.addEventListener('click', function(e) {
             e.stopPropagation();
