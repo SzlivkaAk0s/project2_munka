@@ -909,42 +909,83 @@ body.modal-open {
     transform: translateX(-140px);
     padding-bottom: 40px;
 }
+
+
 .jobs-timer {
     position: fixed;
     right: 90px;
     top: 12px;
-    background: white;
+    background: linear-gradient(to right, #4f5e94 0%, #4f5e94 50%, #3f4f85 50%, #3f4f85 100%);
     padding: 8px 16px;
     border-radius: 20px;
     font-weight: bold;
-    color: #4f5e94;
+    color: white;
     font-size: 18px;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
     z-index: 1000;
     font-family: monospace;
-    border: 2px solid #4f5e94;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
+.jobs-timer:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
 
 .timer-text {
     font-family: monospace;
+    letter-spacing: 1px;
 }
 
+
 .timer-warning {
-    background: #ff9800;
+    background: linear-gradient(to right, #ff9800 0%, #ff9800 50%, #e68900 50%, #e68900 100%);
     color: white;
-    animation: pulse 1s infinite;
+    border-color: rgba(255, 255, 255, 0.3);
+    animation: pulseWarning 1.2s infinite;
 }
 
 .timer-critical {
-    background: #f44336;
+    background: linear-gradient(to right, #f44336 0%, #f44336 50%, #d32f2f 50%, #d32f2f 100%);
     color: white;
-    animation: pulse 0.5s infinite;
+    border-color: rgba(255, 255, 255, 0.3);
+    animation: pulseCritical 0.8s infinite;
 }
 
-@keyframes pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.7; }
-    100% { opacity: 1; }
+@keyframes pulseWarning {
+    0%, 100% { 
+        transform: scale(1); 
+        box-shadow: 0 3px 10px rgba(255, 152, 0, 0.3); 
+    }
+    50% { 
+        transform: scale(1.03); 
+        box-shadow: 0 5px 15px rgba(255, 152, 0, 0.4); 
+    }
+}
+
+@keyframes pulseCritical {
+    0%, 100% { 
+        transform: scale(1); 
+        box-shadow: 0 3px 10px rgba(244, 67, 54, 0.3); 
+    }
+    50% { 
+        transform: scale(1.05); 
+        box-shadow: 0 5px 20px rgba(244, 67, 54, 0.5); 
+    }
+}
+
+.timer-expired {
+    background: linear-gradient(to right, #9e9e9e 0%, #9e9e9e 50%, #757575 50%, #757575 100%);
+    color: #e0e0e0;
+    animation: none;
+}
+
+.timer-warning:hover, .timer-critical:hover {
+    transform: scale(1.05);
+    cursor: pointer;
 }
 
 
