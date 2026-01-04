@@ -253,6 +253,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 let timerInterval = null;
 let timeLeft = 300; 
+let warningModalShown = false;
 
 const startTimer = () => {
     const timerElement = document.querySelector('.jobs-timer');
@@ -291,6 +292,12 @@ const startTimer = () => {
             timerElement.style.background = 'linear-gradient(to right, #4f5e94 0%, #4f5e94 50%, #3f4f85 50%, #3f4f85 100%)';
         }
         
+
+        if (timeLeft === 30 && !warningModalShown) {
+            showWarningModal();
+        }
+        
+
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
             timerInterval = null;
@@ -299,8 +306,8 @@ const startTimer = () => {
             timerElement.classList.add('timer-expired');
             textElement.textContent = '00:00';
             
+
             setTimeout(() => {
-                alert('Az idő lejárt! Visszairányítjuk a főoldalra.');
                 window.location.href = 'index.html';
             }, 1000);
         }
@@ -308,11 +315,264 @@ const startTimer = () => {
 };
 
 
+const showWarningModal = () => {
+    warningModalShown = true;
+    
+
+    let warningModal = document.getElementById('timer-warning-modal');
+    
+    if (!warningModal) {
+        warningModal = document.createElement('div');
+        warningModal.id = 'timer-warning-modal';
+        warningModal.className = 'timer-warning-modal';
+        warningModal.innerHTML = `
+            <div class="timer-warning-modal-content">
+                <div class="timer-warning-modal-header">
+                    <h3>⏰ Idő majdnem lejárt!</h3>
+                    <span class="timer-warning-close-btn">&times;</span>
+                </div>
+                <div class="timer-warning-modal-body">
+                    <p>Már csak <strong>30 másodperc</strong> van hátra az oldalon való tartózkodásodhoz.</p>
+                    <p>Szeretnél tovább maradni?</p>
+                    <div class="timer-warning-countdown">
+                        Válaszidő: <span id="warning-countdown">30</span> másodperc
+                    </div>
+                </div>
+                <div class="timer-warning-modal-footer">
+                    <button class="timer-warning-btn timer-warning-no">Nem, kilépek</button>
+                    <button class="timer-warning-btn timer-warning-yes">Igen, maradok</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(warningModal);
+        
+        // CSS hozzáadása
+        const style = document.createElement('style');
+        style.textContent = `
+            .timer-warning-modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.7);
+                z-index: 9999;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .timer-warning-modal.open {
+                display: flex;
+            }
+            
+            .timer-warning-modal-content {
+                background: white;
+                border-radius: 12px;
+                width: 90%;
+                max-width: 500px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                animation: modalSlideIn 0.3s ease;
+                overflow: hidden;
+            }
+            
+            @keyframes modalSlideIn {
+                from {
+                    transform: translateY(-50px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+            
+            .timer-warning-modal-header {
+                background: linear-gradient(to right, #f44336 0%, #f44336 50%, #d32f2f 50%, #d32f2f 100%);
+                color: white;
+                padding: 20px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            .timer-warning-modal-header h3 {
+                margin: 0;
+                font-size: 1.5rem;
+            }
+            
+            .timer-warning-close-btn {
+                font-size: 28px;
+                cursor: pointer;
+                line-height: 1;
+            }
+            
+            .timer-warning-modal-body {
+                padding: 25px;
+                font-size: 1.1rem;
+                line-height: 1.6;
+                color: #333;
+            }
+            
+            .timer-warning-countdown {
+                margin-top: 15px;
+                padding: 10px;
+                background: #fff3cd;
+                border-left: 4px solid #ffc107;
+                border-radius: 4px;
+                font-weight: bold;
+            }
+            
+            #warning-countdown {
+                color: #f44336;
+                font-size: 1.2rem;
+            }
+            
+            .timer-warning-modal-footer {
+                padding: 20px;
+                background: #f8f9fa;
+                display: flex;
+                justify-content: flex-end;
+                gap: 15px;
+                border-top: 1px solid #dee2e6;
+            }
+            
+            .timer-warning-btn {
+                padding: 12px 24px;
+                border: none;
+                border-radius: 6px;
+                font-size: 1rem;
+                font-weight: bold;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+            
+            .timer-warning-no {
+                background: #6c757d;
+                color: white;
+            }
+            
+            .timer-warning-no:hover {
+                background: #545b62;
+            }
+            
+            .timer-warning-yes {
+                background: linear-gradient(to right, #4f5e94 0%, #4f5e94 50%, #3f4f85 50%, #3f4f85 100%);
+                color: white;
+            }
+            
+            .timer-warning-yes:hover {
+                opacity: 0.9;
+            }
+            
+            .timer-warning-btn:active {
+                transform: scale(0.98);
+            }
+            
+            .timer-warning-flash {
+                animation: warningFlash 1s infinite;
+            }
+            
+            @keyframes warningFlash {
+                0%, 100% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.7); }
+                50% { box-shadow: 0 0 0 10px rgba(244, 67, 54, 0); }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+
+    warningModal.classList.add('open');
+    document.body.classList.add('modal-open');
+    
+
+    let warningCountdown = 30;
+    const countdownElement = document.getElementById('warning-countdown');
+    const countdownInterval = setInterval(() => {
+        warningCountdown--;
+        if (countdownElement) {
+            countdownElement.textContent = warningCountdown;
+            
+
+            if (warningCountdown <= 10) {
+                countdownElement.style.color = '#f44336';
+                countdownElement.style.fontWeight = 'bold';
+                countdownElement.parentElement.classList.add('timer-warning-flash');
+            }
+        }
+        
+
+        if (warningCountdown <= 0) {
+            clearInterval(countdownInterval);
+            closeWarningModal();
+
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 500);
+        }
+    }, 1000);
+    
+
+    const closeWarningModal = () => {
+        warningModal.classList.remove('open');
+        document.body.classList.remove('modal-open');
+        clearInterval(countdownInterval);
+        warningModalShown = false;
+    };
+    
+
+    const closeBtn = warningModal.querySelector('.timer-warning-close-btn');
+    if (closeBtn) {
+        closeBtn.onclick = closeWarningModal;
+    }
+    
+
+    const noBtn = warningModal.querySelector('.timer-warning-no');
+    if (noBtn) {
+        noBtn.onclick = () => {
+            closeWarningModal();
+            window.location.href = 'index.html';
+        };
+    }
+    
+
+    const yesBtn = warningModal.querySelector('.timer-warning-yes');
+    if (yesBtn) {
+        yesBtn.onclick = () => {
+            closeWarningModal();
+            resetTimerOnInteraction();
+ 
+            timeLeft = 300;
+            startTimer();
+        };
+    }
+    
+
+    warningModal.onclick = (e) => {
+        if (e.target === warningModal) {
+            closeWarningModal();
+        }
+    };
+    
+
+    const handleEscape = (e) => {
+        if (e.key === 'Escape' && warningModal.classList.contains('open')) {
+            closeWarningModal();
+        }
+    };
+    document.addEventListener('keydown', handleEscape);
+    
+
+    warningModal.dataset.escapeHandler = 'true';
+};
+
+
 const resetTimerOnInteraction = () => {
     timeLeft = 300;
+    warningModalShown = false;
     startTimer();
     
- 
+
     const timerElement = document.querySelector('.jobs-timer');
     if (timerElement) {
         const textElement = timerElement.querySelector('.timer-text') || timerElement;
@@ -326,6 +586,13 @@ const resetTimerOnInteraction = () => {
             textElement.style.color = '';
             timerElement.style.boxShadow = '';
         }, 300);
+    }
+    
+
+    const warningModal = document.getElementById('timer-warning-modal');
+    if (warningModal) {
+        warningModal.classList.remove('open');
+        document.body.classList.remove('modal-open');
     }
 };
 
@@ -357,8 +624,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const hamburger = document.querySelector('.jobs-hamburger');
     if (hamburger) {
-
-        const originalHamburgerClick = hamburger.onclick;
         hamburger.addEventListener('click', function(e) {
             resetTimerOnInteraction();
         });
@@ -369,16 +634,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeBtn = document.querySelector('.close-btn');
     
     if (sidebar) {
-
         if (closeBtn) {
             closeBtn.addEventListener('click', function() {
                 resetTimerOnInteraction();
             });
         }
         
-
         sidebar.addEventListener('click', function(e) {
-
             if (e.target !== closeBtn && !closeBtn.contains(e.target)) {
                 resetTimerOnInteraction();
             }
@@ -389,8 +651,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const jobCards = document.querySelectorAll('.job-card');
     if (jobCards.length > 0) {
         jobCards.forEach(card => {
-
-            const originalClickHandler = card.onclick;
             card.addEventListener('click', function(e) {
                 resetTimerOnInteraction();
             });
@@ -403,21 +663,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const applyBtn = document.querySelector('.modal-apply-btn');
     
     if (modal) {
-
         if (closeModalBtn) {
             closeModalBtn.addEventListener('click', function() {
                 resetTimerOnInteraction();
             });
         }
         
-
         if (applyBtn) {
             applyBtn.addEventListener('click', function() {
                 resetTimerOnInteraction();
             });
         }
         
-
         modal.addEventListener('click', function(e) {
             if (e.target === modal) {
                 resetTimerOnInteraction();
@@ -431,21 +688,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const filterCheckboxes = document.querySelectorAll('.filter-checkbox input');
     const filterToggles = document.querySelectorAll('.filter-toggle');
     
-
     if (applyFiltersBtn) {
         applyFiltersBtn.addEventListener('click', function() {
             resetTimerOnInteraction();
         });
     }
     
-
     if (resetFiltersBtn) {
         resetFiltersBtn.addEventListener('click', function() {
             resetTimerOnInteraction();
         });
     }
     
-
     if (filterCheckboxes.length > 0) {
         filterCheckboxes.forEach(checkbox => {
             checkbox.addEventListener('change', function() {
@@ -454,7 +708,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-
     if (filterToggles.length > 0) {
         filterToggles.forEach(toggle => {
             toggle.addEventListener('click', function() {
@@ -463,7 +716,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-
+ 
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             const modal = document.getElementById('jobModal');
@@ -473,7 +726,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
- 
+
     if (modal) {
         const observer = new MutationObserver((mutations) => {
             mutations.forEach(mutation => {
@@ -508,12 +761,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 timerInterval = null;
             }
         } else if (!timerInterval && timeLeft > 0) {
-
+ 
             startTimer();
         }
     });
     
-
+ 
     let scrollTimeout;
     window.addEventListener('scroll', function() {
         if (scrollTimeout) {
@@ -522,7 +775,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         scrollTimeout = setTimeout(function() {
             resetTimerOnInteraction();
-        }, 1000); 
+        }, 1000);
     });
 });
 
@@ -574,6 +827,10 @@ const addTimerResetStyles = () => {
                 transform: scale(1);
                 box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
             }
+        }
+        
+        .modal-open {
+            overflow: hidden;
         }
     `;
     document.head.appendChild(style);
