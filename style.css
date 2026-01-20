@@ -30,7 +30,7 @@ body {
     z-index: 2;
 }
 
-/* LOGO */
+
 .logo {
     position: absolute;
     left: 50%;
@@ -53,7 +53,7 @@ body {
     object-fit: contain;
 }
 
-/* Sides */
+
 .side {
     position: absolute;
     top: 0;
@@ -76,7 +76,7 @@ body {
     right: 0; 
 }
 
-/* ZÖLD*/
+
 .side:hover {
     background-color: rgba(53, 189, 91, 0.25);
 }
@@ -96,7 +96,7 @@ body {
     text-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
 
-/* INFO BOX */
+
 .info-box {
     background: rgba(255,255,255,0.15);
     padding: 15px 25px;
@@ -129,7 +129,7 @@ body {
     font-size: 20px;
 }
 
-/* GOMBOK */
+
 .side-btn {
     padding: 12px 28px;
     border: none;
@@ -149,7 +149,7 @@ body {
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
-/* FOOTER */
+
 .footer-wrapper {
     position: fixed;
     bottom: 0;
@@ -202,7 +202,7 @@ body {
 .footer-wrapper:hover .footer-content p:last-child {
     font-size: 16px;
 }
-/* ========== JOBS  ========== */
+
 body.jobs-page {
     background: #4f5e94;
     min-height: 100vh;
@@ -229,7 +229,7 @@ body.jobs-page .footer-wrapper {
     display: none !important;
 }
 
-/* JOBS TOPBAR  */
+
 .jobs-topbar {
     position: fixed;
     top: 0;
@@ -244,7 +244,7 @@ body.jobs-page .footer-wrapper {
 }
 
 
-/* HAMBURGER MENU */
+
 .jobs-hamburger {
     font-size: 42px;
     color: white;
@@ -259,7 +259,7 @@ body.jobs-page .footer-wrapper {
     border-radius: 5px;
 }
 
-/* PROFILE */
+
 .jobs-profile-circle {
     position: fixed;
     right: 30px;
@@ -271,7 +271,7 @@ body.jobs-page .footer-wrapper {
     z-index: 1000;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
 }
-/* JOBS CARDS */
+
 .jobs-list {
     position: relative;
     margin-top: 90px;
@@ -987,6 +987,258 @@ body.modal-open {
     transform: scale(1.05);
     cursor: pointer;
 }
+
+
+.login-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(3px);
+    pointer-events: auto;
+}
+
+.login-modal.open {
+    display: flex;
+    animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        backdrop-filter: blur(0);
+    }
+    to {
+        opacity: 1;
+        backdrop-filter: blur(3px);
+    }
+}
+
+.login-modal-content {
+    background: white;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 450px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    transform: translateY(-30px);
+    opacity: 0;
+    animation: modalSlideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    pointer-events: auto;
+}
+
+.login-modal:not(.open) {
+    pointer-events: none;
+}
+
+.login-modal::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: auto;
+}
+
+@keyframes modalSlideUp {
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.login-modal-header {
+    background: linear-gradient(to right, #4f5e94 0%, #4f5e94 50%, #3f4f85 50%, #3f4f85 100%);
+    color: white;
+    padding: 25px 30px;
+    position: relative;
+}
+
+.login-modal-header h3 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.login-close-btn {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    font-size: 32px;
+    cursor: pointer;
+    line-height: 1;
+    transition: all 0.2s;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.login-close-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: rotate(90deg);
+}
+
+.login-modal-body {
+    padding: 30px;
+}
+
+.login-form {
+    display: none;
+}
+
+.login-form.active {
+    display: block;
+    animation: formFadeIn 0.3s ease;
+}
+
+@keyframes formFadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+    font-size: 16px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 16px;
+    transition: all 0.3s;
+    box-sizing: border-box;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #4f5e94;
+    box-shadow: 0 0 0 3px rgba(79, 94, 148, 0.2);
+}
+
+.form-group .hint {
+    display: block;
+    margin-top: 5px;
+    font-size: 14px;
+    color: #666;
+    font-style: italic;
+}
+
+.form-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.login-btn {
+    background: linear-gradient(to right, #35bd5b 0%, #2da44e 100%);
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 100%;
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(53, 189, 91, 0.3);
+}
+
+.login-btn:active {
+    transform: translateY(0);
+}
+
+.switch-form-btn {
+    background: transparent;
+    color: #4f5e94;
+    border: 2px solid #4f5e94;
+    padding: 14px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 100%;
+}
+
+.switch-form-btn:hover {
+    background: rgba(79, 94, 148, 0.1);
+    transform: translateY(-2px);
+}
+
+.message {
+    margin-top: 20px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 15px;
+    text-align: center;
+    animation: messageAppear 0.3s ease;
+}
+
+@keyframes messageAppear {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.message.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.message.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.message.info {
+    background: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+
+body.modal-open {
+    overflow: hidden;
+}
+
+
 
 
 

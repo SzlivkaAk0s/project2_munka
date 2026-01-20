@@ -22,7 +22,7 @@
                 <li>Gyors és egyszerű keresés</li>
             </ul>
         </div>
-        <button class="side-btn">Belépés</button>
+        <button class="side-btn" data-user-type="employee">Belépés</button>
     </div>
 </div>
 
@@ -36,7 +36,7 @@
                 <li>Modern kezelőfelület</li>
             </ul>
         </div>
-        <button class="side-btn">Belépés</button>
+        <button class="side-btn" data-user-type="employer">Belépés</button>
     </div>
 </div>
 
@@ -47,27 +47,222 @@
     </div>
 </div>
 
+<!-- Login Modal -->
+<div id="loginModal" class="login-modal">
+    <div class="login-modal-content">
+        <div class="login-modal-header">
+            <h3 id="loginTitle">Bejelentkezés - <span id="userTypeText">Munkavállaló</span></h3>
+            <span class="login-close-btn">&times;</span>
+        </div>
+        <div class="login-modal-body">
+            <!-- Login Form (default) -->
+            <form id="loginForm" class="login-form active">
+                <div class="form-group">
+                    <label for="loginUsername">Felhasználónév:</label>
+                    <input type="text" id="loginUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Jelszó:</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="login-btn">Bejelentkezés</button>
+                    <button type="button" class="switch-form-btn" id="showRegister">Regisztráció</button>
+                </div>
+                <div id="loginMessage" class="message"></div>
+            </form>
+            
+            <!-- Register Form (hidden by default) -->
+            <form id="registerForm" class="login-form">
+                <div class="form-group">
+                    <label for="registerUsername">Felhasználónév:</label>
+                    <input type="text" id="registerUsername" required minlength="3">
+                    <small class="hint">Minimum 3 karakter</small>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Jelszó:</label>
+                    <input type="password" id="registerPassword" required minlength="4">
+                    <small class="hint">Minimum 4 karakter</small>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Jelszó megerősítése:</label>
+                    <input type="password" id="confirmPassword" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="login-btn">Regisztráció</button>
+                    <button type="button" class="switch-form-btn" id="showLogin">Vissza a bejelentkezéshez</button>
+                </div>
+                <div id="registerMessage" class="message"></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="auth.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+
+    let currentUserType = 'employee';
+    
+
     const buttons = document.querySelectorAll('.side-btn');
     buttons.forEach(button => {
-        button.addEventListener('click', function() {
-            window.location.href = 'jobs.html';
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            currentUserType = this.getAttribute('data-user-type');
+            const userTypeText = currentUserType === 'employee' ? 'Munkavállaló' : 'Munkáltató';
+            
+            document.getElementById('userTypeText').textContent = userTypeText;
+
+            localStorage.setItem('selectedUserType', currentUserType);
+            
+            document.getElementById('loginModal').classList.add('open');
+            document.body.classList.add('modal-open');
         });
     });
     
+   
     const leftSide = document.getElementById('left');
-    leftSide.addEventListener('click', function(e) {
-        if (e.target === leftSide) {
-            window.location.href = 'jobs.html';
+    const rightSide = document.getElementById('right');
+    
+    [leftSide, rightSide].forEach(side => {
+        side.addEventListener('click', function(e) {
+            if (e.target === side && !isLoggedIn()) {
+                window.location.href = 'jobs.html';
+            }
+        });
+    });
+    
+
+    const loginModal = document.getElementById('loginModal');
+    const closeBtn = document.querySelector('.login-close-btn');
+    
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function() {
+            loginModal.classList.remove('open');
+            document.body.classList.remove('modal-open');
+        });
+    }
+    
+
+    let isDragging = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    const DRAG_THRESHOLD = 5; 
+    
+
+    loginModal.addEventListener('mousedown', function(e) {
+        if (e.target === loginModal) {
+            isDragging = false;
+            dragStartX = e.clientX;
+            dragStartY = e.clientY;
         }
     });
     
-    const rightSide = document.getElementById('right');
-    rightSide.addEventListener('click', function(e) {
-        if (e.target === rightSide) {
-            window.location.href = 'jobs.html';
+
+    loginModal.addEventListener('mousemove', function(e) {
+        if (e.target === loginModal && (dragStartX !== 0 || dragStartY !== 0)) {
+            const deltaX = Math.abs(e.clientX - dragStartX);
+            const deltaY = Math.abs(e.clientY - dragStartY);
+            
+            if (deltaX > DRAG_THRESHOLD || deltaY > DRAG_THRESHOLD) {
+                isDragging = true;
+            }
         }
+    });
+    
+  
+    loginModal.addEventListener('mouseup', function(e) {
+        if (e.target === loginModal && !isDragging) {
+            loginModal.classList.remove('open');
+            document.body.classList.remove('modal-open');
+        }
+        
+
+        isDragging = false;
+        dragStartX = 0;
+        dragStartY = 0;
+    });
+    
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let isTouchDragging = false;
+    
+    loginModal.addEventListener('touchstart', function(e) {
+        if (e.target === loginModal) {
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+            isTouchDragging = false;
+        }
+    }, { passive: true });
+    
+    loginModal.addEventListener('touchmove', function(e) {
+        if (e.target === loginModal && (touchStartX !== 0 || touchStartY !== 0)) {
+            const touch = e.touches[0];
+            const deltaX = Math.abs(touch.clientX - touchStartX);
+            const deltaY = Math.abs(touch.clientY - touchStartY);
+            
+            if (deltaX > DRAG_THRESHOLD || deltaY > DRAG_THRESHOLD) {
+                isTouchDragging = true;
+            }
+        }
+    }, { passive: true });
+    
+    loginModal.addEventListener('touchend', function(e) {
+        if (e.target === loginModal && !isTouchDragging) {
+            loginModal.classList.remove('open');
+            document.body.classList.remove('modal-open');
+        }
+        
+
+        isTouchDragging = false;
+        touchStartX = 0;
+        touchStartY = 0;
+    });
+    
+
+    const showRegisterBtn = document.getElementById('showRegister');
+    const showLoginBtn = document.getElementById('showLogin');
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    
+    if (showRegisterBtn) {
+        showRegisterBtn.addEventListener('click', function() {
+            loginForm.classList.remove('active');
+            registerForm.classList.add('active');
+        });
+    }
+    
+    if (showLoginBtn) {
+        showLoginBtn.addEventListener('click', function() {
+            registerForm.classList.remove('active');
+            loginForm.classList.add('active');
+        });
+    }
+    
+
+    function isLoggedIn() {
+        return localStorage.getItem('currentUser') !== null;
+    }
+    
+
+    if (isLoggedIn()) {
+        console.log('Már be van jelentkezve, átirányítás...');
+        window.location.href = 'jobs.html';
+    }
+    
+ 
+    const inputs = document.querySelectorAll('.login-modal input');
+    inputs.forEach(input => {
+        input.addEventListener('mousedown', function(e) {
+            e.stopPropagation();
+        });
+        
+        input.addEventListener('touchstart', function(e) {
+            e.stopPropagation();
+        }, { passive: true });
     });
 });
 </script>
