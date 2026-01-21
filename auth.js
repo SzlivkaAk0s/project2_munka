@@ -1,4 +1,12 @@
 
+console.log('Auth.js betöltődött - GitHub Pages debug');
+console.log('LocalStorage elérhető?', typeof localStorage !== 'undefined');
+console.log('Window location:', window.location.href);
+
+
+const isGitHubPages = window.location.hostname.includes('github.io');
+console.log('GitHub Pages?', isGitHubPages);
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Auth.js betöltődött');
     
