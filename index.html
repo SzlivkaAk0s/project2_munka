@@ -5,7 +5,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>WorkConnect</title>
-<link rel="stylesheet" href="style.css"/>
+<link rel="stylesheet" href="./style.css"/>
 </head>
 <body>
 
@@ -99,14 +99,14 @@
     </div>
 </div>
 
-<script src="auth.js"></script>
+<script src="./auth.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Index oldal betöltődött');
 
     let currentUserType = 'employee';
     
-    // Belépés gombok kezelése
+    
     const buttons = document.querySelectorAll('.side-btn');
     buttons.forEach(button => {
         button.addEventListener('click', function(e) {
@@ -123,20 +123,20 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Oldalra kattintás - CSAK HA NINCS BEJELENTKEZVE
+    
     const leftSide = document.getElementById('left');
     const rightSide = document.getElementById('right');
     
     [leftSide, rightSide].forEach(side => {
         side.addEventListener('click', function(e) {
             if (e.target === side) {
-                // Ellenőrizzük, hogy be van-e jelentkezve
+                
                 const isLoggedIn = () => {
                     return localStorage.getItem('currentUser') !== null;
                 };
                 
                 if (!isLoggedIn()) {
-                    // Ha nincs bejelentkezve, csak mutassuk a modal-t
+                 
                     const userType = side.id === 'left' ? 'employee' : 'employer';
                     currentUserType = userType;
                     const userTypeText = userType === 'employee' ? 'Munkavállaló' : 'Munkáltató';
@@ -147,12 +147,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('loginModal').classList.add('open');
                     document.body.classList.add('modal-open');
                 }
-                // Ha be van jelentkezve, NE tegyünk semmit - a felhasználó kattintson a belépés gombra
+                
             }
         });
     });
     
-    // Modal bezárás
+  
     const loginModal = document.getElementById('loginModal');
     const closeBtn = document.querySelector('.login-close-btn');
     
@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Modal bezárás kattintással a háttérre
+  
     let isDragging = false;
     let dragStartX = 0;
     let dragStartY = 0;
@@ -194,13 +194,13 @@ document.addEventListener('DOMContentLoaded', function() {
             document.body.classList.remove('modal-open');
         }
         
-        // Reset
+      
         isDragging = false;
         dragStartX = 0;
         dragStartY = 0;
     });
     
-    // Touch események
+  
     let touchStartX = 0;
     let touchStartY = 0;
     let isTouchDragging = false;
@@ -232,13 +232,13 @@ document.addEventListener('DOMContentLoaded', function() {
             document.body.classList.remove('modal-open');
         }
         
-        // Reset
+       
         isTouchDragging = false;
         touchStartX = 0;
         touchStartY = 0;
     });
     
-    // Form váltás
+  
     const showRegisterBtn = document.getElementById('showRegister');
     const showLoginBtn = document.getElementById('showLogin');
     const loginForm = document.getElementById('loginForm');
@@ -258,7 +258,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Inputok kattintásának kezelése (ne zárja be a modalt)
     const inputs = document.querySelectorAll('.login-modal input');
     inputs.forEach(input => {
         input.addEventListener('mousedown', function(e) {
@@ -270,8 +269,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }, { passive: true });
     });
     
-    // FONTOS: NE IRÁNYÍTSUNK AUTOMATIKUSAN AZ INDEX.HTML-RŐL!
-    // Ezt távolítottuk el, mert ez okozta a loop-ot
+
     console.log('Index oldal készen áll, nincs automatikus átirányítás');
 });
 </script>
