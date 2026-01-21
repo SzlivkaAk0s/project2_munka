@@ -153,9 +153,15 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
   
+ 
     const loginModal = document.getElementById('loginModal');
     const closeBtn = document.querySelector('.login-close-btn');
     
+ 
+    let isDraggingFromInput = false;
+    let mouseDownTarget = null;
+    
+   
     if (closeBtn) {
         closeBtn.addEventListener('click', function() {
             loginModal.classList.remove('open');
@@ -164,110 +170,64 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
   
-    let isDragging = false;
-    let dragStartX = 0;
-    let dragStartY = 0;
-    const DRAG_THRESHOLD = 5;
-    
-    loginModal.addEventListener('mousedown', function(e) {
-        if (e.target === loginModal) {
-            isDragging = false;
-            dragStartX = e.clientX;
-            dragStartY = e.clientY;
-        }
-    });
-    
-    loginModal.addEventListener('mousemove', function(e) {
-        if (e.target === loginModal && (dragStartX !== 0 || dragStartY !== 0)) {
-            const deltaX = Math.abs(e.clientX - dragStartX);
-            const deltaY = Math.abs(e.clientY - dragStartY);
-            
-            if (deltaX > DRAG_THRESHOLD || deltaY > DRAG_THRESHOLD) {
-                isDragging = true;
-            }
-        }
-    });
-    
-    loginModal.addEventListener('mouseup', function(e) {
-        if (e.target === loginModal && !isDragging) {
+    loginModal.addEventListener('click', function(e) {
+
+        if (e.target === loginModal && !isDraggingFromInput) {
             loginModal.classList.remove('open');
             document.body.classList.remove('modal-open');
         }
         
       
-        isDragging = false;
-        dragStartX = 0;
-        dragStartY = 0;
+        isDraggingFromInput = false;
     });
     
   
-    let touchStartX = 0;
-    let touchStartY = 0;
-    let isTouchDragging = false;
-    
-    loginModal.addEventListener('touchstart', function(e) {
-        if (e.target === loginModal) {
-            const touch = e.touches[0];
-            touchStartX = touch.clientX;
-            touchStartY = touch.clientY;
-            isTouchDragging = false;
-        }
-    }, { passive: true });
-    
-    loginModal.addEventListener('touchmove', function(e) {
-        if (e.target === loginModal && (touchStartX !== 0 || touchStartY !== 0)) {
-            const touch = e.touches[0];
-            const deltaX = Math.abs(touch.clientX - touchStartX);
-            const deltaY = Math.abs(touch.clientY - touchStartY);
-            
-            if (deltaX > DRAG_THRESHOLD || deltaY > DRAG_THRESHOLD) {
-                isTouchDragging = true;
-            }
-        }
-    }, { passive: true });
-    
-    loginModal.addEventListener('touchend', function(e) {
-        if (e.target === loginModal && !isTouchDragging) {
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && loginModal.classList.contains('open')) {
             loginModal.classList.remove('open');
             document.body.classList.remove('modal-open');
         }
-        
-       
-        isTouchDragging = false;
-        touchStartX = 0;
-        touchStartY = 0;
     });
     
   
-    const showRegisterBtn = document.getElementById('showRegister');
-    const showLoginBtn = document.getElementById('showLogin');
-    const loginForm = document.getElementById('loginForm');
-    const registerForm = document.getElementById('registerForm');
-    
-    if (showRegisterBtn) {
-        showRegisterBtn.addEventListener('click', function() {
-            loginForm.classList.remove('active');
-            registerForm.classList.add('active');
-        });
-    }
-    
-    if (showLoginBtn) {
-        showLoginBtn.addEventListener('click', function() {
-            registerForm.classList.remove('active');
-            loginForm.classList.add('active');
-        });
-    }
-    
     const inputs = document.querySelectorAll('.login-modal input');
     inputs.forEach(input => {
+        
         input.addEventListener('mousedown', function(e) {
-            e.stopPropagation();
+            mouseDownTarget = e.target;
+            isDraggingFromInput = false;
         });
         
-        input.addEventListener('touchstart', function(e) {
+        
+        input.addEventListener('mouseup', function(e) {
+       
+            if (e.target === mouseDownTarget) {
+                isDraggingFromInput = true;
+            }
+            mouseDownTarget = null;
+        });
+        
+    
+        input.addEventListener('mouseleave', function(e) {
+
+            if (mouseDownTarget === input) {
+                isDraggingFromInput = true;
+            }
+        });
+        
+
+        input.addEventListener('click', function(e) {
             e.stopPropagation();
-        }, { passive: true });
+        });
     });
+    
+
+    const modalContent = document.querySelector('.login-modal-content');
+    if (modalContent) {
+        modalContent.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    }
     
 
     console.log('Index oldal készen áll, nincs automatikus átirányítás');
