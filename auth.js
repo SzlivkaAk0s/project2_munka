@@ -1,4 +1,7 @@
+
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Auth.js betöltődött');
+    
 
     const USERS_KEY = 'workconnect_users';
     const CURRENT_USER_KEY = 'currentUser';
@@ -6,17 +9,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
 
     const authManager = {
-
+ 
         getUsers: function() {
             const usersJSON = localStorage.getItem(USERS_KEY);
             return usersJSON ? JSON.parse(usersJSON) : {};
         },
         
- 
+
         saveUsers: function(users) {
             localStorage.setItem(USERS_KEY, JSON.stringify(users));
         },
-        
 
         registerUser: function(username, password, userType = 'employee') {
             const users = this.getUsers();
@@ -26,18 +28,38 @@ document.addEventListener('DOMContentLoaded', function() {
                 return { success: false, message: 'Ez a felhasználónév már foglalt!' };
             }
             
-
+ 
             users[username] = {
-                password: password, 
+                password: password,
                 userType: userType,
                 createdAt: new Date().toISOString()
             };
             
             this.saveUsers(users);
+            
+
+            this.initUserStats(username, userType);
+            
             return { success: true, message: 'Sikeres regisztráció!' };
         },
         
-  
+
+        initUserStats: function(username, userType) {
+            const statsKey = `user_stats_${username}`;
+            const defaultStats = {
+                loginCount: 0,
+                lastLogin: null,
+                jobsApplied: 0,
+                profileViews: 0,
+                jobsPosted: 0,
+                applicationsReceived: 0,
+                memberSince: new Date().toISOString()
+            };
+            
+            localStorage.setItem(statsKey, JSON.stringify(defaultStats));
+        },
+        
+
         loginUser: function(username, password) {
             const users = this.getUsers();
             const user = users[username];
@@ -50,9 +72,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 return { success: false, message: 'Hibás felhasználónév vagy jelszó!' };
             }
             
-
+  
             localStorage.setItem(CURRENT_USER_KEY, username);
             localStorage.setItem(USER_TYPE_KEY, user.userType);
+            
+
+            this.updateLoginStats(username);
             
             return { 
                 success: true, 
@@ -61,13 +86,38 @@ document.addEventListener('DOMContentLoaded', function() {
             };
         },
         
- 
+
+        updateLoginStats: function(username) {
+            const statsKey = `user_stats_${username}`;
+            const statsJSON = localStorage.getItem(statsKey);
+            let stats = statsJSON ? JSON.parse(statsJSON) : {};
+            
+            stats.loginCount = (stats.loginCount || 0) + 1;
+            stats.lastLogin = new Date().toISOString();
+            
+            localStorage.setItem(statsKey, JSON.stringify(stats));
+        },
+        
+
         logoutUser: function() {
+            const username = localStorage.getItem(CURRENT_USER_KEY);
+            
+  
+            if (username) {
+                this.saveLogoutTime(username);
+            }
+            
             localStorage.removeItem(CURRENT_USER_KEY);
             localStorage.removeItem(USER_TYPE_KEY);
         },
         
-
+  
+        saveLogoutTime: function(username) {
+            const logoutKey = `last_logout_${username}`;
+            localStorage.setItem(logoutKey, new Date().toISOString());
+        },
+        
+  
         getCurrentUser: function() {
             const username = localStorage.getItem(CURRENT_USER_KEY);
             if (!username) return null;
@@ -82,20 +132,30 @@ document.addEventListener('DOMContentLoaded', function() {
             } : null;
         },
         
- 
+    
         isLoggedIn: function() {
             return localStorage.getItem(CURRENT_USER_KEY) !== null;
+        },
+        
+   
+        getUserType: function() {
+            return localStorage.getItem(USER_TYPE_KEY);
+        },
+        
+  
+        getUserStats: function(username) {
+            const statsKey = `user_stats_${username}`;
+            const statsJSON = localStorage.getItem(statsKey);
+            return statsJSON ? JSON.parse(statsJSON) : null;
         }
     };
     
-
+  
     const loginForm = document.getElementById('loginForm');
     const registerForm = document.getElementById('registerForm');
-    const loginMessage = document.getElementById('loginMessage');
-    const registerMessage = document.getElementById('registerMessage');
     
-
     if (loginForm) {
+        console.log('Login form található (index.html)');
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -103,27 +163,28 @@ document.addEventListener('DOMContentLoaded', function() {
             const password = document.getElementById('loginPassword').value;
             
             if (!username || !password) {
-                showMessage(loginMessage, 'Kérlek töltsd ki minden mezőt!', 'error');
+                showMessage('loginMessage', 'Kérlek töltsd ki minden mezőt!', 'error');
                 return;
             }
             
             const result = authManager.loginUser(username, password);
             
             if (result.success) {
-                showMessage(loginMessage, result.message, 'success');
+                showMessage('loginMessage', result.message, 'success');
                 
-
+   
                 setTimeout(() => {
                     window.location.href = 'jobs.html';
-                }, 1500);
+                }, 1000);
             } else {
-                showMessage(loginMessage, result.message, 'error');
+                showMessage('loginMessage', result.message, 'error');
             }
         });
     }
     
-
+  
     if (registerForm) {
+        console.log('Register form található (index.html)');
         registerForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -131,56 +192,57 @@ document.addEventListener('DOMContentLoaded', function() {
             const password = document.getElementById('registerPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
             
-
+            
             if (!username || !password || !confirmPassword) {
-                showMessage(registerMessage, 'Kérlek töltsd ki minden mezőt!', 'error');
+                showMessage('registerMessage', 'Kérlek töltsd ki minden mezőt!', 'error');
                 return;
             }
             
             if (username.length < 3) {
-                showMessage(registerMessage, 'A felhasználónév minimum 3 karakter hosszú legyen!', 'error');
+                showMessage('registerMessage', 'A felhasználónév minimum 3 karakter hosszú legyen!', 'error');
                 return;
             }
             
             if (password.length < 4) {
-                showMessage(registerMessage, 'A jelszó minimum 4 karakter hosszú legyen!', 'error');
+                showMessage('registerMessage', 'A jelszó minimum 4 karakter hosszú legyen!', 'error');
                 return;
             }
             
             if (password !== confirmPassword) {
-                showMessage(registerMessage, 'A jelszavak nem egyeznek!', 'error');
+                showMessage('registerMessage', 'A jelszavak nem egyeznek!', 'error');
                 return;
             }
             
-
+         
             const userType = localStorage.getItem('selectedUserType') || 'employee';
             
-
+     
             const result = authManager.registerUser(username, password, userType);
             
             if (result.success) {
-                showMessage(registerMessage, result.message + ' Most már bejelentkezhetsz!', 'success');
+                showMessage('registerMessage', result.message + ' Most már bejelentkezhetsz!', 'success');
                 
-
+              
                 setTimeout(() => {
                     registerForm.reset();
                     registerForm.classList.remove('active');
                     loginForm.classList.add('active');
-                    loginMessage.innerHTML = '<div class="message success">Sikeres regisztráció! Most már bejelentkezhetsz.</div>';
+                    showMessage('loginMessage', 'Sikeres regisztráció! Most már bejelentkezhetsz.', 'success');
                 }, 1500);
             } else {
-                showMessage(registerMessage, result.message, 'error');
+                showMessage('registerMessage', result.message, 'error');
             }
         });
     }
     
 
-    function showMessage(element, text, type = 'info') {
+    function showMessage(elementId, text, type = 'info') {
+        const element = document.getElementById(elementId);
         if (!element) return;
         
         element.innerHTML = `<div class="message ${type}">${text}</div>`;
         
-
+  
         if (type === 'success') {
             setTimeout(() => {
                 element.innerHTML = '';
@@ -188,21 +250,30 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-
+  
     window.authManager = authManager;
     
-
-    console.log('Mentett felhasználók:', authManager.getUsers());
-    console.log('Bejelentkezett felhasználó:', authManager.getCurrentUser());
+    console.log('AuthManager inicializálva. Bejelentkezve:', authManager.isLoggedIn());
+    
+   
 });
 
 
-function checkLoginStatus() {
-    const currentUser = localStorage.getItem('currentUser');
-    if (!currentUser) {
-
-        window.location.href = 'index.html';
-        return false;
+function updateProfileIcon() {
+    const profileCircle = document.querySelector('.jobs-profile-circle');
+    if (profileCircle && window.authManager && window.authManager.isLoggedIn()) {
+        const currentUser = window.authManager.getCurrentUser();
+        if (currentUser) {
+         
+            profileCircle.style.background = '#35bd5b';
+            profileCircle.style.display = 'flex';
+            profileCircle.style.alignItems = 'center';
+            profileCircle.style.justifyContent = 'center';
+            profileCircle.style.color = 'white';
+            profileCircle.style.fontWeight = 'bold';
+            profileCircle.style.fontSize = '18px';
+            profileCircle.textContent = currentUser.username.charAt(0).toUpperCase();
+            profileCircle.title = `${currentUser.username} (${currentUser.userType === 'employee' ? 'Munkavállaló' : 'Munkáltató'})`;
+        }
     }
-    return true;
 }

@@ -261,15 +261,36 @@ body.jobs-page .footer-wrapper {
 
 
 .jobs-profile-circle {
-    position: fixed;
-    right: 30px;
-    top: 12px;
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    background: white;
-    z-index: 1000;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+    position: fixed !important;
+    right: 30px !important;
+    top: 12px !important;  
+    width: 45px !important;
+    height: 45px !important;
+    border-radius: 50% !important;
+    background: white !important;
+    cursor: pointer !important;
+    z-index: 1000 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-weight: bold !important;
+    font-size: 20px !important;
+    color: #4f5e94 !important;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25) !important;
+    transform: scale(1) !important;  
+    transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+    will-change: transform, box-shadow !important;  
+    
+}
+
+.jobs-profile-circle:hover {
+    transform: scale(1.15) !important;
+    box-shadow: 0 0 20px rgba(53, 189, 91, 0.8) !important;
+}
+
+.jobs-profile-circle:active {
+    transform: scale(0.95) !important;
+    transition: transform 0.05s ease !important;
 }
 
 .jobs-list {
@@ -1239,7 +1260,7 @@ body.modal-open {
 }
 
 
-/* Style for the Premium card */
+
 h1, h4{
     text-align: center;
     color: white;
@@ -1309,13 +1330,13 @@ h1, h4{
     background: #0056b3;
 }
 
-/* Tier highlights */
+
 .free { opacity: 0.9; }
 .premium { border: 3px solid gold; }
 .pro { border: 3px solid #ff4d22; }
 
 
-/* Responsive */
+
 @media (max-width: 900px) {
     .pricing-wrapper {
         flex-direction: column;
@@ -1323,7 +1344,7 @@ h1, h4{
     }
 }
 
-/* Popup background */
+
 .popup {
     position: fixed;
     top: 0;
@@ -1340,13 +1361,13 @@ h1, h4{
     z-index: 9999;
 }
 
-/* Show popup */
+
 .popup.show {
     opacity: 1;
     pointer-events: auto;
 }
 
-/* Popup box */
+
 .popup-content {
     background: white;
     padding: 40px 30px;
@@ -1366,7 +1387,7 @@ h1, h4{
     font-size: 18px;
 }
 
-/* Animation */
+
 @keyframes popIn {
     from {
         transform: scale(0.7);
