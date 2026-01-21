@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -101,12 +100,48 @@
 
 <script src="./auth.js"></script>
 <script>
+// CSAK A MODAL NYITÁS/ZÁRÁS ÉS FORM VÁLTÁS - NINCS REGISZTRÁCIÓ/BEJELENTKEZÉS LOGIKA
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Index oldal betöltődött');
 
     let currentUserType = 'employee';
     
+    // FORM VÁLTÁS ESEMÉNYKEZELŐK
+    const showRegisterBtn = document.getElementById('showRegister');
+    const showLoginBtn = document.getElementById('showLogin');
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
     
+    if (showRegisterBtn) {
+        showRegisterBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Register gombra kattintottak');
+            
+            if (loginForm && registerForm) {
+                loginForm.classList.remove('active');
+                registerForm.classList.add('active');
+                console.log('Form váltás: Login -> Register');
+            }
+        });
+    }
+    
+    if (showLoginBtn) {
+        showLoginBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Vissza gombra kattintottak');
+            
+            if (loginForm && registerForm) {
+                registerForm.classList.remove('active');
+                loginForm.classList.add('active');
+                console.log('Form váltás: Register -> Login');
+            }
+        });
+    }
+    
+    // BELÉPÉS GOMBOK - CSAK MODAL NYITÁS
     const buttons = document.querySelectorAll('.side-btn');
     buttons.forEach(button => {
         button.addEventListener('click', function(e) {
@@ -115,7 +150,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const userTypeText = currentUserType === 'employee' ? 'Munkavállaló' : 'Munkáltató';
             
             document.getElementById('userTypeText').textContent = userTypeText;
-
             localStorage.setItem('selectedUserType', currentUserType);
             
             document.getElementById('loginModal').classList.add('open');
@@ -123,20 +157,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    
+    // OLDALAK KATTINTÁSA
     const leftSide = document.getElementById('left');
     const rightSide = document.getElementById('right');
     
     [leftSide, rightSide].forEach(side => {
         side.addEventListener('click', function(e) {
             if (e.target === side) {
+                const isLoggedIn = localStorage.getItem('currentUser') !== null;
                 
-                const isLoggedIn = () => {
-                    return localStorage.getItem('currentUser') !== null;
-                };
-                
-                if (!isLoggedIn()) {
-                 
+                if (!isLoggedIn) {
                     const userType = side.id === 'left' ? 'employee' : 'employer';
                     currentUserType = userType;
                     const userTypeText = userType === 'employee' ? 'Munkavállaló' : 'Munkáltató';
@@ -147,21 +177,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('loginModal').classList.add('open');
                     document.body.classList.add('modal-open');
                 }
-                
             }
         });
     });
     
-  
- 
+    // MODAL BEZÁRÁS
     const loginModal = document.getElementById('loginModal');
     const closeBtn = document.querySelector('.login-close-btn');
     
- 
-    let isDraggingFromInput = false;
-    let mouseDownTarget = null;
-    
-   
     if (closeBtn) {
         closeBtn.addEventListener('click', function() {
             loginModal.classList.remove('open');
@@ -169,19 +192,56 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-  
+    // EZ A MEGOLDÁS MŰKÖDIK - NE ZÁRJA BE A MODALT HA HÚZVA JELÖLÜNK KI
+    let isDraggingFromInput = false;
+    let mouseDownTarget = null;
+    
+    // INPUT MEZŐK ESEMÉNYKEZELŐK
+    const inputs = document.querySelectorAll('.login-modal input');
+    inputs.forEach(input => {
+        // Amikor lenyomjuk az egérgombot az inputon
+        input.addEventListener('mousedown', function(e) {
+            mouseDownTarget = e.target;
+            isDraggingFromInput = false;
+        });
+        
+        // Amikor felengedjük az egérgombot
+        input.addEventListener('mouseup', function(e) {
+            // Ha ugyanarra az elemre engedtük fel, ahol lenyomtuk
+            if (e.target === mouseDownTarget) {
+                isDraggingFromInput = true;
+            }
+            mouseDownTarget = null;
+        });
+        
+        // Ha kihúzzuk az egeret az inputból drag közben
+        input.addEventListener('mouseleave', function(e) {
+            // Ha még mindig lenyomva van az egérgomb
+            if (mouseDownTarget === input) {
+                isDraggingFromInput = true;
+            }
+        });
+        
+        // Kattintás - ne menjen át a modal-ra
+        input.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    });
+    
+    // MODAL CLICK - CSAK AKKOR ZÁRJA BE, HA NEM VOLT INPUTRÓL HÚZÁS
     loginModal.addEventListener('click', function(e) {
-
+        // Csak akkor zárjuk be, ha a modal háttérjére kattintunk
+        // ÉS nem volt inputról érkező húzás
         if (e.target === loginModal && !isDraggingFromInput) {
             loginModal.classList.remove('open');
             document.body.classList.remove('modal-open');
         }
         
-      
+        // Reseteljük a húzás állapotot
         isDraggingFromInput = false;
     });
     
-  
+    // ESC BILLENTYŰ
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && loginModal.classList.contains('open')) {
             loginModal.classList.remove('open');
@@ -189,39 +249,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-  
-    const inputs = document.querySelectorAll('.login-modal input');
-    inputs.forEach(input => {
-        
-        input.addEventListener('mousedown', function(e) {
-            mouseDownTarget = e.target;
-            isDraggingFromInput = false;
-        });
-        
-        
-        input.addEventListener('mouseup', function(e) {
-       
-            if (e.target === mouseDownTarget) {
-                isDraggingFromInput = true;
-            }
-            mouseDownTarget = null;
-        });
-        
-    
-        input.addEventListener('mouseleave', function(e) {
-
-            if (mouseDownTarget === input) {
-                isDraggingFromInput = true;
-            }
-        });
-        
-
-        input.addEventListener('click', function(e) {
-            e.stopPropagation();
-        });
-    });
-    
-
+    // MODAL CONTENT - NE ZÁRULJON BE
     const modalContent = document.querySelector('.login-modal-content');
     if (modalContent) {
         modalContent.addEventListener('click', function(e) {
@@ -229,8 +257,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-
-    console.log('Index oldal készen áll, nincs automatikus átirányítás');
+    console.log('Index oldal készen áll');
 });
 </script>
 

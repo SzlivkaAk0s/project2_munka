@@ -1,4 +1,3 @@
-
 console.log('Auth.js betöltődött - GitHub Pages debug');
 console.log('LocalStorage elérhető?', typeof localStorage !== 'undefined');
 console.log('Window location:', window.location.href);
@@ -228,15 +227,19 @@ document.addEventListener('DOMContentLoaded', function() {
             const result = authManager.registerUser(username, password, userType);
             
             if (result.success) {
-                showMessage('registerMessage', result.message + ' Most már bejelentkezhetsz!', 'success');
+                // AUTOMATIKUS BEJELENTKEZÉS ÉS ÁTIRÁNYÍTÁS
+                const loginResult = authManager.loginUser(username, password);
                 
-              
-                setTimeout(() => {
-                    registerForm.reset();
-                    registerForm.classList.remove('active');
-                    loginForm.classList.add('active');
-                    showMessage('loginMessage', 'Sikeres regisztráció! Most már bejelentkezhetsz.', 'success');
-                }, 1500);
+                if (loginResult.success) {
+                    showMessage('registerMessage', 'Sikeres regisztráció! Automatikusan bejelentkeztél. Átirányítás...', 'success');
+                    
+                    // Azonnal átirányítás jobs.html-re
+                    setTimeout(() => {
+                        window.location.href = 'jobs.html';
+                    }, 1500);
+                } else {
+                    showMessage('registerMessage', 'Sikeres regisztráció! Most már bejelentkezhetsz.', 'success');
+                }
             } else {
                 showMessage('registerMessage', result.message, 'error');
             }
@@ -253,7 +256,10 @@ document.addEventListener('DOMContentLoaded', function() {
   
         if (type === 'success') {
             setTimeout(() => {
-                element.innerHTML = '';
+                // Csak akkor töröljük, ha még nem történt meg az átirányítás
+                if (element.innerHTML.includes(text)) {
+                    element.innerHTML = '';
+                }
             }, 5000);
         }
     }
