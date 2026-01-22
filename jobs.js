@@ -238,7 +238,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    if (applyBtn) {
+    /*if (applyBtn) {
         applyBtn.addEventListener('click', function() {
             alert('Köszönjük a jelentkezésed! Hamarosan visszajelzünk.');
             if (modal) {
@@ -246,7 +246,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.body.classList.remove('modal-open');
             }
         });
-    }
+    }*/
     
 
     const timerElement = document.querySelector('.jobs-timer');
