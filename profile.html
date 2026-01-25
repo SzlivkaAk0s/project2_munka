@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -404,6 +405,150 @@
         border-top: 1px solid rgba(255,255,255,0.1);
     }
     
+    /* Pop-up menük stílusai */
+    .popup-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 2000;
+        justify-content: center;
+        align-items: center;
+        animation: fadeIn 0.3s ease;
+    }
+    
+    .popup-overlay.show {
+        display: flex;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    .popup-menu {
+        background: white;
+        border-radius: 15px;
+        width: 90%;
+        max-width: 400px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+        animation: slideUp 0.3s ease;
+    }
+    
+    @keyframes slideUp {
+        from {
+            transform: translateY(20px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+    
+    .popup-header {
+        background: linear-gradient(to right, #4f5e94 0%, #4f5e94 50%, #3f4f85 50%, #3f4f85 100%);
+        color: white;
+        padding: 20px 25px;
+        text-align: center;
+        position: relative;
+    }
+    
+    .popup-header h3 {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 600;
+    }
+    
+    .popup-close {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        font-size: 28px;
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: background 0.2s;
+    }
+    
+    .popup-close:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .popup-content {
+        padding: 30px;
+    }
+    
+    .popup-message {
+        text-align: center;
+        margin-bottom: 25px;
+        font-size: 16px;
+        color: #555;
+        line-height: 1.6;
+    }
+    
+    .popup-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+    }
+    
+    .popup-btn {
+        padding: 12px 25px;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 120px;
+    }
+    
+    .popup-btn-confirm {
+        background: linear-gradient(135deg, #4f5e94 0%, #3f4f85 100%);
+        color: white;
+        box-shadow: 0 4px 10px rgba(79, 94, 148, 0.3);
+    }
+    
+    .popup-btn-confirm:hover {
+        background: linear-gradient(135deg, #3f4f85 0%, #2f3f75 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(79, 94, 148, 0.4);
+    }
+    
+    .popup-btn-cancel {
+        background: #f0f0f0;
+        color: #333;
+        border: 1px solid #ddd;
+    }
+    
+    .popup-btn-cancel:hover {
+        background: #e0e0e0;
+        transform: translateY(-2px);
+    }
+    
+    .popup-btn-danger {
+        background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+        color: white;
+        box-shadow: 0 4px 10px rgba(244, 67, 54, 0.3);
+    }
+    
+    .popup-btn-danger:hover {
+        background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(244, 67, 54, 0.4);
+    }
     
     @media (max-width: 768px) {
         .profile-container {
@@ -436,6 +581,19 @@
             padding: 16px;
             font-size: 16px;
         }
+        
+        .popup-menu {
+            width: 95%;
+            margin: 0 15px;
+        }
+        
+        .popup-actions {
+            flex-direction: column;
+        }
+        
+        .popup-btn {
+            width: 100%;
+        }
     }
     
     @media (max-width: 480px) {
@@ -457,9 +615,45 @@
 
 <div class="split-bg"></div>
 
+<!-- Kijelentkezés pop-up -->
+<div id="logoutPopup" class="popup-overlay">
+    <div class="popup-menu">
+        <div class="popup-header">
+            <h3>Kijelentkezés</h3>
+            <button class="popup-close" data-popup="logoutPopup">×</button>
+        </div>
+        <div class="popup-content">
+            <p class="popup-message">Biztosan ki szeretnél jelentkezni?</p>
+            <div class="popup-actions">
+                <button class="popup-btn popup-btn-cancel" data-popup="logoutPopup">Mégse</button>
+                <button class="popup-btn popup-btn-danger" id="confirmLogout">Igen, jelentkezek ki</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Profil szerkesztés pop-up -->
+<div id="editProfilePopup" class="popup-overlay">
+    <div class="popup-menu">
+        <div class="popup-header">
+            <h3>Profil szerkesztése</h3>
+            <button class="popup-close" data-popup="editProfilePopup">×</button>
+        </div>
+        <div class="popup-content">
+            <p class="popup-message">A profil szerkesztése funkció jelenleg fejlesztés alatt áll. Hamarosan elérhető!</p>
+            <div class="popup-actions">
+                <button class="popup-btn popup-btn-confirm" data-popup="editProfilePopup">Rendben</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Felső sáv -->
 <div class="jobs-topbar">
     <div class="jobs-hamburger">☰</div>
+    <div class="jobs-timer">
+        <span class="timer-text">05:00</span>
+    </div>
     <div class="jobs-profile-circle" id="profileIcon">U</div>
 </div>
 
@@ -551,6 +745,105 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Profile oldal betöltődött');
     
+    // Timer változók
+    let timerInterval = null;
+    let timeLeft = 300;
+    
+    // Timer indítása
+    function startTimer() {
+        const timerElement = document.querySelector('.jobs-timer');
+        if (!timerElement) return;
+        
+        const textElement = timerElement.querySelector('.timer-text') || timerElement;
+        
+        if (timerInterval) {
+            clearInterval(timerInterval);
+        }
+        
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            textElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Timer állapot frissítése
+            timerElement.classList.remove('timer-warning', 'timer-critical', 'timer-expired');
+            
+            if (timeLeft <= 60 && timeLeft > 30) {
+                timerElement.classList.add('timer-warning');
+            } else if (timeLeft <= 30 && timeLeft > 0) {
+                timerElement.classList.add('timer-critical');
+            } else if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                timerElement.classList.add('timer-expired');
+                // Automatikus kijelentkezés
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('userType');
+                window.location.href = 'index.html';
+            }
+        }, 1000);
+    }
+    
+    // Timer kattintás esemény
+    const timerElement = document.querySelector('.jobs-timer');
+    if (timerElement) {
+        timerElement.addEventListener('click', function() {
+            timeLeft = 300;
+            startTimer();
+        });
+    }
+    
+    // Timer indítása
+    startTimer();
+    
+    // Pop-up kezelő függvények
+    function showPopup(popupId) {
+        document.getElementById(popupId).classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function hidePopup(popupId) {
+        document.getElementById(popupId).classList.remove('show');
+        document.body.style.overflow = 'auto';
+    }
+    
+    // Pop-up bezárása gombok eseménykezelője
+    document.querySelectorAll('.popup-close').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const popupId = this.getAttribute('data-popup');
+            hidePopup(popupId);
+        });
+    });
+    
+    // Cancel gombok eseménykezelője
+    document.querySelectorAll('.popup-btn-cancel').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const popupId = this.getAttribute('data-popup');
+            hidePopup(popupId);
+        });
+    });
+    
+    // Kattintás a pop-up overlay-re (háttér) bezáráshoz
+    document.querySelectorAll('.popup-overlay').forEach(popup => {
+        popup.addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('show');
+                document.body.style.overflow = 'auto';
+            }
+        });
+    });
+    
+    // ESC billentyű pop-up bezáráshoz
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.popup-overlay.show').forEach(popup => {
+                popup.classList.remove('show');
+                document.body.style.overflow = 'auto';
+            });
+        }
+    });
+    
     // Hamburger menü kezelése
     const hamburger = document.querySelector('.jobs-hamburger');
     const sidebar = document.querySelector('.sidebar-menu');
@@ -583,7 +876,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (sidebarLogout) {
         sidebarLogout.addEventListener('click', function(e) {
             e.preventDefault();
-            performLogout();
+            showPopup('logoutPopup');
         });
     }
     
@@ -614,8 +907,9 @@ document.addEventListener('DOMContentLoaded', function() {
         profileIcon.style.background = '#35bd5b';
         profileIcon.style.color = 'white';
         
-        // Profil ikon click - vissza a profile.html-re
+        // Profil ikon click - vissza a profile.html-re (jelenleg már itt vagyunk)
         profileIcon.addEventListener('click', function() {
+            // Frissíti az oldalt, hogy újra betöltse az adatokat
             window.location.href = 'profile.html';
         });
     }
@@ -683,24 +977,35 @@ document.addEventListener('DOMContentLoaded', function() {
     // Stat kártyák frissítése
     updateStatsCards(stats, userType, joinDate);
     
-    // Kijelentkezés gomb
+    // Profil szerkesztése gomb - pop-up megjelenítése
+    document.getElementById('editProfile').addEventListener('click', function() {
+        showPopup('editProfilePopup');
+    });
+    
+    // Kijelentkezés gomb - pop-up megjelenítése
     document.getElementById('logoutBtn').addEventListener('click', function() {
+        showPopup('logoutPopup');
+    });
+    
+    // Kijelentkezés megerősítése
+    document.getElementById('confirmLogout').addEventListener('click', function() {
         performLogout();
     });
     
-    // Profil szerkesztése gomb (demo funkció)
-    document.getElementById('editProfile').addEventListener('click', function() {
-        alert('A profil szerkesztése funkció jelenleg fejlesztés alatt áll. Hamarosan elérhető!');
+    // Profil szerkesztés pop-up "Rendben" gombja
+    document.querySelector('#editProfilePopup .popup-btn-confirm').addEventListener('click', function() {
+        hidePopup('editProfilePopup');
     });
     
     // Kijelentkezés függvény
     function performLogout() {
-        if (confirm('Biztosan ki szeretnél jelentkezni?')) {
-            // Töröljük a bejelentkezési adatokat
-            localStorage.removeItem('currentUser');
-            localStorage.removeItem('userType');
-            window.location.href = 'index.html';
+        if (timerInterval) {
+            clearInterval(timerInterval);
         }
+        localStorage.removeItem('currentUser');
+        localStorage.removeItem('userType');
+        hidePopup('logoutPopup');
+        window.location.href = 'index.html';
     }
     
     // Statisztikák frissítése
