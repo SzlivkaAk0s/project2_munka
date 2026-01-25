@@ -1147,7 +1147,7 @@ body.modal-open {
 
 .form-group input {
     width: 100%;
-    padding: 14px 16px !important;
+    padding: 14px 16px !important; 
     border: 2px solid #e0e0e0;
     border-radius: 10px;
     font-size: 16px;
