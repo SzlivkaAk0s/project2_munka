@@ -618,10 +618,14 @@
         const type = localStorage.getItem("userType");
 
         if(type==="employer"){
-        const back = document.querySelector(".back-to-jobs");
-        if(back) back.remove();
+            const back = document.querySelector(".back-to-jobs");
+            if(back) back.remove();
         }
 
+        if(type==="employee"){
+            const back = document.querySelector(".back-to-jobPut");
+            if(back) back.remove();
+        }
     });
 </script>
 <div class="split-bg"></div>
@@ -674,7 +678,6 @@
     <h3>Menü</h3>
     <ul>
         <li><a href="index.html">Főoldal</a></li>
-        <li><a href="jobs.html">Állások</a></li>
         <li><a href="premium.html">Premium</a></li>
         <li><a href="profile.html" class="active">Profil</a></li>
         <li><a href="#">Beállítások</a></li>
@@ -742,6 +745,7 @@
             <div class="profile-actions">
                 <button class="profile-btn btn-edit" id="editProfile">Profil szerkesztése</button>
                 <a href="jobs.html" class="profile-btn btn-back back-to-jobs">Vissza az állásokhoz</a>
+                <a href="allashirdet.html" class="profile-btn btn-back back-to-jobPut">Vissza az kezelőfelületre</a>
                 <button class="profile-btn btn-logout" id="logoutBtn">Kijelentkezés</button>
             </div>
         </div>
