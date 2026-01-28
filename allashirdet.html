@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <title>Document</title>
+</head>
+<body class="jobs-page">
+    <div class="jobs-topbar">
+        <div class="jobs-hamburger">☰</div>
+        <div class="jobs-timer">
+            <span class="timer-text">05:00</span>
+        </div>
+        <a href="profile.html" class="jobs-profile-circle"></a>
+    </div>
+    <div class="sidebar-menu">
+        <button class="close-btn">×</button>
+        <h3>Menü</h3>
+        <ul>
+            <li><a href="index.html">Főoldal</a></li>
+            <li><a href="premium.html">Premium</a></li>
+            <li><a href="#">Profil</a></li>
+            <li><a href="#">Beállítások</a></li>
+            <li><a href="#">Kijelentkezés</a></li>
+        </ul>
+    </div>
+    <h1>Munkáltatói vezérlőpult</h1>
+
+    <div class="dashboard">
+
+        <div class="dash-card">
+            <h3>Új álláshirdetés</h3>
+            <input placeholder="Pozíció neve">
+            <input placeholder="Helyszín">
+            <button>Hirdetés feladása</button>
+        </div>
+
+        <div class="dash-card">
+            <h3>Aktív hirdetések</h3>
+            <ul id="jobList">
+            <li>Frontend fejlesztő</li>
+            <li>Backend fejlesztő</li>
+            </ul>
+        </div>
+
+        <div class="dash-card">
+            <h3>Jelentkezések</h3>
+            <p>Még nincs jelentkező</p>
+        </div>
+
+    </div>
+    <script src="jobs.js"></script>
+</body>
+</html>

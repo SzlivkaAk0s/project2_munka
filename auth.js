@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.setItem(USERS_KEY, JSON.stringify(users));
         },
 
-        registerUser: function(username, password, userType = 'employee') {
+        registerUser: function(username, password, userType = 'employee', extra = {}) {
             const users = this.getUsers();
             
 
@@ -37,8 +37,10 @@ document.addEventListener('DOMContentLoaded', function() {
             
  
             users[username] = {
-                password: password,
-                userType: userType,
+                password,
+                userType,
+                companyName: extra.companyName || null,
+                companyEmail: extra.companyEmail || null,
                 createdAt: new Date().toISOString()
             };
             
@@ -180,8 +182,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 showMessage('loginMessage', result.message, 'success');
                 
    
+                const userType = authManager.getUserType();
+
                 setTimeout(() => {
+                    if (userType === 'employer') {
+                        window.location.href = 'allashirdet.html';
+                    } else {
                     window.location.href = 'jobs.html';
+                    }
                 }, 1000);
             } else {
                 showMessage('loginMessage', result.message, 'error');
@@ -224,7 +232,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const userType = localStorage.getItem('selectedUserType') || 'employee';
             
      
-            const result = authManager.registerUser(username, password, userType);
+            const extra = {
+                companyName: document.getElementById('companyName')?.value || '',
+                companyEmail: document.getElementById('companyEmail')?.value || ''
+            };
+
+            const result = authManager.registerUser(username, password, userType, extra);
             
             if (result.success) {
                 // AUTOMATIKUS BEJELENTKEZÉS ÉS ÁTIRÁNYÍTÁS
@@ -235,7 +248,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     // Azonnal átirányítás jobs.html-re
                     setTimeout(() => {
-                        window.location.href = 'jobs.html';
+                        if (userType === 'employer') {
+                            window.location.href = 'allashirdet.html';
+                        } else {
+                            window.location.href = 'jobs.html';
+                        }
                     }, 1500);
                 } else {
                     showMessage('registerMessage', 'Sikeres regisztráció! Most már bejelentkezhetsz.', 'success');

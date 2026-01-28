@@ -1426,6 +1426,11 @@ form{
     display: block;
     margin-top: 0em;
     unicode-bidi: isolate;
+    font-size: large;
+}
+
+form h1{
+    color: black;
 }
 
 .field{
@@ -1459,8 +1464,7 @@ input[type="text" i] {
     padding-inline: 2px;
 }
 
-input:not([type="file" i], [type="image" i], [type="checkbox" i], [type="radio" i]) {
-}
+
 
 input{
     text-rendering: auto;
@@ -1511,4 +1515,45 @@ input{
     width: 300px;
     text-align: center;
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+#btnKuld{
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: auto;
+    font-size: large;
+    text-align: center;
+    display: block;
+}
+
+.dashboard{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:20px;
+    padding:30px;
+}
+
+.dash-card{
+    background:#1b1b1b;
+    padding:20px;
+    border-radius:12px;
+    color:white;
+}
+
+.dash-card input{
+    width:100%;
+    margin:5px 0;
+    padding:6px;
+}
+
+.dash-card button{
+    margin-top:10px;
+    padding:8px;
+    background:#35bd5b;
+    border:none;
+    cursor:pointer;
 }

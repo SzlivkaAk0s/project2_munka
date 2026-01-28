@@ -84,6 +84,16 @@
                     <input type="password" id="registerPassword" required minlength="4">
                     <small class="hint">Minimum 4 karakter</small>
                 </div>
+                <div id="employerFields" style="display:none">
+                    <div class="form-group">
+                        <label>Cégnév:</label>
+                        <input type="text" id="companyName">
+                    </div>
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" id="companyEmail">
+                    </div>
+                </div>
                 <div class="form-group">
                     <label for="confirmPassword">Jelszó megerősítése:</label>
                     <input type="password" id="confirmPassword" required>
@@ -147,6 +157,13 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('click', function(e) {
             e.stopPropagation();
             currentUserType = this.getAttribute('data-user-type');
+            const employerFields = document.getElementById('employerFields');
+
+            if (currentUserType === 'employer') {
+                employerFields.style.display = 'block';
+            } else {
+                employerFields.style.display = 'none';
+            }
             const userTypeText = currentUserType === 'employee' ? 'Munkavállaló' : 'Munkáltató';
             
             document.getElementById('userTypeText').textContent = userTypeText;

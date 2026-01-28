@@ -612,7 +612,18 @@
 </style>
 </head>
 <body class="profile-page">
+<script>
+    document.addEventListener("DOMContentLoaded",()=>{
 
+        const type = localStorage.getItem("userType");
+
+        if(type==="employer"){
+        const back = document.querySelector(".back-to-jobs");
+        if(back) back.remove();
+        }
+
+    });
+</script>
 <div class="split-bg"></div>
 
 <!-- Kijelentkezés pop-up -->
@@ -730,7 +741,7 @@
             
             <div class="profile-actions">
                 <button class="profile-btn btn-edit" id="editProfile">Profil szerkesztése</button>
-                <a href="jobs.html" class="profile-btn btn-back">Vissza az állásokhoz</a>
+                <a href="jobs.html" class="profile-btn btn-back back-to-jobs">Vissza az állásokhoz</a>
                 <button class="profile-btn btn-logout" id="logoutBtn">Kijelentkezés</button>
             </div>
         </div>
