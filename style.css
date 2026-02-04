@@ -38,7 +38,7 @@ body {
     transform: translate(-50%, -50%);
     width: 150px;
     height: 150px;
-    background: white;
+    background: #0F172A;
     clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
     display: flex;
     justify-content: center;
@@ -51,6 +51,7 @@ body {
     width: 80%;
     height: 80%;
     object-fit: contain;
+    content: url(logo_finale.png);
 }
 
 
@@ -1556,4 +1557,13 @@ input{
     background:#35bd5b;
     border:none;
     cursor:pointer;
+}
+
+.job-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    object-fit: cover;
+    margin-right: 20px;
+    flex-shrink: 0;
 }
