@@ -420,12 +420,32 @@ body.jobs-page .split-bg {
     cursor: pointer;
     border-left: 5px solid #4f5e94;
     transition: all 0.3s ease;
+    display: flex;              /* Flexbox */
+    align-items: flex-start;    /* Elején igazítás */
+    gap: 20px;                  /* Térköz kép és szöveg között */
 }
 
 .job-card:hover {
     transform: scale(1.02);
     box-shadow: 0 10px 25px rgba(0,0,0,0.15);
     border-left-color: #35bd5b;
+}
+
+/* Kép stílus - BAL oldalra */
+.job-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    object-fit: cover;
+    flex-shrink: 0;            /* Ne zsugorodjon */
+    /* float: right; TÖRÖLVE */
+    order: 1;                  /* Első elemként (bal oldal) */
+}
+
+/* Job content konténer - JOBRA */
+.job-content {
+    flex: 1;                   /* Maradék helyet foglalja */
+    order: 2;                  /* Második elemként (jobbra) */
 }
 
 .job-card h3 {
@@ -452,14 +472,6 @@ body.jobs-page .split-bg {
     padding: 5px 10px;
     border-radius: 6px;
     display: inline-block;
-}
-
-.job-image {
-    width: 60px;
-    height: 60px;
-    border-radius: 10px;
-    object-fit: cover;
-    float: right;
 }
 
 /* ================================
@@ -705,7 +717,7 @@ body.modal-open {
    JELENTKEZÉS.HTML - Űrlap (frissített)
    ================================ */
 
-   .application-container {
+.application-container {
     max-width: 900px;
     margin: 100px auto 40px;
     position: relative;
