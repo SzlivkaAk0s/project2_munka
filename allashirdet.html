@@ -6,6 +6,71 @@
     <link rel="stylesheet" href="./style.css">
     <link rel="icon" href="favicon.ico">
     <title>Document</title>
+    <style>
+        textarea{
+            resize: none;
+            border: 2px solid;
+            padding: 20px; 
+            resize: both;
+            overflow: auto;
+            max-width: fit-content;
+        }
+        .job-preview {
+            width: 320px;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            font-family: Arial, sans-serif;
+        }
+
+        /* FREE */
+        .free-style {
+            background: #f3f3f3;
+            border: 2px solid #ccc;
+            color: #333;
+        }
+
+        /* PREMIUM */
+        .premium-style {
+            background: #e8f2ff;
+            border: 2px solid #2b7cff;
+            color: #1a3e7a;
+        }
+
+        /* PRO */
+        .pro-style {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            border: 2px solid gold;
+            color: white;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+        }
+
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .badge {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: bold;
+            background: #ccc;
+            color: white;
+        }
+
+        .pro-style .badge {
+            background: gold;
+            color: black;
+        }
+
+        .premium-style .badge {
+            background: #2b7cff;
+        }
+
+    </style>
 </head>
 <body class="jobs-page">
     <div class="jobs-topbar">
@@ -19,7 +84,7 @@
         <button class="close-btn">×</button>
         <h3>Menü</h3>
         <ul>
-            <li><a href="jobs.html">Főoldal</a></li>
+            <li><a href="index.html">Főoldal</a></li>
             <li><a href="premium.html">Premium</a></li>
             <li><a href="#">Profil</a></li>
             <li><a href="#">Beállítások</a></li>
@@ -32,8 +97,8 @@
 
         <div class="dash-card">
             <h3>Új álláshirdetés</h3>
-            <input placeholder="Pozíció neve">
-            <input placeholder="Helyszín">
+            <input id="jobName" placeholder="Pozíció neve">
+            <input id="jobPlace" placeholder="Helyszín">
             <button>Hirdetés feladása</button>
         </div>
 
@@ -49,8 +114,87 @@
             <h3>Jelentkezések</h3>
             <p>Még nincs jelentkező</p>
         </div>
-
+        <div class="dash-card">
+            <h3>Jelenlegi csomagja:</h3>
+            <p id="csomagja"></p>
+        </div>
+        <div class="dash-card" id="levelPrem">
+            <h3>Körlevél</h3>
+            <textarea id="uzenet" name="level"></textarea>
+            <button onclick="kuldes()">Küldés</button>
+        </div>
     </div>
+    <hr>
+    <h3>Hirdetés előnézet:</h3>
+
+    <div id="jobPreview" class="job-preview free-style">
+        <div class="job-header">
+            <h4 id="previewTitle">Pozíció neve</h4>
+            <span id="previewBadge" class="badge">FREE</span>
+        </div>
+        <p id="previewLocation">Helyszín</p>
+    </div>
+
+
+    <script>
+        //Jelenlegi csomag
+        const csomag = localStorage.getItem("activePackage") || "Free";
+        document.getElementById("csomagja").innerHTML = csomag;
+
+        if (csomag === "Free") {
+            level.style.display = 'none';
+        }
+
+        //Körüzenet küldés, mentese local /előző üzenetek. progress
+        const level = document.getElementById("uzenet");
+        const uzenetHely = document.querySelector('textarea[name="level"]');
+        const savedList = JSON.parse(localStorage.getItem('myList')) || [];
+
+        function kuldes() {
+            localStorage.setItem("uzenet", level.value)
+            level.value = "";
+            uzenetHely.style.height = 'fit-content';
+            
+            savedList.push(localStorage.getItem("uzenet"));
+            localStorage.setItem('myList', JSON.stringify(savedList));
+        }
+    
+        //üzenet mentese local
+        
+        
+    
+        // Preview styling
+        const preview = document.getElementById("jobPreview");
+        const badge = document.getElementById("previewBadge");
+    
+        preview.classList.remove("free-style", "premium-style", "pro-style");
+    
+        if (csomag === "Premium") {
+            preview.classList.add("premium-style");
+            badge.textContent = "PREMIUM";
+        } 
+        else if (csomag === "Pro") {
+            preview.classList.add("pro-style");
+            badge.textContent = "PRO";
+        } 
+        else {
+            preview.classList.add("free-style");
+            badge.textContent = "FREE";
+        }
+    
+        // Live preview update
+        const jobNameInput = document.getElementById("jobName");
+        const jobPlaceInput = document.getElementById("jobPlace");
+    
+        jobNameInput.addEventListener("input", () => {
+            document.getElementById("previewTitle").textContent = jobNameInput.value || "Pozíció neve";
+        });
+    
+        jobPlaceInput.addEventListener("input", () => {
+            document.getElementById("previewLocation").textContent = jobPlaceInput.value || "Helyszín";
+        });
+    </script>
+    
     <script src="jobs.js"></script>
 </body>
 </html>
