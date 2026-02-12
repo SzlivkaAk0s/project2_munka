@@ -51,7 +51,7 @@
                 <li>Korlátozott hirdetések</li>
                 <li>Standard megjelenés</li>
             </ul>
-            <button onclick="Megvesz()" class="buy-btn">Ingyenes</button>
+            <button class="buy-btn" data-package="Free">Ingyenes</button>
         </div>
 
        
@@ -63,7 +63,7 @@
                 <li>Részletes statisztikák</li>
                 <li>Gyorsabb jelentkezések</li>
             </ul>
-            <button onclick="Megvesz()" class="buy-btn">Vásárlás</button>
+            <button class="buy-btn" data-package="Premium">Vásárlás</button>
         </div>
 
     
@@ -75,7 +75,7 @@
                 <li>Prioritásos támogatás</li>
                 <li>Exkluzív funkciók</li>
             </ul>
-            <button onclick="Megvesz()" class="buy-btn">Vásárlás</button>
+            <button class="buy-btn" data-package="Pro">Vásárlás</button>
         </div>
 
     </div>
@@ -91,16 +91,49 @@
     <script>
         const buttons = document.querySelectorAll('.buy-btn');
         const popup = document.getElementById('purchase-popup');
-
+    
+        // Load current package from localStorage
+        let currentPackage = localStorage.getItem("activePackage");
+    
+        // Function to update UI
+        function updateButtons() {
+            buttons.forEach(btn => {
+                const packageName = btn.dataset.package;
+    
+                if (packageName === currentPackage) {
+                    btn.textContent = "Aktív csomag";
+                    btn.disabled = true;
+                    btn.style.opacity = "0.6";
+                } else {
+                    btn.disabled = false;
+                    btn.style.opacity = "1";
+                    btn.textContent = packageName === "Free" ? "Ingyenes" : "Vásárlás";
+                }
+            });
+        }
+    
+        // Handle click
         buttons.forEach(btn => {
             btn.addEventListener('click', () => {
+                const selectedPackage = btn.dataset.package;
+    
+                // Save to localStorage
+                localStorage.setItem("activePackage", selectedPackage);
+                currentPackage = selectedPackage;
+    
+                // Update UI
+                updateButtons();
+    
+                // Show popup
                 popup.classList.add('show');
-
                 setTimeout(() => {
                     popup.classList.remove('show');
-                }, 4500); 
+                }, 3000);
             });
         });
+    
+        // Run on page load
+        updateButtons();
     </script>
 
     <script src="jobs.js"></script>
