@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Álláshirdetés feltöltése</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="icon" href="favicon.ico">
+
+    <style>
+        body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6fb; /* háttérszín */
+    color: #222;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    margin: 20px 0 25px 0;
+    font-size: 26px;
+}
+
+/* Fő kártya */
+.upload-card {
+    max-width: 450px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: 0 0 18px rgba(0,0,0,0.10);
+}
+
+.upload-card h2 {
+    margin-top: 0;
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+/* Inputok */
+.upload-card input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    font-size: 14px;
+    outline: none;
+    transition: 0.2s;
+}
+
+.upload-card input:focus {
+    border-color: #2b7cff;
+    box-shadow: 0 0 0 3px rgba(43,124,255,0.15);
+}
+
+/* File input */
+.upload-card input[type="file"] {
+    padding: 10px;
+    background: #fafafa;
+    cursor: pointer;
+}
+
+/* Preview box */
+.preview-box {
+    margin-top: 18px;
+    padding: 16px;
+    border-radius: 16px;
+    border: 2px dashed #bbb;
+    background: #fbfbfb;
+    text-align: center;
+}
+
+.preview-box strong {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 15px;
+}
+
+#previewText p {
+    margin: 6px 0;
+}
+
+/* Kép preview */
+#imgPreview {
+    max-width: 100%;
+    border-radius: 16px;
+    margin-top: 14px;
+    box-shadow: 0 0 12px rgba(0,0,0,0.12);
+}
+
+/* Gomb */
+.upload-card button {
+    width: 100%;
+    margin-top: 18px;
+    padding: 14px;
+    border-radius: 14px;
+    border: none;
+    background: #2b7cff;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.upload-card button:hover {
+    opacity: 0.9;
+}
+
+.upload-card button:active {
+    transform: scale(0.98);
+}
+
+/* Mobil */
+@media (max-width: 520px) {
+    body {
+        padding: 12px;
+    }
+
+    .upload-card {
+        padding: 18px;
+    }
+
+    h1 {
+        font-size: 22px;
+    }
+}
+    </style>
+</head>
+<body>
+
+    <h1>Álláshirdetés feltöltése</h1>
+
+    <div class="upload-card">
+        <h2>Űrlap</h2>
+
+        <input id="companyName" placeholder="Cég neve" />
+        <input id="jobPosition" placeholder="Pozíció neve" />
+        <input id="jobLocation" placeholder="Helyszín" />
+
+        <input id="jobImage" type="file" accept="image/*" />
+
+        <div class="preview-box">
+            <strong>Előnézet</strong>
+            <div id="previewText"></div>
+            <img id="imgPreview" style="display:none;" />
+        </div>
+
+        <button onclick="submitJob()">Hirdetés feladása</button>
+    </div>
+
+    <script>
+    const companyName = document.getElementById("companyName");
+    const jobPosition = document.getElementById("jobPosition");
+    const jobLocation = document.getElementById("jobLocation");
+    const jobImage = document.getElementById("jobImage");
+
+    const previewText = document.getElementById("previewText");
+    const imgPreview = document.getElementById("imgPreview");
+
+    function updatePreview() {
+        previewText.innerHTML = `
+            <p><b>Cég:</b> ${companyName.value || "-"}</p>
+            <p><b>Pozíció:</b> ${jobPosition.value || "-"}</p>
+            <p><b>Helyszín:</b> ${jobLocation.value || "-"}</p>
+        `;
+    }
+
+    companyName.addEventListener("input", updatePreview);
+    jobPosition.addEventListener("input", updatePreview);
+    jobLocation.addEventListener("input", updatePreview);
+
+    jobImage.addEventListener("change", () => {
+        const file = jobImage.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            imgPreview.src = e.target.result;
+            imgPreview.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+    });
+
+    updatePreview();
+
+    function submitJob() {
+        if (!companyName.value || !jobPosition.value || !jobLocation.value) {
+            alert("Tölts ki minden mezőt (cég, pozíció, helyszín)!");
+            return;
+        }
+
+        const jobData = {
+            id: Date.now(),
+            company: companyName.value,
+            position: jobPosition.value,
+            location: jobLocation.value,
+            image: imgPreview.src || null
+        };
+
+        
+        const jobs = JSON.parse(localStorage.getItem("jobs")) || [];
+        jobs.push(jobData);
+        localStorage.setItem("jobs", JSON.stringify(jobs));
+
+        
+        window.location.href = "allashirdet.html";
+    }
+</script>
+</body>
+</html>
