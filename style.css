@@ -1614,6 +1614,28 @@ body.profile-page {
 }
 
 /* ================================
+   Company switcher
+   ================================ */
+.company-switcher{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:10px;
+}
+
+.company-chip{
+    padding:6px 12px;
+    border-radius:20px;
+    background:#333;
+    color:white;
+    cursor:pointer;
+}
+
+.company-chip.active{
+    background:#35bd5b;
+}
+
+/* ================================
    RESPONSIVE DESIGN
    ================================ */
 
