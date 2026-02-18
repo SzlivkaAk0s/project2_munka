@@ -23,7 +23,7 @@
         <button class="close-btn">×</button>
         <h3>Menü</h3>
         <ul>
-            <li><a href="index.html">Főoldal</a></li>
+            <li><a href="jobs.html">Főoldal</a></li>
             <li><a href="premium.html">Premium</a></li>
             <li><a href="profile.html">Profil</a></li>
             <li><a href="#">Beállítások</a></li>
@@ -245,7 +245,7 @@
                     isValid = false;
                 }
                 
-                if (isValid) {
+                                if (isValid) {
                     // Sikeres küldés - mutasd a popup-ot
                     successPopup.classList.add('show');
                     
@@ -253,12 +253,27 @@
                     const username = localStorage.getItem('currentUser');
                     const userType = localStorage.getItem('userType');
                     
+                    console.log('Jelentkezés - Felhasználó:', username, 'Típus:', userType);
+                    
                     if (userType === 'employee' && username) {
                         const statsKey = `user_stats_${username}`;
                         const statsJSON = localStorage.getItem(statsKey);
                         let stats = statsJSON ? JSON.parse(statsJSON) : {};
-                        stats.jobsApplied = (stats.jobsApplied || 0) + 1;
+                        
+                        console.log('Jelenlegi statisztika:', stats);
+                        
+                        // Ha nincs jobsApplied mező, hozza létre 0-val, majd növeli
+                        if (!stats.jobsApplied) {
+                            stats.jobsApplied = 0;
+                        }
+                        stats.jobsApplied = stats.jobsApplied + 1;
+                        
+                        console.log('Új érték:', stats.jobsApplied);
+                        
                         localStorage.setItem(statsKey, JSON.stringify(stats));
+                        console.log('Statisztika elmentve:', localStorage.getItem(statsKey));
+                    } else {
+                        console.log('Nem munkavállaló vagy nincs felhasználónév');
                     }
                     
                     // 3 másodperc után átirányítás az állásokhoz

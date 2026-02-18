@@ -55,17 +55,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
         initUserStats: function(username, userType) {
             const statsKey = `user_stats_${username}`;
-            const defaultStats = {
-                loginCount: 0,
-                lastLogin: null,
-                jobsApplied: 0,
-                profileViews: 0,
-                jobsPosted: 0,
-                applicationsReceived: 0,
-                memberSince: new Date().toISOString()
-            };
             
-            localStorage.setItem(statsKey, JSON.stringify(defaultStats));
+            // Ellenőrizzük, hogy létezik-e már statisztika
+            const existingStats = localStorage.getItem(statsKey);
+            
+            if (!existingStats) {
+                // Csak akkor hozzuk létre, ha még nem létezik
+                const defaultStats = {
+                    loginCount: 0,
+                    lastLogin: null,
+                    jobsApplied: 0,
+                    profileViews: 0,
+                    jobsPosted: 0,
+                    applicationsReceived: 0,
+                    memberSince: new Date().toISOString()
+                };
+                
+                localStorage.setItem(statsKey, JSON.stringify(defaultStats));
+                console.log('Új statisztika létrehozva:', username);
+            } else {
+                console.log('Meglévő statisztika megőrizve:', username);
+            }
         },
         
 
