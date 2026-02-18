@@ -678,7 +678,7 @@
     <button class="close-btn">×</button>
     <h3>Menü</h3>
     <ul>
-        <li><a href="index.html">Főoldal</a></li>
+        <li><a href="jobs.html">Főoldal</a></li>
         <li><a href="premium.html">Premium</a></li>
         <li><a href="profile.html" class="active">Profil</a></li>
         <li><a href="#">Beállítások</a></li>
@@ -976,11 +976,15 @@ document.addEventListener('DOMContentLoaded', function() {
     let stats = statsJSON ? JSON.parse(statsJSON) : {
         loginCount: 1,
         lastLogin: new Date().toISOString(),
-        jobsApplied: Math.floor(Math.random() * 10),
+        jobsApplied: 0,  // Itt explicit 0-ra állítjuk
         profileViews: Math.floor(Math.random() * 50),
         jobsPosted: userType === 'employer' ? Math.floor(Math.random() * 5) : 0,
         applicationsReceived: userType === 'employer' ? Math.floor(Math.random() * 20) : 0
     };
+
+// DEBUG - ellenőrizd, hogy megvan-e a jobsApplied
+console.log('Profil betöltés - statisztika:', stats);
+console.log('Jelentkezések száma:', stats.jobsApplied);
     
     // Utolsó belépés frissítése
     stats.lastLogin = new Date().toISOString();
