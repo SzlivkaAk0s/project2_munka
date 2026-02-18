@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <link rel="icon" href="favicon.ico">
+    <title>Jelentkezés - WorkConnect</title>
+</head>
+<body class="jobs-page">
+
+    <!-- Felső sáv -->
+    <div class="jobs-topbar">
+        <div class="jobs-hamburger">☰</div>
+        <div class="jobs-timer">
+            <span class="timer-text">05:00</span>
+        </div>
+        <a href="profile.html" class="jobs-profile-circle"></a>
+    </div>
+
+    <!-- Oldalsó menü -->
+    <div class="sidebar-menu">
+        <button class="close-btn">×</button>
+        <h3>Menü</h3>
+        <ul>
+            <li><a href="jobs.html">Főoldal</a></li>
+            <li><a href="premium.html">Premium</a></li>
+            <li><a href="profile.html">Profil</a></li>
+            <li><a href="#">Beállítások</a></li>
+            <li><a href="#" id="logoutBtnSidebar">Kijelentkezés</a></li>
+        </ul>
+    </div>
+
+    <!-- Fő tartalom -->
+    <div class="application-container">
+        <a href="jobs.html" class="back-button">Vissza az állásokhoz</a>
+        
+        <div class="application-header">
+            <h1>Jelentkezés</h1>
+            <p>Töltsd ki az alábbi űrlapot a jelentkezéshez</p>
+        </div>
+        
+        <div class="form-section">
+            <form action="" method="post" id="signup">
+                <div class="field">
+                    <label for="name" class="required">Teljes név:</label>
+                    <input type="text" id="name" name="name" placeholder="Add meg a neved" required />
+                    <small class="error-message"></small>
+                </div>
+                
+                <div class="field">
+                    <label for="email" class="required">Email cím:</label>
+                    <input type="email" id="email" name="email" placeholder="pelda@email.com" required />
+                    <small class="error-message"></small>
+                </div>
+                
+                <div class="field">
+                    <label for="phone" class="required">Telefonszám:</label>
+                    <input type="tel" id="phone" name="phone" placeholder="+36 30 123 4567" required />
+                    <small class="error-message"></small>
+                </div>
+                
+                <div class="field">
+                    <label for="address" class="required">Lakcím:</label>
+                    <input type="text" id="address" name="address" placeholder="Város, utca, házszám" required />
+                    <small class="error-message"></small>
+                </div>
+                
+                <div class="field">
+                    <label class="required">Jogosítvány:</label>
+                    <div class="license-options">
+                        <label class="license-option">
+                            <input type="radio" name="license" value="yes" required>
+                            Van jogosítványom
+                        </label>
+                        <label class="license-option">
+                            <input type="radio" name="license" value="no" required>
+                            Nincs jogosítványom
+                        </label>
+                    </div>
+                    <small class="error-message"></small>
+                </div>
+                
+                <div class="field">
+                    <label for="cv">Önéletrajz (opcionális):</label>
+                    <input type="file" id="cv" name="cv" accept=".pdf,.doc,.docx" />
+                    <small>PDF, DOC vagy DOCX formátum (max. 5MB)</small>
+                </div>
+                
+                <div class="field">
+                    <label for="message">Bemutatkozó levél (opcionális):</label>
+                    <textarea id="message" name="message" rows="4" placeholder="Írj néhány szót magadról, tapasztalataidról..."></textarea>
+                </div>
+                
+                <button type="submit" class="apply-submit-btn">
+                    Jelentkezés elküldése
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sikeres jelentkezés popup -->
+    <div id="successPopup" class="popup">
+        <div class="popup-content">
+            <h3>Jelentkezését megkaptuk! 🎉</h3>
+            <p>Emailben hamarosan értesítjük a továbbiakról.</p>
+            <button onclick="closePopup()" class="buy-btn">Rendben</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Jelentkezés oldal betöltődött');
+            
+            // Auth ellenőrzés
+            const isLoggedIn = () => {
+                return localStorage.getItem('currentUser') !== null;
+            };
+            
+            if (!isLoggedIn()) {
+                console.log('Nincs bejelentkezve, átirányítás index.html-re');
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // Profil ikon frissítése
+            const profileCircle = document.querySelector('.jobs-profile-circle');
+            if (profileCircle) {
+                const username = localStorage.getItem('currentUser');
+                if (username) {
+                    profileCircle.style.background = '#35bd5b';
+                    profileCircle.style.color = 'white';
+                    profileCircle.textContent = username.charAt(0).toUpperCase();
+                    profileCircle.title = `${username} - Profil`;
+                }
+            }
+            
+            // Sidebar menü kezelése
+            const hamburger = document.querySelector('.jobs-hamburger');
+            const sidebar = document.querySelector('.sidebar-menu');
+            const closeBtn = document.querySelector('.close-btn');
+            
+            if (hamburger && sidebar) {
+                hamburger.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    sidebar.classList.toggle('open');
+                });
+                
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', function() {
+                        sidebar.classList.remove('open');
+                    });
+                }
+            }
+            
+            // Sidebar kijelentkezés
+            const logoutBtnSidebar = document.getElementById('logoutBtnSidebar');
+            if (logoutBtnSidebar) {
+                logoutBtnSidebar.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (confirm('Biztosan ki szeretne jelentkezni?')) {
+                        localStorage.removeItem('currentUser');
+                        localStorage.removeItem('userType');
+                        window.location.href = 'index.html';
+                    }
+                });
+            }
+            
+            // Timer indítása
+            let timerInterval = null;
+            let timeLeft = 300;
+            
+            function startTimer() {
+                const timerElement = document.querySelector('.jobs-timer');
+                if (!timerElement) return;
+                
+                const textElement = timerElement.querySelector('.timer-text') || timerElement;
+                
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                }
+                
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    
+                    const minutes = Math.floor(timeLeft / 60);
+                    const seconds = timeLeft % 60;
+                    textElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        localStorage.removeItem('currentUser');
+                        localStorage.removeItem('userType');
+                        window.location.href = 'index.html';
+                    }
+                }, 1000);
+            }
+            
+            startTimer();
+            
+            // Timer kattintás esemény
+            const timerElement = document.querySelector('.jobs-timer');
+            if (timerElement) {
+                timerElement.addEventListener('click', function() {
+                    timeLeft = 300;
+                    startTimer();
+                });
+            }
+            
+            // Űrlap validáció és küldés
+            const form = document.getElementById('signup');
+            const successPopup = document.getElementById('successPopup');
+            
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                // Egyszerű validáció
+                let isValid = true;
+                const requiredFields = ['name', 'email', 'phone', 'address'];
+                
+                // Töröld a korábbi hibaüzeneteket
+                document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+                
+                requiredFields.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (!field.value.trim()) {
+                        field.nextElementSibling.textContent = 'Kötelező mező!';
+                        isValid = false;
+                    }
+                });
+                
+                // Email validáció
+                const emailField = document.getElementById('email');
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (emailField.value && !emailRegex.test(emailField.value)) {
+                    emailField.nextElementSibling.textContent = 'Érvénytelen email cím!';
+                    isValid = false;
+                }
+                
+                // Jogosítvány validáció
+                const licenseSelected = document.querySelector('input[name="license"]:checked');
+                if (!licenseSelected) {
+                    document.querySelectorAll('.error-message')[4].textContent = 'Válassz egy lehetőséget!';
+                    isValid = false;
+                }
+                
+                                if (isValid) {
+                    // Sikeres küldés - mutasd a popup-ot
+                    successPopup.classList.add('show');
+                    
+                    // Jelentkezési statisztika növelése (ha employee)
+                    const username = localStorage.getItem('currentUser');
+                    const userType = localStorage.getItem('userType');
+                    
+                    console.log('Jelentkezés - Felhasználó:', username, 'Típus:', userType);
+                    
+                    if (userType === 'employee' && username) {
+                        const statsKey = `user_stats_${username}`;
+                        const statsJSON = localStorage.getItem(statsKey);
+                        let stats = statsJSON ? JSON.parse(statsJSON) : {};
+                        
+                        console.log('Jelenlegi statisztika:', stats);
+                        
+                        // Ha nincs jobsApplied mező, hozza létre 0-val, majd növeli
+                        if (!stats.jobsApplied) {
+                            stats.jobsApplied = 0;
+                        }
+                        stats.jobsApplied = stats.jobsApplied + 1;
+                        
+                        console.log('Új érték:', stats.jobsApplied);
+                        
+                        localStorage.setItem(statsKey, JSON.stringify(stats));
+                        console.log('Statisztika elmentve:', localStorage.getItem(statsKey));
+                    } else {
+                        console.log('Nem munkavállaló vagy nincs felhasználónév');
+                    }
+                    
+                    // 3 másodperc után átirányítás az állásokhoz
+                    setTimeout(() => {
+                        successPopup.classList.remove('show');
+                        window.location.href = 'jobs.html';
+                    }, 3000);
+                }
+            });
+        });
+        
+        function closePopup() {
+            document.getElementById('successPopup').classList.remove('show');
+        }
+    </script>
+
+</body>
+</html>

@@ -4,13 +4,14 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>WorkConnect</title>
-<link rel="stylesheet" href="style.css"/>
+<link rel="stylesheet" href="./style.css"/>
+<link rel="icon" href="favicon.ico">
 </head>
 <body>
 
 <div class="split-bg"></div>
 <div class="middle-line"></div>
-<div class="logo"><img src="logo.jpg" alt="WorkConnect Logo"></div>
+<div class="logo"><img src="logo_finale.png" alt="WorkConnect Logo"></div>
 
 <div class="side" id="left">
     <div class="side-content">
@@ -22,7 +23,7 @@
                 <li>Gyors és egyszerű keresés</li>
             </ul>
         </div>
-        <button class="side-btn">Belépés</button>
+        <button class="side-btn" data-user-type="employee">Belépés</button>
     </div>
 </div>
 
@@ -36,7 +37,7 @@
                 <li>Modern kezelőfelület</li>
             </ul>
         </div>
-        <button class="side-btn">Belépés</button>
+        <button class="side-btn" data-user-type="employer">Belépés</button>
     </div>
 </div>
 
@@ -47,28 +48,234 @@
     </div>
 </div>
 
+
+<div id="loginModal" class="login-modal">
+    <div class="login-modal-content">
+        <div class="login-modal-header">
+            <h3 id="loginTitle">Bejelentkezés - <span id="userTypeText">Munkavállaló</span></h3>
+            <span class="login-close-btn">&times;</span>
+        </div>
+        <div class="login-modal-body">
+     
+            <form id="loginForm" class="login-form active">
+                <div class="form-group">
+                    <label for="loginUsername">Felhasználónév:</label>
+                    <input type="text" id="loginUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Jelszó:</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="login-btn">Bejelentkezés</button>
+                    <button type="button" class="switch-form-btn" id="showRegister">Regisztráció</button>
+                </div>
+                <div id="loginMessage" class="message"></div>
+            </form>
+            
+        
+            <form id="registerForm" class="login-form">
+                <div class="form-group">
+                    <label for="registerUsername">Felhasználónév:</label>
+                    <input type="text" id="registerUsername" required minlength="3">
+                    <small class="hint">Minimum 3 karakter</small>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Jelszó:</label>
+                    <input type="password" id="registerPassword" required minlength="4">
+                    <small class="hint">Minimum 4 karakter</small>
+                </div>
+                <div id="employerFields" style="display:none">
+                    <div class="form-group">
+                        <label>Cégnév:</label>
+                        <input type="text" id="companyName">
+                    </div>
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" id="companyEmail">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Jelszó megerősítése:</label>
+                    <input type="password" id="confirmPassword" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="login-btn">Regisztráció</button>
+                    <button type="button" class="switch-form-btn" id="showLogin">Vissza a bejelentkezéshez</button>
+                </div>
+                <div id="registerMessage" class="message"></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="./auth.js"></script>
 <script>
+// CSAK A MODAL NYITÁS/ZÁRÁS ÉS FORM VÁLTÁS - NINCS REGISZTRÁCIÓ/BEJELENTKEZÉS LOGIKA
+
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Index oldal betöltődött');
+
+    let currentUserType = 'employee';
+    
+    // FORM VÁLTÁS ESEMÉNYKEZELŐK
+    const showRegisterBtn = document.getElementById('showRegister');
+    const showLoginBtn = document.getElementById('showLogin');
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    
+    if (showRegisterBtn) {
+        showRegisterBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Register gombra kattintottak');
+            
+            if (loginForm && registerForm) {
+                loginForm.classList.remove('active');
+                registerForm.classList.add('active');
+                console.log('Form váltás: Login -> Register');
+            }
+        });
+    }
+    
+    if (showLoginBtn) {
+        showLoginBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Vissza gombra kattintottak');
+            
+            if (loginForm && registerForm) {
+                registerForm.classList.remove('active');
+                loginForm.classList.add('active');
+                console.log('Form váltás: Register -> Login');
+            }
+        });
+    }
+    
+    // BELÉPÉS GOMBOK - CSAK MODAL NYITÁS
     const buttons = document.querySelectorAll('.side-btn');
     buttons.forEach(button => {
-        button.addEventListener('click', function() {
-            window.location.href = 'jobs.html';
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            currentUserType = this.getAttribute('data-user-type');
+            const employerFields = document.getElementById('employerFields');
+
+            if (currentUserType === 'employer') {
+                employerFields.style.display = 'block';
+            } else {
+                employerFields.style.display = 'none';
+            }
+            const userTypeText = currentUserType === 'employee' ? 'Munkavállaló' : 'Munkáltató';
+            
+            document.getElementById('userTypeText').textContent = userTypeText;
+            localStorage.setItem('selectedUserType', currentUserType);
+            
+            document.getElementById('loginModal').classList.add('open');
+            document.body.classList.add('modal-open');
         });
     });
     
+    // OLDALAK KATTINTÁSA
     const leftSide = document.getElementById('left');
-    leftSide.addEventListener('click', function(e) {
-        if (e.target === leftSide) {
-            window.location.href = 'jobs.html';
+    const rightSide = document.getElementById('right');
+    
+    [leftSide, rightSide].forEach(side => {
+        side.addEventListener('click', function(e) {
+            if (e.target === side) {
+                const isLoggedIn = localStorage.getItem('currentUser') !== null;
+                
+                if (!isLoggedIn) {
+                    const userType = side.id === 'left' ? 'employee' : 'employer';
+                    currentUserType = userType;
+                    const userTypeText = userType === 'employee' ? 'Munkavállaló' : 'Munkáltató';
+                    
+                    document.getElementById('userTypeText').textContent = userTypeText;
+                    localStorage.setItem('selectedUserType', userType);
+                    
+                    document.getElementById('loginModal').classList.add('open');
+                    document.body.classList.add('modal-open');
+                }
+            }
+        });
+    });
+    
+    // MODAL BEZÁRÁS
+    const loginModal = document.getElementById('loginModal');
+    const closeBtn = document.querySelector('.login-close-btn');
+    
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function() {
+            loginModal.classList.remove('open');
+            document.body.classList.remove('modal-open');
+        });
+    }
+    
+    // EZ A MEGOLDÁS MŰKÖDIK - NE ZÁRJA BE A MODALT HA HÚZVA JELÖLÜNK KI
+    let isDraggingFromInput = false;
+    let mouseDownTarget = null;
+    
+    // INPUT MEZŐK ESEMÉNYKEZELŐK
+    const inputs = document.querySelectorAll('.login-modal input');
+    inputs.forEach(input => {
+        // Amikor lenyomjuk az egérgombot az inputon
+        input.addEventListener('mousedown', function(e) {
+            mouseDownTarget = e.target;
+            isDraggingFromInput = false;
+        });
+        
+        // Amikor felengedjük az egérgombot
+        input.addEventListener('mouseup', function(e) {
+            // Ha ugyanarra az elemre engedtük fel, ahol lenyomtuk
+            if (e.target === mouseDownTarget) {
+                isDraggingFromInput = true;
+            }
+            mouseDownTarget = null;
+        });
+        
+        // Ha kihúzzuk az egeret az inputból drag közben
+        input.addEventListener('mouseleave', function(e) {
+            // Ha még mindig lenyomva van az egérgomb
+            if (mouseDownTarget === input) {
+                isDraggingFromInput = true;
+            }
+        });
+        
+        // Kattintás - ne menjen át a modal-ra
+        input.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    });
+    
+    // MODAL CLICK - CSAK AKKOR ZÁRJA BE, HA NEM VOLT INPUTRÓL HÚZÁS
+    loginModal.addEventListener('click', function(e) {
+        // Csak akkor zárjuk be, ha a modal háttérjére kattintunk
+        // ÉS nem volt inputról érkező húzás
+        if (e.target === loginModal && !isDraggingFromInput) {
+            loginModal.classList.remove('open');
+            document.body.classList.remove('modal-open');
+        }
+        
+        // Reseteljük a húzás állapotot
+        isDraggingFromInput = false;
+    });
+    
+    // ESC BILLENTYŰ
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && loginModal.classList.contains('open')) {
+            loginModal.classList.remove('open');
+            document.body.classList.remove('modal-open');
         }
     });
     
-    const rightSide = document.getElementById('right');
-    rightSide.addEventListener('click', function(e) {
-        if (e.target === rightSide) {
-            window.location.href = 'jobs.html';
-        }
-    });
+    // MODAL CONTENT - NE ZÁRULJON BE
+    const modalContent = document.querySelector('.login-modal-content');
+    if (modalContent) {
+        modalContent.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    }
+    
+    console.log('Index oldal készen áll');
 });
 </script>
 

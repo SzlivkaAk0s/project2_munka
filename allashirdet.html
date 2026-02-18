@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <link rel="icon" href="favicon.ico">
+    <title>Document</title>
+    <style>
+        textarea{
+            resize: none;
+            border: 2px solid;
+            padding: 20px; 
+            resize: both;
+            overflow: auto;
+            max-width: fit-content;
+        }
+        .job-preview {
+            width: 320px;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            font-family: Arial, sans-serif;
+        }
+
+        /* FREE */
+        .free-style {
+            background: #f3f3f3;
+            border: 2px solid #ccc;
+            color: #333;
+        }
+
+        /* PREMIUM */
+        .premium-style {
+            background: #e8f2ff;
+            border: 2px solid #2b7cff;
+            color: #1a3e7a;
+        }
+
+        /* PRO */
+        .pro-style {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            border: 2px solid gold;
+            color: white;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+        }
+
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .badge {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: bold;
+            background: #ccc;
+            color: white;
+        }
+
+        .pro-style .badge {
+            background: gold;
+            color: black;
+        }
+
+        .premium-style .badge {
+            background: #2b7cff;
+        }
+
+        .company-modal{
+            position:fixed;
+            top:0;
+            left:0;
+            width:100%;
+            height:100%;
+            background:rgba(0,0,0,0.6);
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            z-index:9999;
+        }
+
+        .hidden{
+            display:none;
+        }
+
+        .company-modal-content{
+            background:#1b1b1b;
+            padding:25px;
+            border-radius:12px;
+            width:300px;
+            color:white;
+        }
+
+        .company-modal-content input{
+            width:100%;
+            margin:8px 0;
+            padding:8px;
+        }
+
+        .modal-actions{
+            display:flex;
+            justify-content:space-between;
+            margin-top:10px;
+        }
+
+        #deleteCompanyBtn{
+            background:#ff4d4d;
+            color:white;
+            border:none;
+            padding:8px 12px;
+            border-radius:6px;
+            cursor:pointer;
+            margin-top: 5px;
+        }
+
+    </style>
+</head>
+<body class="jobs-page">
+    <div class="jobs-topbar">
+        <div class="jobs-hamburger">☰</div>
+        <div class="jobs-timer">
+            <span class="timer-text">05:00</span>
+        </div>
+        <a href="profile.html" class="jobs-profile-circle"></a>
+    </div>
+    <div class="sidebar-menu">
+        <button class="close-btn">×</button>
+        <h3>Menü</h3>
+        <ul>
+            <li><a href="jobs.html">Főoldal</a></li>
+            <li><a href="premium.html">Premium</a></li>
+            <li><a href="profile.html">Profil</a></li>
+            <li><a href="#">Beállítások</a></li>
+            <li><a href="#">Kijelentkezés</a></li>
+        </ul>
+    </div>
+    <h1>Munkáltatói vezérlőpult</h1>
+
+    <div class="dashboard">
+
+        <div class="dash-card">
+            <h3>Aktív hirdetések</h3>
+            <ul id="jobList">
+            <li>Frontend fejlesztő</li>
+            <li>Backend fejlesztő</li>
+            </ul>
+        </div>
+
+        <div class="dash-card">
+            <h3>Jelentkezések</h3>
+            <p>Még nincs jelentkező</p>
+        </div>
+        <div class="dash-card">
+            <h3>Jelenlegi csomagja:</h3>
+            <p id="csomagja"></p>
+        </div>
+        <div class="dash-card" id="levelPrem">
+            <h3>Körlevél</h3>
+            <textarea id="uzenet" name="level"></textarea>
+            <button onclick="kuldes()">Küldés</button>
+        </div>
+        <div class="dash-card">
+            <h3>Új álláshirdetés</h3>
+            <div id="companySwitcher" class="company-switcher"></div>
+
+            <button onclick="openCompanyModal()">+ Új cég</button>
+            <button onclick="deleteSelectedCompany()" id="deleteCompanyBtn" disabled>Kiválasztott cég törlése</button>
+
+            <input id="jobName" placeholder="Pozíció neve">
+            <input id="jobPlace" placeholder="Helyszín">
+
+            <button onclick="createJob()">Hirdetés feladása</button>
+        </div>
+    </div>
+    <hr>
+    <div style="margin-left: 25px;">
+        <h3>Hirdetés előnézet:</h3>
+
+        <div id="jobPreview" class="job-preview free-style">
+            <div class="job-header">
+                <h4 id="previewTitle">Pozíció neve</h4>
+                <span id="previewBadge" class="badge">FREE</span>
+            </div>
+            <p id="previewLocation">Helyszín</p>
+            <p id="previewCompany">Cég neve</p>
+        </div>
+    </div>
+
+    <!--modal cégeknek-->
+    <div id="companyModal" class="company-modal hidden">
+        <div class="company-modal-content">
+
+            <h3>Új cég létrehozása</h3>
+
+            <input id="companyNameInput" placeholder="Cég neve">
+            <input id="companyCityInput" placeholder="Város">
+            <input id="companyFieldInput" placeholder="Iparág">
+
+            <div class="modal-actions">
+                <button onclick="saveCompany()">Mentés</button>
+                <button onclick="closeCompanyModal()">Mégse</button>
+            </div>
+
+        </div>
+    </div>
+
+
+    <script>
+        //Jelenlegi csomag
+        const level = document.getElementById("uzenet");
+        const uzenetHely = document.querySelector('textarea[name="level"]');
+
+        // Jelenlegi csomag
+        const csomag = localStorage.getItem("activePackage") || "Free";
+        document.getElementById("csomagja").innerHTML = csomag;
+
+        if (csomag === "Free") {
+            document.getElementById("levelPrem").style.display = "none";
+        }
+
+        //Körüzenet küldés, mentese local /előző üzenetek. progress
+        const savedList = JSON.parse(localStorage.getItem('myList')) || [];
+
+        function kuldes() {
+            localStorage.setItem("uzenet", level.value)
+            level.value = "";
+            uzenetHely.style.height = 'fit-content';
+            
+            savedList.push(localStorage.getItem("uzenet"));
+            localStorage.setItem('myList', JSON.stringify(savedList));
+        }
+    
+        //üzenet mentese local
+        
+        
+    
+        // Preview styling
+        const preview = document.getElementById("jobPreview");
+        const badge = document.getElementById("previewBadge");
+    
+        preview.classList.remove("free-style", "premium-style", "pro-style");
+    
+        if (csomag === "Premium") {
+            preview.classList.add("premium-style");
+            badge.textContent = "PREMIUM";
+        } 
+        else if (csomag === "Pro") {
+            preview.classList.add("pro-style");
+            badge.textContent = "PRO";
+        } 
+        else {
+            preview.classList.add("free-style");
+            badge.textContent = "FREE";
+        }
+    
+        // Live preview update
+        const jobNameInput = document.getElementById("jobName");
+        const jobPlaceInput = document.getElementById("jobPlace");
+    
+        jobNameInput.addEventListener("input", () => {
+            document.getElementById("previewTitle").textContent = jobNameInput.value || "Pozíció neve";
+        });
+    
+        jobPlaceInput.addEventListener("input", () => {
+            document.getElementById("previewLocation").textContent = jobPlaceInput.value || "Helyszín";
+        });
+
+        function getCurrentUser(){
+            return localStorage.getItem("currentUser") || "guest";
+        }
+
+        function getUserPackage(){
+            return localStorage.getItem("activePackage") || "Free";
+        }
+
+        // Cégek kezelése
+        const currentUser = localStorage.getItem("currentUser");
+        function getCompanyLimit(){
+            const pack = getUserPackage();
+
+            if(pack==="Pro") return Infinity;
+            if(pack==="Premium") return 2;
+            return 1;
+        }
+        function getCompanies(){
+            const all = JSON.parse(localStorage.getItem("companies")) || {};
+            return all[getCurrentUser()] || [];
+        }
+
+        function saveCompanies(list){
+            const all = JSON.parse(localStorage.getItem("companies")) || {};
+            all[getCurrentUser()] = list;
+            localStorage.setItem("companies", JSON.stringify(all));
+        }
+        
+
+        function addCompany() {
+
+            const companies = getCompanies();
+            const limit = getCompanyLimit();
+
+            if (companies.length >= limit) {
+                alert("Elérted a csomagod céglimitjét!");
+                return;
+            }
+
+            const name = prompt("Cég neve:");
+
+            if (!name) return;
+
+            companies.push({
+                id: Date.now(),
+                name: name
+            });
+
+            saveCompanies(companies);
+            renderCompanies();
+        }
+
+        const companyModal = document.getElementById("companyModal");
+        const companyNameInput = document.getElementById("companyNameInput");
+        const companyCityInput = document.getElementById("companyCityInput");
+        const companyFieldInput = document.getElementById("companyFieldInput");
+        const previewCompany = document.getElementById("previewCompany");
+
+        function openCompanyModal(){
+            companyModal.classList.remove("hidden");
+        }
+
+        function closeCompanyModal(){
+            companyModal.classList.add("hidden");
+        }
+
+        let selectedCompanyId = null;
+
+        function saveCompany(){
+
+            const companies = getCompanies();
+
+            if(companies.length >= getCompanyLimit()){
+                alert("Csomag limit elérve!");
+                return;
+            }
+
+            const company = {
+                id: Date.now(),
+                name: companyNameInput.value,
+                city: companyCityInput.value,
+                field: companyFieldInput.value
+            };
+
+            companies.push(company);
+            saveCompanies(companies);
+
+            closeCompanyModal();
+            renderCompanies();
+        }
+
+        function renderCompanies(){
+
+            const container = document.getElementById("companySwitcher");
+            container.innerHTML="";
+
+            getCompanies().forEach(c=>{
+
+                const chip=document.createElement("div");
+                chip.className="company-chip";
+                chip.textContent=c.name;
+
+                chip.onclick=()=>{
+                    selectedCompanyId=c.id;
+
+                    document
+                    .querySelectorAll(".company-chip")
+                    .forEach(el=>el.classList.remove("active"));
+
+                    chip.classList.add("active");
+
+                    previewCompany.textContent=c.name;
+
+                    document.getElementById("deleteCompanyBtn").disabled = false;
+                };
+
+                container.appendChild(chip);
+            });
+        }
+
+        renderCompanies();
+
+        function createJob(){
+
+            if(!selectedCompanyId){
+                alert("Válassz céget!");
+                return;
+            }
+
+            const jobs = JSON.parse(localStorage.getItem("jobs")) || [];
+
+            const company = getCompanies()
+                .find(c=>c.id===selectedCompanyId);
+
+            jobs.push({
+                title: jobName.value,
+                location: jobPlace.value,
+                company: company.name,
+                package: getUserPackage()
+            });
+
+            localStorage.setItem("jobs",JSON.stringify(jobs));
+        }
+
+        function enforceCompanyLimit(){
+
+            const companies = getCompanies();
+            const limit = getCompanyLimit();
+
+            if(companies.length > limit){
+
+                alert(
+                    "Több céged van mint amit a jelenlegi csomag enged.\n" +
+                    "Új céget nem adhatsz hozzá amíg nem törölsz."
+                );
+            }
+        }
+
+        enforceCompanyLimit();
+        if(getCompanies().length >= getCompanyLimit()){
+            document.querySelector(".dash-card button[onclick='openCompanyModal()']").disabled = true;
+        }
+
+        function deleteSelectedCompany(){
+
+            if(!selectedCompanyId){
+                alert("Nincs kiválasztott cég!");
+                return;
+            }
+
+            let companies = getCompanies();
+
+            companies = companies.filter(
+                c => c.id !== selectedCompanyId
+            );
+
+            saveCompanies(companies);
+
+            // reset selection
+            selectedCompanyId = null;
+            previewCompany.textContent = "Cég neve";
+
+            document.getElementById("deleteCompanyBtn").disabled = true;
+
+            renderCompanies();
+
+            // újra engedélyezzük az add gombot ha lehet
+            if(getCompanies().length < getCompanyLimit()){
+                document.querySelector(
+                    ".dash-card button[onclick='openCompanyModal()']"
+                ).disabled = false;
+            }
+        }
+    </script>
+    
+    <script src="jobs.js"></script>
+</body>
+</html>

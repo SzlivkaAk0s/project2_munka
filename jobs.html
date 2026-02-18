@@ -3,25 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <title>Álláshirdetések</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./style.css"/>
+    <link rel="icon" href="favicon.ico">
 </head>
 <body class="jobs-page">
 
 <div class="split-bg"></div>
 
-<!-- felső sáv -->
+
 <div class="jobs-topbar">
     <div class="jobs-hamburger">☰</div>
-
     <div class="jobs-timer">
-        <span class="filter-timer">05:00</span>
+        <span class="timer-text">05:00</span>
     </div>
-
-    <div class="jobs-profile-circle"></div>
-
+    <a href="profile.html" class="jobs-profile-circle"></a>
 </div>
 
-<!-- oldalsó menü -->
+
 <div class="sidebar-menu">
     <button class="close-btn">×</button>
     <h3>Menü</h3>
@@ -34,40 +32,58 @@
     </ul>
 </div>
 
-<!-- hirdetések -->
+
 <div class="jobs-list">
     <div class="job-card" data-job="1">
-        <h3>Frontend fejlesztő</h3>
-        <p>Budapest • Full-time</p>
-        <div class="job-tags">
-            <span class="tag">React</span>
-            <span class="tag">JavaScript</span>
-            <span class="tag">CSS</span>
+        <!-- KÉP ELŐRE (BALRA) -->
+        <img class="job-image" src="frontend.jpg" alt="">
+        
+        <!-- SZÖVEG UTÁNA (JOBBRA) -->
+        <div class="job-content">
+            <h3>Frontend fejlesztő</h3>
+            <p>Budapest • Full-time</p>
+            <div class="job-tags">
+                <span class="tag">React</span>
+                <span class="tag">JavaScript</span>
+                <span class="tag">CSS</span>
+            </div>
         </div>
     </div>
 
     <div class="job-card" data-job="2">
-        <h3>Backend fejlesztő</h3>
-        <p>Remote • Junior</p>
-        <div class="job-tags">
-            <span class="tag">Node.js</span>
-            <span class="tag">Python</span>
-            <span class="tag">MongoDB</span>
+        <!-- KÉP ELŐRE (BALRA) -->
+        <img class="job-image" src="backend.jpg" alt="">
+        
+        <!-- SZÖVEG UTÁNA (JOBBRA) -->
+        <div class="job-content">
+            <h3>Backend fejlesztő</h3>
+            <p>Remote • Junior</p>
+            <div class="job-tags">
+                <span class="tag">Node.js</span>
+                <span class="tag">Python</span>
+                <span class="tag">MongoDB</span>
+            </div>
         </div>
     </div>
 
     <div class="job-card" data-job="3">
-        <h3>UI / UX Designer</h3>
-        <p>Szeged • Hybrid</p>
-        <div class="job-tags">
-            <span class="tag">Figma</span>
-            <span class="tag">Adobe XD</span>
-            <span class="tag">Prototyping</span>
+        <!-- KÉP ELŐRE (BALRA) -->
+        <img class="job-image" src="uiux.png" alt="">
+        
+        <!-- SZÖVEG UTÁNA (JOBBRA) -->
+        <div class="job-content">
+            <h3>UI / UX Designer</h3>
+            <p>Szeged • Hybrid</p>
+            <div class="job-tags">
+                <span class="tag">Figma</span>
+                <span class="tag">Adobe XD</span>
+                <span class="tag">Prototyping</span>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- MODAL (RÉSZLETEK) -->
+
 <div class="job-modal" id="jobModal">
     <div class="modal-content">
         <button class="modal-close-btn">×</button>
@@ -103,12 +119,12 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button class="modal-apply-btn">Jelentkezem</button>
+            <a href="jelentkezes.html"><button class="modal-apply-btn">Jelentkezem</button></a>
         </div>
     </div>
 </div>
 
-<!-- JOBB OLDALI SZŰRŐ PANEL -->
+
 <div class="filter-sidebar right">
     <div class="filter-header">
         <h3>🔍 Szűrők</h3>

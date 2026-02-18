@@ -1,0 +1,1088 @@
+
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Profil - WorkConnect</title>
+<link rel="stylesheet" href="./style.css"/>
+<link rel="icon" href="favicon.ico">
+<style>
+    body.profile-page {
+        background: #4f5e94;
+        min-height: 100vh;
+        margin: 0;
+        overflow-y: auto;
+        padding-top: 70px;
+        font-family: Arial, sans-serif;
+    }
+    
+    .profile-page .split-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #4f5e94;
+        z-index: 1;
+    }
+    
+    .profile-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+        position: relative;
+        z-index: 2;
+    }
+    
+    
+    .jobs-topbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 70px;
+        z-index: 100;
+        background: rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        padding: 0 30px;
+        box-sizing: border-box;
+    }
+    
+    .jobs-hamburger {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 42px;
+        color: white;
+        cursor: pointer;
+        padding: 8px 12px;
+        z-index: 101;
+    }
+    
+    .jobs-hamburger:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 5px;
+    }
+    
+    .jobs-profile-circle {
+        position: absolute;
+        right: 30px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: white;
+        cursor: pointer;
+        z-index: 101;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #4f5e94;
+        font-weight: bold;
+        font-size: 20px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+    }
+    
+    
+    .sidebar-menu {
+        position: fixed;
+        top: 0;
+        left: -350px;
+        width: 300px;
+        height: 100%;
+        background: white;
+        box-shadow: 5px 0 25px rgba(0, 0, 0, 0.5);
+        transition: left 0.3s ease;
+        z-index: 1000;
+        padding: 25px;
+        overflow-y: auto;
+    }
+    
+    .sidebar-menu.open {
+        left: 0;
+    }
+    
+    .close-btn {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        font-size: 42px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #333;
+        width: 45px;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+        padding: 0;
+    }
+    
+    .close-btn:hover {
+        color: #ff4444;
+        background: #f0f0f0;
+        border-radius: 50%;
+    }
+    
+    .sidebar-menu h3 {
+        margin-top: 50px;
+        color: #333;
+        font-size: 26px;
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #4f5e94;
+    }
+    
+    .sidebar-menu ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .sidebar-menu li {
+        margin-bottom: 15px;
+    }
+    
+    .sidebar-menu a {
+        text-decoration: none;
+        color: #555;
+        font-size: 18px;
+        font-weight: 500;
+        display: block;
+        padding: 12px 15px;
+        border-radius: 8px;
+    }
+    
+    .sidebar-menu a:hover {
+        background: #f0f0f0;
+        color: #4f5e94;
+    }
+    
+    
+    .profile-header {
+        text-align: center;
+        margin-bottom: 40px;
+        color: white;
+    }
+    
+    .profile-header h1 {
+        font-size: 42px;
+        margin-bottom: 15px;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .profile-header p {
+        font-size: 20px;
+        opacity: 0.9;
+    }
+    
+    .profile-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        overflow: hidden;
+        margin-bottom: 30px;
+    }
+    
+    .profile-card-header {
+        background: linear-gradient(to right, #4f5e94 0%, #4f5e94 50%, #3f4f85 50%, #3f4f85 100%);
+        padding: 30px;
+        color: white;
+        text-align: center;
+    }
+    
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        background: white;
+        border-radius: 50%;
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 50px;
+        color: #4f5e94;
+        font-weight: bold;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    .profile-name {
+        font-size: 32px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+    
+    .profile-type {
+        font-size: 18px;
+        opacity: 0.9;
+        background: rgba(255,255,255,0.2);
+        padding: 8px 20px;
+        border-radius: 25px;
+        display: inline-block;
+    }
+    
+    .profile-card-body {
+        padding: 30px;
+    }
+    
+    .profile-info {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
+    }
+    
+    .info-group {
+        background: #f8f9fa;
+        padding: 25px;
+        border-radius: 15px;
+        border-left: 5px solid #4f5e94;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    }
+    
+    .info-group h3 {
+        color: #4f5e94;
+        margin: 0 0 20px 0;
+        font-size: 20px;
+        font-weight: 600;
+    }
+    
+    .info-item {
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .info-item:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+    
+    .info-label {
+        font-weight: bold;
+        color: #555;
+        font-size: 14px;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .info-value {
+        color: #333;
+        font-size: 18px;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+    
+    .stat-card {
+        background: linear-gradient(135deg, #4f5e94 0%, #3f4f85 100%);
+        color: white;
+        padding: 25px 20px;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    }
+    
+    .stat-number {
+        font-size: 36px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+    
+    .stat-label {
+        font-size: 15px;
+        opacity: 0.9;
+    }
+    
+    .profile-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 20px; 
+        margin-top: 40px;
+    }
+    
+    .profile-btn {
+        padding: 18px 24px; 
+        border: none;
+        border-radius: 12px;
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+        text-decoration: none;
+        display: flex; 
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-height: 60px; 
+        box-sizing: border-box; 
+    }
+    
+   
+    .btn-edit,
+    .btn-back,
+    .btn-logout {
+        width: 100%;
+        min-height: 60px;
+        padding: 18px 24px;
+        font-size: 18px;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+    }
+    
+    .btn-edit {
+        background: linear-gradient(135deg, #4f5e94 0%, #3f4f85 100%);
+        color: white;
+        box-shadow: 0 4px 12px rgba(79, 94, 148, 0.3);
+    }
+    
+    .btn-edit:hover {
+        background: linear-gradient(135deg, #3f4f85 0%, #2f3f75 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 18px rgba(79, 94, 148, 0.4);
+    }
+    
+    .btn-back {
+        background: linear-gradient(135deg, #6c757d 0%, #545b62 100%);
+        color: white;
+        box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+    }
+    
+    .btn-back:hover {
+        background: linear-gradient(135deg, #545b62 0%, #495057 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 18px rgba(108, 117, 125, 0.4);
+    }
+    
+    .btn-logout {
+        background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+        color: white;
+        box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+    }
+    
+    .btn-logout:hover {
+        background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 18px rgba(244, 67, 54, 0.4);
+    }
+    
+  
+    .profile-btn:active {
+        transform: translateY(-1px);
+        transition: transform 0.1s ease;
+    }
+    
+    .profile-footer {
+        text-align: center;
+        padding: 30px 20px;
+        color: rgba(255,255,255,0.7);
+        font-size: 16px;
+        margin-top: 30px;
+        border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    /* Pop-up menük stílusai */
+    .popup-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 2000;
+        justify-content: center;
+        align-items: center;
+        animation: fadeIn 0.3s ease;
+    }
+    
+    .popup-overlay.show {
+        display: flex;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    .popup-menu {
+        background: white;
+        border-radius: 15px;
+        width: 90%;
+        max-width: 400px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+        animation: slideUp 0.3s ease;
+    }
+    
+    @keyframes slideUp {
+        from {
+            transform: translateY(20px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+    
+    .popup-header {
+        background: linear-gradient(to right, #4f5e94 0%, #4f5e94 50%, #3f4f85 50%, #3f4f85 100%);
+        color: white;
+        padding: 20px 25px;
+        text-align: center;
+        position: relative;
+    }
+    
+    .popup-header h3 {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 600;
+    }
+    
+    .popup-close {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        font-size: 28px;
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: background 0.2s;
+    }
+    
+    .popup-close:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .popup-content {
+        padding: 30px;
+    }
+    
+    .popup-message {
+        text-align: center;
+        margin-bottom: 25px;
+        font-size: 16px;
+        color: #555;
+        line-height: 1.6;
+    }
+    
+    .popup-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+    }
+    
+    .popup-btn {
+        padding: 12px 25px;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 120px;
+    }
+    
+    .popup-btn-confirm {
+        background: linear-gradient(135deg, #4f5e94 0%, #3f4f85 100%);
+        color: white;
+        box-shadow: 0 4px 10px rgba(79, 94, 148, 0.3);
+    }
+    
+    .popup-btn-confirm:hover {
+        background: linear-gradient(135deg, #3f4f85 0%, #2f3f75 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(79, 94, 148, 0.4);
+    }
+    
+    .popup-btn-cancel {
+        background: #f0f0f0;
+        color: #333;
+        border: 1px solid #ddd;
+    }
+    
+    .popup-btn-cancel:hover {
+        background: #e0e0e0;
+        transform: translateY(-2px);
+    }
+    
+    .popup-btn-danger {
+        background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+        color: white;
+        box-shadow: 0 4px 10px rgba(244, 67, 54, 0.3);
+    }
+    
+    .popup-btn-danger:hover {
+        background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(244, 67, 54, 0.4);
+    }
+    
+    @media (max-width: 768px) {
+        .profile-container {
+            padding: 15px;
+        }
+        
+        .profile-header h1 {
+            font-size: 32px;
+        }
+        
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            font-size: 40px;
+        }
+        
+        .profile-info {
+            grid-template-columns: 1fr;
+        }
+        
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .profile-actions {
+            gap: 12px;
+        }
+        
+        .profile-btn {
+            padding: 16px;
+            font-size: 16px;
+        }
+        
+        .popup-menu {
+            width: 95%;
+            margin: 0 15px;
+        }
+        
+        .popup-actions {
+            flex-direction: column;
+        }
+        
+        .popup-btn {
+            width: 100%;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .profile-header h1 {
+            font-size: 28px;
+        }
+        
+        .profile-header p {
+            font-size: 18px;
+        }
+    }
+</style>
+</head>
+<body class="profile-page">
+<script>
+    document.addEventListener("DOMContentLoaded",()=>{
+
+        const type = localStorage.getItem("userType");
+
+        if(type==="employer"){
+            const back = document.querySelector(".back-to-jobs");
+            if(back) back.remove();
+        }
+
+        if(type==="employee"){
+            const back = document.querySelector(".back-to-jobPut");
+            if(back) back.remove();
+        }
+    });
+</script>
+<div class="split-bg"></div>
+
+<!-- Kijelentkezés pop-up -->
+<div id="logoutPopup" class="popup-overlay">
+    <div class="popup-menu">
+        <div class="popup-header">
+            <h3>Kijelentkezés</h3>
+            <button class="popup-close" data-popup="logoutPopup">×</button>
+        </div>
+        <div class="popup-content">
+            <p class="popup-message">Biztosan ki szeretnél jelentkezni?</p>
+            <div class="popup-actions">
+                <button class="popup-btn popup-btn-cancel" data-popup="logoutPopup">Mégse</button>
+                <button class="popup-btn popup-btn-danger" id="confirmLogout">Igen, jelentkezek ki</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Profil szerkesztés pop-up -->
+<div id="editProfilePopup" class="popup-overlay">
+    <div class="popup-menu">
+        <div class="popup-header">
+            <h3>Profil szerkesztése</h3>
+            <button class="popup-close" data-popup="editProfilePopup">×</button>
+        </div>
+        <div class="popup-content">
+            <p class="popup-message">A profil szerkesztése funkció jelenleg fejlesztés alatt áll. Hamarosan elérhető!</p>
+            <div class="popup-actions">
+                <button class="popup-btn popup-btn-confirm" data-popup="editProfilePopup">Rendben</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Felső sáv -->
+<div class="jobs-topbar">
+    <div class="jobs-hamburger">☰</div>
+    <div class="jobs-timer">
+        <span class="timer-text">05:00</span>
+    </div>
+    <div class="jobs-profile-circle" id="profileIcon">U</div>
+</div>
+
+<!-- Oldalsó menü -->
+<div class="sidebar-menu">
+    <button class="close-btn">×</button>
+    <h3>Menü</h3>
+    <ul>
+        <li><a href="jobs.html">Főoldal</a></li>
+        <li><a href="premium.html">Premium</a></li>
+        <li><a href="profile.html" class="active">Profil</a></li>
+        <li><a href="#">Beállítások</a></li>
+        <li><a href="#" id="sidebarLogout">Kijelentkezés</a></li>
+    </ul>
+</div>
+
+<!-- Profil tartalom -->
+<div class="profile-container">
+    <div class="profile-header">
+        <h1>Profilom</h1>
+        <p>Tekintsd meg és kezeld profilod adatait</p>
+    </div>
+    
+    <div class="profile-card">
+        <div class="profile-card-header">
+            <div class="profile-avatar" id="profileAvatar">U</div>
+            <div class="profile-name" id="profileName">Felhasználó</div>
+            <div class="profile-type" id="profileType">Munkavállaló</div>
+        </div>
+        
+        <div class="profile-card-body">
+            <div class="stats-grid" id="statsContainer">
+                <!-- Statisztikák jönnek ide JavaScriptből -->
+                <div class="stat-card">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Betöltés...</div>
+                </div>
+            </div>
+            
+            <div class="profile-info">
+                <div class="info-group">
+                    <h3>Alap információk</h3>
+                    <div class="info-item">
+                        <div class="info-label">Felhasználónév</div>
+                        <div class="info-value" id="infoUsername">-</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Felhasználó típus</div>
+                        <div class="info-value" id="infoUserType">-</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Tagság kezdete</div>
+                        <div class="info-value" id="infoJoinDate">-</div>
+                    </div>
+                </div>
+                
+                <div class="info-group">
+                    <h3>Főoldal információk</h3>
+                    <div class="info-item">
+                        <div class="info-label">Belépések száma</div>
+                        <div class="info-value" id="infoLoginCount">0</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Utolsó belépés</div>
+                        <div class="info-value" id="infoLastLogin">-</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Profil létrehozva</div>
+                        <div class="info-value" id="infoCreatedAt">-</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="profile-actions">
+                <button class="profile-btn btn-edit" id="editProfile">Profil szerkesztése</button>
+                <a href="jobs.html" class="profile-btn btn-back back-to-jobs">Vissza az állásokhoz</a>
+                <a href="allashirdet.html" class="profile-btn btn-back back-to-jobPut">Vissza az kezelőfelületre</a>
+                <button class="profile-btn btn-logout" id="logoutBtn">Kijelentkezés</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="profile-footer">
+        WorkConnect &copy; 2024 - Minden jog fenntartva
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Profile oldal betöltődött');
+    
+    // Timer változók
+    let timerInterval = null;
+    let timeLeft = 300;
+    
+    // Timer indítása
+    function startTimer() {
+        const timerElement = document.querySelector('.jobs-timer');
+        if (!timerElement) return;
+        
+        const textElement = timerElement.querySelector('.timer-text') || timerElement;
+        
+        if (timerInterval) {
+            clearInterval(timerInterval);
+        }
+        
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            textElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Timer állapot frissítése
+            timerElement.classList.remove('timer-warning', 'timer-critical', 'timer-expired');
+            
+            if (timeLeft <= 60 && timeLeft > 30) {
+                timerElement.classList.add('timer-warning');
+            } else if (timeLeft <= 30 && timeLeft > 0) {
+                timerElement.classList.add('timer-critical');
+            } else if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                timerElement.classList.add('timer-expired');
+                // Automatikus kijelentkezés
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('userType');
+                window.location.href = 'index.html';
+            }
+        }, 1000);
+    }
+    
+    // Timer kattintás esemény
+    const timerElement = document.querySelector('.jobs-timer');
+    if (timerElement) {
+        timerElement.addEventListener('click', function() {
+            timeLeft = 300;
+            startTimer();
+        });
+    }
+    
+    // Timer indítása
+    startTimer();
+    
+    // Pop-up kezelő függvények
+    function showPopup(popupId) {
+        document.getElementById(popupId).classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function hidePopup(popupId) {
+        document.getElementById(popupId).classList.remove('show');
+        document.body.style.overflow = 'auto';
+    }
+    
+    // Pop-up bezárása gombok eseménykezelője
+    document.querySelectorAll('.popup-close').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const popupId = this.getAttribute('data-popup');
+            hidePopup(popupId);
+        });
+    });
+    
+    // Cancel gombok eseménykezelője
+    document.querySelectorAll('.popup-btn-cancel').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const popupId = this.getAttribute('data-popup');
+            hidePopup(popupId);
+        });
+    });
+    
+    // Kattintás a pop-up overlay-re (háttér) bezáráshoz
+    document.querySelectorAll('.popup-overlay').forEach(popup => {
+        popup.addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('show');
+                document.body.style.overflow = 'auto';
+            }
+        });
+    });
+    
+    // ESC billentyű pop-up bezáráshoz
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.popup-overlay.show').forEach(popup => {
+                popup.classList.remove('show');
+                document.body.style.overflow = 'auto';
+            });
+        }
+    });
+    
+    // Hamburger menü kezelése
+    const hamburger = document.querySelector('.jobs-hamburger');
+    const sidebar = document.querySelector('.sidebar-menu');
+    const closeBtn = document.querySelector('.close-btn');
+    
+    if (hamburger && sidebar) {
+        hamburger.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            sidebar.classList.toggle('open');
+        });
+        
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function() {
+                sidebar.classList.remove('open');
+            });
+        }
+        
+        document.addEventListener('click', function(e) {
+            if (sidebar.classList.contains('open') && 
+                !sidebar.contains(e.target) && 
+                e.target !== hamburger) {
+                sidebar.classList.remove('open');
+            }
+        });
+    }
+    
+    // Sidebar kijelentkezés gomb
+    const sidebarLogout = document.getElementById('sidebarLogout');
+    if (sidebarLogout) {
+        sidebarLogout.addEventListener('click', function(e) {
+            e.preventDefault();
+            showPopup('logoutPopup');
+        });
+    }
+    
+    // Ellenőrizzük, hogy be van-e jelentkezve
+    const isLoggedIn = () => {
+        return localStorage.getItem('currentUser') !== null;
+    };
+    
+    if (!isLoggedIn()) {
+        console.log('Nincs bejelentkezve, átirányítás index.html-re');
+        window.location.href = 'index.html';
+        return;
+    }
+    
+    // Aktuális felhasználó adatainak betöltése
+    const username = localStorage.getItem('currentUser');
+    const userType = localStorage.getItem('userType') || 'employee';
+    
+    if (!username) {
+        window.location.href = 'index.html';
+        return;
+    }
+    
+    // Profil ikon frissítése
+    const profileIcon = document.getElementById('profileIcon');
+    if (profileIcon) {
+        profileIcon.textContent = username.charAt(0).toUpperCase();
+        profileIcon.style.background = '#35bd5b';
+        profileIcon.style.color = 'white';
+        
+        // Profil ikon click - vissza a profile.html-re (jelenleg már itt vagyunk)
+        profileIcon.addEventListener('click', function() {
+            // Frissíti az oldalt, hogy újra betöltse az adatokat
+            window.location.href = 'profile.html';
+        });
+    }
+    
+    // Felhasználó adatainak megjelenítése
+    document.getElementById('profileName').textContent = username;
+    document.getElementById('profileAvatar').textContent = username.charAt(0).toUpperCase();
+    document.getElementById('profileType').textContent = 
+        userType === 'employee' ? 'Munkavállaló' : 'Munkáltató';
+    
+    // Alap információk
+    document.getElementById('infoUsername').textContent = username;
+    document.getElementById('infoUserType').textContent = 
+        userType === 'employee' ? 'Munkavállaló' : 'Munkáltató';
+    
+    // Dátum formázás
+    const formatDate = (dateString) => {
+        if (!dateString) return '-';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('hu-HU', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    };
+    
+    const formatDateShort = (dateString) => {
+        if (!dateString) return '-';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('hu-HU');
+    };
+    
+    // Tagság kezdete (először nézzük, van-e mentve)
+    let joinDate = localStorage.getItem(`joinDate_${username}`);
+    if (!joinDate) {
+        joinDate = new Date().toISOString();
+        localStorage.setItem(`joinDate_${username}`, joinDate);
+    }
+    
+    document.getElementById('infoJoinDate').textContent = formatDateShort(joinDate);
+    document.getElementById('infoCreatedAt').textContent = formatDateShort(joinDate);
+    
+    // Statisztikák
+    const statsKey = `user_stats_${username}`;
+    const statsJSON = localStorage.getItem(statsKey);
+    let stats = statsJSON ? JSON.parse(statsJSON) : {
+        loginCount: 1,
+        lastLogin: new Date().toISOString(),
+        jobsApplied: 0,  // Itt explicit 0-ra állítjuk
+        profileViews: Math.floor(Math.random() * 50),
+        jobsPosted: userType === 'employer' ? Math.floor(Math.random() * 5) : 0,
+        applicationsReceived: userType === 'employer' ? Math.floor(Math.random() * 20) : 0
+    };
+
+// DEBUG - ellenőrizd, hogy megvan-e a jobsApplied
+console.log('Profil betöltés - statisztika:', stats);
+console.log('Jelentkezések száma:', stats.jobsApplied);
+    
+    // Utolsó belépés frissítése
+    stats.lastLogin = new Date().toISOString();
+    stats.loginCount = (stats.loginCount || 0) + 1;
+    localStorage.setItem(statsKey, JSON.stringify(stats));
+    
+    document.getElementById('infoLoginCount').textContent = stats.loginCount;
+    document.getElementById('infoLastLogin').textContent = formatDate(stats.lastLogin);
+    
+    // Stat kártyák frissítése
+    updateStatsCards(stats, userType, joinDate);
+    
+    // Profil szerkesztése gomb - pop-up megjelenítése
+    document.getElementById('editProfile').addEventListener('click', function() {
+        showPopup('editProfilePopup');
+    });
+    
+    // Kijelentkezés gomb - pop-up megjelenítése
+    document.getElementById('logoutBtn').addEventListener('click', function() {
+        showPopup('logoutPopup');
+    });
+    
+    // Kijelentkezés megerősítése
+    document.getElementById('confirmLogout').addEventListener('click', function() {
+        performLogout();
+    });
+    
+    // Profil szerkesztés pop-up "Rendben" gombja
+    document.querySelector('#editProfilePopup .popup-btn-confirm').addEventListener('click', function() {
+        hidePopup('editProfilePopup');
+    });
+    
+    // Kijelentkezés függvény
+    function performLogout() {
+        if (timerInterval) {
+            clearInterval(timerInterval);
+        }
+        localStorage.removeItem('currentUser');
+        localStorage.removeItem('userType');
+        hidePopup('logoutPopup');
+        window.location.href = 'index.html';
+    }
+    
+    // Statisztikák frissítése
+    function updateStatsCards(stats, userType, joinDate) {
+        const statsContainer = document.getElementById('statsContainer');
+        
+        if (userType === 'employee') {
+            statsContainer.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">${stats.loginCount || 1}</div>
+                    <div class="stat-label">Belépések</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.jobsApplied || 0}</div>
+                    <div class="stat-label">Jelentkezések</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.profileViews || 0}</div>
+                    <div class="stat-label">Profil megtekintések</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${getMemberDays(joinDate)}</div>
+                    <div class="stat-label">Tagság (nap)</div>
+                </div>
+            `;
+        } else {
+            statsContainer.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">${stats.loginCount || 1}</div>
+                    <div class="stat-label">Belépések</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.jobsPosted || 0}</div>
+                    <div class="stat-label">Hirdetések</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.applicationsReceived || 0}</div>
+                    <div class="stat-label">Jelentkezések</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${getMemberDays(joinDate)}</div>
+                    <div class="stat-label">Tagság (nap)</div>
+                </div>
+            `;
+        }
+    }
+    
+    // Tagság napjainak számolása
+    function getMemberDays(createdAt) {
+        if (!createdAt) return 0;
+        const created = new Date(createdAt);
+        const now = new Date();
+        const diffTime = Math.abs(now - created);
+        return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    }
+});
+</script>
+
+</body>
+</html>
