@@ -26,11 +26,11 @@
         <button class="close-btn">×</button>
         <h3>Menü</h3>
         <ul>
-            <li><a href="../html/jobs.html">Főoldal</a></li>
-            <li><a href="../html/premium.html">Premium</a></li>
-            <li><a href="../html/profile.html">Profil</a></li>
-            <li><a href="../html/profile.html">Beállítások</a></li>
-            <li><a href="../html/profile.html">Kijelentkezés</a></li>
+            <li><a href="jobs.html" class="dynamic-home" data-employer="allashirdet.html" data-employee="jobs.html">Állások</a></li>
+            <li><a href="premium.html">Premium</a></li>
+            <li><a href="profile.html">Profil</a></li>
+            <li><a href="profile.html">Beállítások</a></li>
+            <li><a href="profile.html">Kijelentkezés</a></li>
         </ul>
     </div>
 
@@ -308,6 +308,39 @@
         function closePopup() {
             document.getElementById('successPopup').classList.remove('show');
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+    const userType = localStorage.getItem('userType');
+    const mainPageLink = document.querySelector('.dynamic-home'); // Módosítva: class alapján keressük
+    
+    console.log('Dinamikus link kezelő - userType:', userType);
+    console.log('Main page link elem:', mainPageLink);
+    
+    if (mainPageLink) {
+        if (userType === 'employer') {
+            mainPageLink.href = 'allashirdet.html';
+            mainPageLink.textContent = 'Vezérlőpult';
+            console.log('Munkáltatói link beállítva: allashirdet.html');
+        } else {
+            mainPageLink.href = 'jobs.html';
+            mainPageLink.textContent = 'Állások';
+            console.log('Munkavállalói link beállítva: jobs.html');
+        }
+    }
+    
+    // Kijelentkezés kezelése
+    const logoutLink = document.getElementById('logoutLink');
+    if (logoutLink) {
+        logoutLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (confirm('Biztosan ki szeretnél jelentkezni?')) {
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('userType');
+                window.location.href = 'index.html';
+            }
+        });
+    }
+});
     </script>
 
 </body>

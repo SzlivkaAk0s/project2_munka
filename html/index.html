@@ -277,6 +277,39 @@ document.addEventListener('DOMContentLoaded', function() {
     
     console.log('Index oldal készen áll');
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const userType = localStorage.getItem('userType');
+    const mainPageLink = document.querySelector('.dynamic-home'); // Módosítva: class alapján keressük
+    
+    console.log('Dinamikus link kezelő - userType:', userType);
+    console.log('Main page link elem:', mainPageLink);
+    
+    if (mainPageLink) {
+        if (userType === 'employer') {
+            mainPageLink.href = 'allashirdet.html';
+            mainPageLink.textContent = 'Vezérlőpult';
+            console.log('Munkáltatói link beállítva: allashirdet.html');
+        } else {
+            mainPageLink.href = 'jobs.html';
+            mainPageLink.textContent = 'Állások';
+            console.log('Munkavállalói link beállítva: jobs.html');
+        }
+    }
+    
+    // Kijelentkezés kezelése
+    const logoutLink = document.getElementById('logoutLink');
+    if (logoutLink) {
+        logoutLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (confirm('Biztosan ki szeretnél jelentkezni?')) {
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('userType');
+                window.location.href = 'index.html';
+            }
+        });
+    }
+});
 </script>
 
 </body>
