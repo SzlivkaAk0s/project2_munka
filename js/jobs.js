@@ -327,57 +327,49 @@ function startTimer() {
 
 function filterCards() {
     const jobCards = document.querySelectorAll('.job-card');
-    const locationCheckboxes = document.querySelectorAll('.filter-section:nth-child(2) input:checked');
-    const typeCheckboxes = document.querySelectorAll('.filter-section:nth-child(3) input:checked');
-    const techCheckboxes = document.querySelectorAll('.filter-section:nth-child(4) input:checked');
+    const filterSections = document.querySelectorAll('.filter-section');
     
-    const selectedLocations = Array.from(locationCheckboxes).map(cb => cb.value);
-    const selectedTypes = Array.from(typeCheckboxes).map(cb => cb.value);
-    const selectedTechs = Array.from(techCheckboxes).map(cb => cb.value);
-    
+    let selectedLocations = [];
+    let selectedTypes = [];
+    let selectedTechs = [];
+
+    filterSections.forEach(section => {
+        const header = section.querySelector('h4').textContent;
+        const checkedInputs = Array.from(section.querySelectorAll('input:checked')).map(cb => cb.value);
+        if (header.includes('Munkavégzés')) selectedLocations = checkedInputs;
+        else if (header.includes('Pozíció')) selectedTypes = checkedInputs;
+        else if (header.includes('Technológiák')) selectedTechs = checkedInputs;
+    });
+
+    let visibleCount = 0;
     jobCards.forEach(card => {
-        const cardText = card.textContent.toLowerCase();
-        let showCard = true;
-        
-  
-        if (selectedLocations.length > 0) {
-            const hasLocation = selectedLocations.some(loc => 
-                cardText.includes(loc.toLowerCase())
-            );
-            if (!hasLocation) showCard = false;
-        }
-        
-    
-        if (selectedTypes.length > 0 && showCard) {
-            const hasType = selectedTypes.some(type => 
-                cardText.includes(type.toLowerCase())
-            );
-            if (!hasType) showCard = false;
-        }
-        
-   
-        if (selectedTechs.length > 0 && showCard) {
-            const hasTech = selectedTechs.some(tech => 
-                cardText.includes(tech.toLowerCase())
-            );
-            if (!hasTech) showCard = false;
-        }
-        
- 
-        if (showCard) {
+        const loc = card.getAttribute('data-location');
+        const type = card.getAttribute('data-type');
+        const techAttr = card.getAttribute('data-tech') || "";
+        const cardTechs = techAttr.split(',');
+
+        const matchLoc = selectedLocations.length === 0 || selectedLocations.includes(loc);
+        const matchType = selectedTypes.length === 0 || selectedTypes.includes(type);
+        const matchTech = selectedTechs.length === 0 || selectedTechs.some(t => cardTechs.includes(t));
+
+        if (matchLoc && matchType && matchTech) {
             card.style.display = 'block';
-            setTimeout(() => {
-                card.style.opacity = '1';
-                card.style.transform = 'translateY(0)';
-            }, 10);
+            visibleCount++;
         } else {
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(20px)';
-            setTimeout(() => {
-                card.style.display = 'none';
-            }, 300);
+            card.style.display = 'none';
         }
     });
+
+    let noResultMsg = document.getElementById('no-results-message');
+    if (!noResultMsg) {
+        noResultMsg = document.createElement('p');
+        noResultMsg.id = 'no-results-message';
+        noResultMsg.style.textAlign = 'center';
+        noResultMsg.style.marginTop = '20px';
+        noResultMsg.textContent = 'Sajnos nincs a szűrési feltételeknek megfelelő álláshirdetés.';
+        document.querySelector('.jobs-list').appendChild(noResultMsg);
+    }
+    noResultMsg.style.display = visibleCount === 0 ? 'block' : 'none';
 }
 
 function renderDynamicJobs(){
