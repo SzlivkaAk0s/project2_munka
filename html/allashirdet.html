@@ -1,165 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hu">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="icon" href="../images/favicon.ico">
-    <title>Document</title>
-
-    <style>
-        textarea{
-            resize: none;
-            border: 2px solid;
-            padding: 20px; 
-            resize: both;
-            overflow: auto;
-            max-width: fit-content;
-        }
-
-        .job-preview {
-            width: 320px;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 15px;
-            transition: all 0.3s ease;
-            font-family: Arial, sans-serif;
-        }
-
-     
-        .free-style {
-            background: #f3f3f3;
-            border: 2px solid #ccc;
-            color: #333;
-        }
-
-        /* PREMIUM */
-        .premium-style {
-            background: #e8f2ff;
-            border: 2px solid #2b7cff;
-            color: #1a3e7a;
-        }
-
-        /* PRO */
-        .pro-style {
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
-            border: 2px solid gold;
-            color: white;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
-        }
-
-        .job-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .badge {
-            font-size: 12px;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-weight: bold;
-            background: #ccc;
-            color: white;
-        }
-
-        .pro-style .badge {
-            background: gold;
-            color: black;
-        }
-
-        .premium-style .badge {
-            background: #2b7cff;
-        }
-
-   
-
-        #jobCards{
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 10px;
-        }
-
-        .job-card{
-            width: 320px;
-        }
-
-        .job-card img{
-            width: 100%;
-            border-radius: 10px;
-            margin-top: 10px;
-        }
-
-        .job-card .delete-btn{
-            margin-top: 10px;
-            padding: 8px 12px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            background: crimson;
-            color: white;
-            font-weight: bold;
-        }
-
-        .company-modal{
-            position:fixed;
-            top:0;
-            left:0;
-            width:100%;
-            height:100%;
-            background:rgba(0,0,0,0.6);
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            z-index:9999;
-        }
-
-        .hidden{
-            display:none;
-        }
-
-        .company-modal-content{
-            background:#1b1b1b;
-            padding:25px;
-            border-radius:12px;
-            width:300px;
-            color:white;
-        }
-
-        .company-modal-content input{
-            width:100%;
-            margin:8px 0;
-            padding:8px;
-        }
-
-        .modal-actions{
-            display:flex;
-            justify-content:space-between;
-            margin-top:10px;
-        }
-
-        #deleteCompanyBtn{
-            background:#ff4d4d;
-            color:white;
-            border:none;
-            padding:8px 12px;
-            border-radius:6px;
-            cursor:pointer;
-            margin-top: 5px;
-        }
-    </style>
+    <title>Munkáltatói Vezérlőpult - WorkConnect</title>
 </head>
-
 <body class="jobs-page">
+    <div class="split-bg"></div>
+    
+    <!-- Felső sáv -->
     <div class="jobs-topbar">
         <div class="jobs-hamburger">☰</div>
         <div class="jobs-timer">
             <span class="timer-text">05:00</span>
         </div>
-        <a href="html/profile.html" class="jobs-profile-circle"></a>
+        <a href="profile.html" class="jobs-profile-circle" id="profileIcon">U</a>
     </div>
 
+    <!-- Oldalsó menü -->
     <div class="sidebar-menu">
         <button class="close-btn">×</button>
         <h3>Menü</h3>
@@ -168,119 +28,306 @@
             <li><a href="premium.html">Premium</a></li>
             <li><a href="profile.html">Profil</a></li>
             <li><a href="profile.html">Beállítások</a></li>
-            <li><a href="profile.html">Kijelentkezés</a></li>
+            <li><a href="#" id="sidebarLogout">Kijelentkezés</a></li>
         </ul>
     </div>
 
-    <h1>Munkáltatói vezérlőpult</h1>
-
-    <h2 id="activeCompanyDisplay" style="color:white; text-align: center;">Nincs kiválasztott cég </h2>
-
-    <div class="dashboard">
-
-        <div class="dash-card">
-            <h3>Hirdetés feladása</h3>
-            <p>Új álláshirdetés feltöltése (név, kép, helyszín, pozíció).</p>
-            <button onclick="goToUpload()">
-                Új hirdetés létrehozása
-            </button>
+    <!-- ===== EGYSÉGES MODAL RENDSZER ===== -->
+    <div id="customModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 id="modalTitle">Üzenet</h3>
+                <button class="modal-close-btn" onclick="hideModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="modalIcon" class="modal-icon"></div>
+                <div id="modalMessage" class="modal-message"></div>
+                <div id="modalActions" class="modal-actions"></div>
+            </div>
         </div>
-
-       
-        <div class="dash-card">
-            <h3>Aktív hirdetések</h3>
-
-        
-            <div id="jobCards"></div>
-
-           
-            <p id="noJobsText" style="display:none;">Nincs még aktív hirdetés</p>
-        </div>
-
-       
-        <div class="dash-card">
-            <h3>Jelentkezések</h3>
-            <p>Még nincs jelentkező</p>
-        </div>
-
-        
-        <div class="dash-card">
-            <h3>Jelenlegi csomagja:</h3>
-            <p id="csomagja"></p>
-        </div>
-
-      
-        <div class="dash-card" id="levelPrem">
-            <h3>Körlevél</h3>
-            <textarea id="uzenet" name="level"></textarea>
-            <button onclick="kuldes()">Küldés</button>
-        </div>
-
-        <div class="dash-card">
-            <h3>Cégkezelő</h3>
-            <div id="companySwitcher" class="company-switcher"></div>
-
-            <button onclick="openCompanyModal()">+ Új cég</button>
-            <button onclick="deleteSelectedCompany()" id="deleteCompanyBtn" disabled>Kiválasztott cég törlése</button>
-        </div>
-
     </div>
 
-    <hr>
-
-    <h3>Hirdetés előnézet:</h3>
-
-    <div id="jobPreview" class="job-preview free-style">
-        <div class="job-header">
-            <h4 id="previewTitle">Pozíció neve</h4>
-            <span id="previewBadge" class="badge">FREE</span>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1>Munkáltatói Vezérlőpult</h1>
+            <p>Kezeld hirdetéseidet és cégeidet egy helyen</p>
         </div>
-        <p id="previewLocation">Helyszín</p>
+
+        <!-- Aktív cég kijelző -->
+        <div style="text-align: center;">
+            <div class="active-company-badge" id="activeCompanyDisplay">
+                Aktív cég: <span>Nincs kiválasztva</span>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Hirdetés feladása kártya -->
+            <div class="dash-card">
+                <div class="card-header">
+                    <h3>📢 Hirdetés feladása</h3>
+                </div>
+                <div class="card-body">
+                    <p style="color: #555; margin-bottom: 20px;">Új álláshirdetés létrehozása cégednek.</p>
+                    <button class="dash-btn" onclick="goToUpload()">
+                        <span style="font-size: 20px;">+</span> Új hirdetés létrehozása
+                    </button>
+                </div>
+            </div>
+
+            <!-- Aktív hirdetések kártya -->
+            <div class="dash-card">
+                <div class="card-header">
+                    <h3>📋 Aktív hirdetések</h3>
+                </div>
+                <div class="card-body">
+                    <div id="jobCards" class="jobs-list-compact"></div>
+                    <p id="noJobsText" class="no-data" style="display:none;">Nincs még aktív hirdetés</p>
+                </div>
+            </div>
+
+            <!-- Jelentkezések kártya -->
+            <div class="dash-card">
+                <div class="card-header">
+                    <h3>👥 Jelentkezések</h3>
+                </div>
+                <div class="card-body">
+                    <div class="applicant-card">
+                        <div class="applicant-name">Kiss Péter</div>
+                        <div class="applicant-date">2024.03.15. 14:30</div>
+                        <span class="applicant-badge">Új</span>
+                    </div>
+                    <div class="applicant-card">
+                        <div class="applicant-name">Nagy Anna</div>
+                        <div class="applicant-date">2024.03.14. 09:15</div>
+                    </div>
+                    <div class="applicant-card">
+                        <div class="applicant-name">Szabó Gábor</div>
+                        <div class="applicant-date">2024.03.12. 11:45</div>
+                    </div>
+                    <p style="text-align: center; color: #888; margin-top: 15px;">Összesen: 3 jelentkező</p>
+                </div>
+            </div>
+
+            <!-- Jelenlegi csomag kártya -->
+            <div class="dash-card">
+                <div class="card-header">
+                    <h3>⭐ Jelenlegi csomagod</h3>
+                </div>
+                <div class="card-body" style="text-align: center;">
+                    <div style="margin: 15px 0;">
+                        <span class="package-badge" id="csomagja">Free</span>
+                    </div>
+                    <p style="color: #666; font-size: 14px;">A csomagod határozza meg a hirdetés előnézetének megjelenését és a céged limitjét.</p>
+                    <button class="dash-btn dash-btn-small" onclick="window.location.href='premium.html'">Csomag váltás</button>
+                </div>
+            </div>
+
+            <!-- Cégkezelő kártya -->
+            <div class="dash-card">
+                <div class="card-header">
+                    <h3>🏢 Cégkezelő</h3>
+                </div>
+                <div class="card-body">
+                    <div id="companySwitcher" class="company-switcher"></div>
+                    <button class="dash-btn dash-btn-small" onclick="openCompanyModal()" style="width: 100%; margin-bottom: 8px;">
+                        + Új cég hozzáadása
+                    </button>
+                    <button class="dash-btn dash-btn-small dash-btn-outline" onclick="deleteSelectedCompany()" id="deleteCompanyBtn" disabled>
+                        🗑️ Kiválasztott cég törlése
+                    </button>
+                </div>
+            </div>
+
+            <!-- Körlevél kártya (csak Premium/Pro) -->
+            <div class="dash-card" id="levelPrem">
+                <div class="card-header">
+                    <h3>📧 Körlevél</h3>
+                </div>
+                <div class="card-body">
+                    <textarea id="uzenet" class="message-textarea" placeholder="Írd be az üzenetet..."></textarea>
+                    <button class="dash-btn dash-btn-small" onclick="kuldes()" style="width: 100%;">Küldés</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hirdetés előnézet szekció -->
+        <div class="preview-section">
+            <h3>📌 Hirdetés előnézet</h3>
+            <div id="jobPreview" class="job-preview free-style">
+                <div class="job-header">
+                    <h4 id="previewTitle">Pozíció neve</h4>
+                    <span id="previewBadge" class="badge">FREE</span>
+                </div>
+                <p id="previewLocation" style="margin-top: 10px;">Helyszín</p>
+            </div>
+        </div>
     </div>
 
-     <!--modal cégeknek-->
+    <!-- Modal cégeknek (ez a meglévő céges modal) -->
     <div id="companyModal" class="company-modal hidden">
         <div class="company-modal-content">
-
-            <h3>Új cég létrehozása</h3>
-
-            <input id="companyNameInput" placeholder="Cég neve">
-            <input id="companyCityInput" placeholder="Város">
-            <input id="companyFieldInput" placeholder="Iparág">
-
+            <h3>➕ Új cég létrehozása</h3>
+            <input id="companyNameInput" placeholder="Cég neve *" value="Teszt Kft.">
+            <input id="companyCityInput" placeholder="Város" value="Budapest">
+            <input id="companyFieldInput" placeholder="Iparág" value="IT">
             <div class="modal-actions">
                 <button onclick="saveCompany()">Mentés</button>
                 <button onclick="closeCompanyModal()">Mégse</button>
             </div>
-
         </div>
     </div>
 
     <script>
-      
+        // ========== MODAL KEZELŐ FÜGGVÉNYEK ==========
+        const modalOverlay = document.getElementById('customModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalIcon = document.getElementById('modalIcon');
+        const modalMessage = document.getElementById('modalMessage');
+        const modalActions = document.getElementById('modalActions');
+
+        function showModal(options) {
+            // Alapértelmezett beállítások
+            const settings = {
+                title: options.title || 'Üzenet',
+                message: options.message || '',
+                type: options.type || 'info', // info, success, error, warning, confirm
+                onConfirm: options.onConfirm || null,
+                onCancel: options.onCancel || null,
+                confirmText: options.confirmText || 'Rendben',
+                cancelText: options.cancelText || 'Mégse',
+                showCancel: options.showCancel || false
+            };
+
+            // Fejléc beállítása
+            modalTitle.textContent = settings.title;
+
+            // Ikon beállítása típus alapján
+            modalIcon.className = 'modal-icon';
+            let iconContent = '';
+            switch(settings.type) {
+                case 'success':
+                    modalIcon.classList.add('success');
+                    iconContent = '✅';
+                    break;
+                case 'error':
+                    modalIcon.classList.add('error');
+                    iconContent = '❌';
+                    break;
+                case 'warning':
+                    modalIcon.classList.add('warning');
+                    iconContent = '⚠️';
+                    break;
+                case 'confirm':
+                    modalIcon.classList.add('warning');
+                    iconContent = '❓';
+                    break;
+                default: // info
+                    modalIcon.classList.add('info');
+                    iconContent = 'ℹ️';
+            }
+            modalIcon.textContent = iconContent;
+
+            // Üzenet beállítása
+            modalMessage.textContent = settings.message;
+
+            // Gombok generálása
+            modalActions.innerHTML = '';
+
+            if (settings.type === 'confirm') {
+                // Konfirmációs modal - két gomb
+                const cancelBtn = document.createElement('button');
+                cancelBtn.className = 'modal-btn modal-btn-secondary';
+                cancelBtn.textContent = settings.cancelText;
+                cancelBtn.onclick = () => {
+                    hideModal();
+                    if (settings.onCancel) settings.onCancel();
+                };
+                modalActions.appendChild(cancelBtn);
+
+                const confirmBtn = document.createElement('button');
+                confirmBtn.className = 'modal-btn modal-btn-danger';
+                confirmBtn.textContent = settings.confirmText;
+                confirmBtn.onclick = () => {
+                    hideModal();
+                    if (settings.onConfirm) settings.onConfirm();
+                };
+                modalActions.appendChild(confirmBtn);
+            } else {
+                // Egyszerű információs modal - egy gomb
+                const okBtn = document.createElement('button');
+                okBtn.className = `modal-btn ${settings.type === 'success' ? 'modal-btn-success' : 
+                                                   settings.type === 'error' ? 'modal-btn-danger' : 
+                                                   'modal-btn-primary'}`;
+                okBtn.textContent = settings.confirmText;
+                okBtn.onclick = () => {
+                    hideModal();
+                    if (settings.onConfirm) settings.onConfirm();
+                };
+                modalActions.appendChild(okBtn);
+            }
+
+            // Modal megjelenítése
+            modalOverlay.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideModal() {
+            modalOverlay.classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
+        // ESC billentyűre bezárás
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modalOverlay.classList.contains('show')) {
+                hideModal();
+            }
+        });
+
+        // Kattintás az overlay-re bezárás
+        modalOverlay.addEventListener('click', function(e) {
+            if (e.target === modalOverlay) {
+                hideModal();
+            }
+        });
+
+        // ========== ALAP BEÁLLÍTÁSOK ==========
         const csomag = localStorage.getItem("activePackage") || "Free";
         document.getElementById("csomagja").innerHTML = csomag;
 
-       
+        // Körlevél kártya elrejtése Free csomagban
         const levelPrem = document.getElementById("levelPrem");
         if (csomag === "Free") {
             levelPrem.style.display = "none";
         }
 
-      
+        // Körlevél funkciók
         const level = document.getElementById("uzenet");
-        const uzenetHely = document.querySelector('textarea[name="level"]');
         const savedList = JSON.parse(localStorage.getItem('myList')) || [];
 
         function kuldes() {
-            localStorage.setItem("uzenet", level.value)
-            level.value = "";
-            uzenetHely.style.height = 'fit-content';
-
-            savedList.push(localStorage.getItem("uzenet"));
+            if (!level.value.trim()) {
+                showModal({
+                    title: 'Üres üzenet',
+                    message: 'Írj be egy üzenetet!',
+                    type: 'warning',
+                    confirmText: 'Rendben'
+                });
+                return;
+            }
+            localStorage.setItem("uzenet", level.value);
+            savedList.push(level.value);
             localStorage.setItem('myList', JSON.stringify(savedList));
+            level.value = "";
+            
+            showModal({
+                title: 'Siker!',
+                message: '✅ Üzenet sikeresen elküldve!',
+                type: 'success',
+                confirmText: 'Rendben'
+            });
         }
 
+        // ========== ELŐNÉZET BEÁLLÍTÁSA ==========
         const preview = document.getElementById("jobPreview");
         const badge = document.getElementById("previewBadge");
 
@@ -289,17 +336,15 @@
         if (csomag === "Premium") {
             preview.classList.add("premium-style");
             badge.textContent = "PREMIUM";
-        } 
-        else if (csomag === "Pro") {
+        } else if (csomag === "Pro") {
             preview.classList.add("pro-style");
             badge.textContent = "PRO";
-        } 
-        else {
+        } else {
             preview.classList.add("free-style");
             badge.textContent = "FREE";
         }
 
-       
+        // ========== HIRDETÉS KEZELÉS ==========
         function getJobs() {
             return JSON.parse(localStorage.getItem("jobs")) || [];
         }
@@ -309,18 +354,32 @@
         }
 
         function deleteJob(id) {
-            const jobs = getJobs();
-            const filtered = jobs.filter(j => j.id !== id);
-            saveJobs(filtered);
-            renderJobs();
+            showModal({
+                title: 'Hirdetés törlése',
+                message: 'Biztosan törölni szeretnéd ezt a hirdetést?',
+                type: 'confirm',
+                confirmText: 'Igen, törlöm',
+                cancelText: 'Mégsem',
+                onConfirm: () => {
+                    const jobs = getJobs();
+                    const filtered = jobs.filter(j => j.id !== id);
+                    saveJobs(filtered);
+                    renderJobs();
+                    
+                    showModal({
+                        title: 'Törölve',
+                        message: 'A hirdetés sikeresen törölve!',
+                        type: 'success',
+                        confirmText: 'Rendben'
+                    });
+                }
+            });
         }
 
         function renderJobs() {
-
             const selectedCompanyId = localStorage.getItem("selectedCompanyId");
-
             const allJobs = getJobs();
-            const jobs = allJobs.filter(job => job.companyId == selectedCompanyId);
+            const jobs = selectedCompanyId ? allJobs.filter(job => job.companyId == selectedCompanyId) : [];
 
             const jobCards = document.getElementById("jobCards");
             const noJobsText = document.getElementById("noJobsText");
@@ -329,7 +388,6 @@
 
             if (jobs.length === 0) {
                 noJobsText.style.display = "block";
-
                 document.getElementById("previewTitle").textContent = "Pozíció neve";
                 document.getElementById("previewLocation").textContent = "Helyszín";
                 return;
@@ -337,148 +395,116 @@
 
             noJobsText.style.display = "none";
 
-           
             const lastJob = jobs[jobs.length - 1];
             document.getElementById("previewTitle").textContent = lastJob.position;
             document.getElementById("previewLocation").textContent = lastJob.location;
 
             jobs.forEach(job => {
                 const card = document.createElement("div");
-                card.className = `job-card job-preview ${preview.classList.contains("pro-style") ? "pro-style" :
-                    preview.classList.contains("premium-style") ? "premium-style" : "free-style"
-                }`;
+                card.className = "job-mini-card";
 
                 card.innerHTML = `
-                    <div class="job-header">
-                        <h4>${job.position}</h4>
-                        <span class="badge">${badge.textContent}</span>
+                    <div class="job-mini-header">
+                        <span class="job-mini-title">${job.position}</span>
+                        <span class="job-mini-badge">${badge.textContent}</span>
                     </div>
-                    <p><b>Cég:</b> ${job.company}</p>
-                    <p><b>Helyszín:</b> ${job.location}</p>
-                    ${job.image ? `<img src="${job.image}" alt="Kép">` : ""}
-                    <button class="delete-btn" onclick="deleteJob(${job.id})">Törlés</button>
+                    <div class="job-mini-details">
+                        <span>🏢 ${job.company}</span>
+                        <span>📍 ${job.location}</span>
+                    </div>
+                    <div class="job-mini-actions">
+                        <button class="delete-mini-btn" onclick="deleteJob(${job.id})">Törlés</button>
+                    </div>
                 `;
 
                 jobCards.appendChild(card);
             });
         }
 
-        renderJobs();
-        document.addEventListener('DOMContentLoaded', function() {
-            const userType = localStorage.getItem('userType');
-            const mainPageLink = document.querySelector('.dynamic-home'); // Módosítva: class alapján keressük
-            
-            console.log('Dinamikus link kezelő - userType:', userType);
-            console.log('Main page link elem:', mainPageLink);
-            
-            if (mainPageLink) {
-                if (userType === 'employer') {
-                    mainPageLink.href = 'allashirdet.html';
-                    mainPageLink.textContent = 'Vezérlőpult';
-                    console.log('Munkáltatói link beállítva: allashirdet.html');
-                } else {
-                    mainPageLink.href = 'jobs.html';
-                    mainPageLink.textContent = 'Állások';
-                    console.log('Munkavállalói link beállítva: jobs.html');
-                }
-            }
-            
-            // Kijelentkezés kezelése
-            const logoutLink = document.getElementById('logoutLink');
-            if (logoutLink) {
-                logoutLink.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    if (confirm('Biztosan ki szeretnél jelentkezni?')) {
-                        localStorage.removeItem('currentUser');
-                        localStorage.removeItem('userType');
-                        window.location.href = 'index.html';
-                    }
-                });
-            }
-        });
-
-        function getCurrentUser(){
+        // ========== CÉG KEZELÉS ==========
+        function getCurrentUser() {
             return localStorage.getItem("currentUser") || "guest";
         }
 
-        function getUserPackage(){
+        function getUserPackage() {
             return localStorage.getItem("activePackage") || "Free";
         }
 
-        // Cégek kezelése
-        const currentUser = localStorage.getItem("currentUser");
-        function getCompanyLimit(){
+        function getCompanyLimit() {
             const pack = getUserPackage();
-
-            if(pack==="Pro") return Infinity;
-            if(pack==="Premium") return 2;
+            if (pack === "Pro") return Infinity;
+            if (pack === "Premium") return 2;
             return 1;
         }
-        function getCompanies(){
+
+        function getCompanies() {
             const all = JSON.parse(localStorage.getItem("companies")) || {};
             return all[getCurrentUser()] || [];
         }
 
-        function saveCompanies(list){
+        function saveCompanies(list) {
             const all = JSON.parse(localStorage.getItem("companies")) || {};
             all[getCurrentUser()] = list;
             localStorage.setItem("companies", JSON.stringify(all));
-        }
-        
-
-        function addCompany() {
-
-            const companies = getCompanies();
-            const limit = getCompanyLimit();
-
-            if (companies.length >= limit) {
-                alert("Elérted a csomagod céglimitjét!");
-                return;
-            }
-
-            const name = prompt("Cég neve:");
-
-            if (!name) return;
-
-            companies.push({
-                id: Date.now(),
-                name: name
-            });
-
-            saveCompanies(companies);
-            renderCompanies();
         }
 
         const companyModal = document.getElementById("companyModal");
         const companyNameInput = document.getElementById("companyNameInput");
         const companyCityInput = document.getElementById("companyCityInput");
         const companyFieldInput = document.getElementById("companyFieldInput");
-        const previewCompany = document.getElementById("previewCompany");
 
-        function openCompanyModal(){
+        function openCompanyModal() {
+            const companies = getCompanies();
+            const limit = getCompanyLimit();
+            if (companies.length >= limit) {
+                showModal({
+                    title: 'Limit elérve',
+                    message: `❌ Elérted a csomagod céglimitjét! (Maximum: ${limit === Infinity ? '∞' : limit})`,
+                    type: 'warning',
+                    confirmText: 'Rendben'
+                });
+                return;
+            }
             companyModal.classList.remove("hidden");
         }
 
-        function closeCompanyModal(){
+        function closeCompanyModal() {
             companyModal.classList.add("hidden");
+            companyNameInput.value = "";
+            companyCityInput.value = "";
+            companyFieldInput.value = "";
         }
 
         let selectedCompanyId = null;
 
-        function saveCompany(){
+        function saveCompany() {
+            if (!companyNameInput.value.trim()) {
+                showModal({
+                    title: 'Hiányzó adat',
+                    message: 'A cég neve kötelező!',
+                    type: 'warning',
+                    confirmText: 'Rendben'
+                });
+                return;
+            }
 
             const companies = getCompanies();
 
-            if(companies.length >= getCompanyLimit()){
-                alert("Csomag limit elérve!");
+            if (companies.length >= getCompanyLimit()) {
+                showModal({
+                    title: 'Limit elérve',
+                    message: '❌ Csomag limit elérve!',
+                    type: 'warning',
+                    confirmText: 'Rendben'
+                });
                 return;
             }
 
             const company = {
                 id: Date.now(),
-                name: companyNameInput.value,
-                city: companyCityInput.value,
-                field: companyFieldInput.value
+                name: companyNameInput.value.trim(),
+                city: companyCityInput.value.trim(),
+                field: companyFieldInput.value.trim()
             };
 
             companies.push(company);
@@ -486,58 +512,50 @@
 
             closeCompanyModal();
             renderCompanies();
+            
+            showModal({
+                title: 'Siker!',
+                message: `✅ A(z) "${company.name}" cég sikeresen létrehozva!`,
+                type: 'success',
+                confirmText: 'Rendben'
+            });
         }
 
-        function renderCompanies(){
-
+        function renderCompanies() {
             const container = document.getElementById("companySwitcher");
-            container.innerHTML="";
+            container.innerHTML = "";
 
-            getCompanies().forEach(c=>{
-
-                const chip=document.createElement("div");
-                chip.className="company-chip";
-                chip.textContent=c.name;
+            getCompanies().forEach(c => {
+                const chip = document.createElement("div");
+                chip.className = "company-chip";
+                chip.textContent = c.name;
 
                 chip.onclick = () => {
-
                     selectedCompanyId = c.id;
-
                     localStorage.setItem("selectedCompanyId", c.id);
                     renderJobs();
 
-                    document
-                        .querySelectorAll(".company-chip")
-                        .forEach(el => el.classList.remove("active"));
-
+                    document.querySelectorAll(".company-chip").forEach(el => el.classList.remove("active"));
                     chip.classList.add("active");
 
-                    document.getElementById("activeCompanyDisplay").textContent =
-                        "Aktív cég: " + c.name;
-
+                    document.getElementById("activeCompanyDisplay").innerHTML = `Aktív cég: <span>${c.name}</span>`;
                     document.getElementById("deleteCompanyBtn").disabled = false;
                 };
 
                 container.appendChild(chip);
             });
 
-            // visszaállítjuk az aktív céget ha van
+            // Visszaállítjuk az aktív céget ha van
             const savedId = localStorage.getItem("selectedCompanyId");
-
-            if(savedId){
+            if (savedId) {
                 const active = getCompanies().find(c => c.id == savedId);
-
-                if(active){
+                if (active) {
                     selectedCompanyId = active.id;
-
-                    document.getElementById("activeCompanyDisplay").textContent =
-                        "Aktív cég: " + active.name;
-
+                    document.getElementById("activeCompanyDisplay").innerHTML = `Aktív cég: <span>${active.name}</span>`;
                     document.getElementById("deleteCompanyBtn").disabled = false;
 
-                    // aktív chip kijelölése
-                    document.querySelectorAll(".company-chip").forEach(chip=>{
-                        if(chip.textContent === active.name){
+                    document.querySelectorAll(".company-chip").forEach(chip => {
+                        if (chip.textContent === active.name) {
                             chip.classList.add("active");
                         }
                     });
@@ -545,66 +563,149 @@
             }
         }
 
-        renderCompanies();
-
-        function enforceCompanyLimit(){
-
-            const companies = getCompanies();
-            const limit = getCompanyLimit();
-
-            if(companies.length > limit){
-
-                alert(
-                    "Több céged van mint amit a jelenlegi csomag enged.\n" +
-                    "Új céget nem adhatsz hozzá amíg nem törölsz."
-                );
-            }
-        }
-
-        enforceCompanyLimit();
-        if(getCompanies().length >= getCompanyLimit()){
-            document.querySelector(".dash-card button[onclick='openCompanyModal()']").disabled = true;
-        }
-
-        function deleteSelectedCompany(){
-
-            if(!selectedCompanyId){
-                alert("Nincs kiválasztott cég!");
+        function deleteSelectedCompany() {
+            if (!selectedCompanyId) {
+                showModal({
+                    title: 'Nincs kiválasztva',
+                    message: 'Nincs kiválasztott cég!',
+                    type: 'warning',
+                    confirmText: 'Rendben'
+                });
                 return;
             }
 
-            let companies = getCompanies();
+            showModal({
+                title: 'Cég törlése',
+                message: 'Biztosan törölni szeretnéd ezt a céget? A hozzá tartozó hirdetések is törlődnek!',
+                type: 'confirm',
+                confirmText: 'Igen, törlöm',
+                cancelText: 'Mégsem',
+                onConfirm: () => {
+                    let companies = getCompanies();
+                    companies = companies.filter(c => c.id !== selectedCompanyId);
+                    saveCompanies(companies);
 
-            // tényleges törlés
-            companies = companies.filter(c => c.id !== selectedCompanyId);
+                    // Kapcsolódó hirdetések törlése
+                    const jobs = getJobs().filter(job => job.companyId != selectedCompanyId);
+                    saveJobs(jobs);
 
-            saveCompanies(companies);
+                    localStorage.removeItem("selectedCompanyId");
+                    selectedCompanyId = null;
 
-            // kijelölés törlése
-            localStorage.removeItem("selectedCompanyId");
-            selectedCompanyId = null;
+                    document.getElementById("activeCompanyDisplay").innerHTML = 'Aktív cég: <span>Nincs kiválasztva</span>';
+                    document.getElementById("deleteCompanyBtn").disabled = true;
 
-            document.getElementById("activeCompanyDisplay").textContent =
-                "Nincs kiválasztott cég";
-
-            document.getElementById("deleteCompanyBtn").disabled = true;
-
-            renderCompanies();
+                    renderCompanies();
+                    renderJobs();
+                    
+                    showModal({
+                        title: 'Törölve',
+                        message: 'A cég és a hozzá tartozó hirdetések sikeresen törölve!',
+                        type: 'success',
+                        confirmText: 'Rendben'
+                    });
+                }
+            });
         }
 
-        function goToUpload(){
-
+        function goToUpload() {
             const selected = localStorage.getItem("selectedCompanyId");
-
-            if(!selected){
-                alert("Először válassz ki egy céget!");
+            if (!selected) {
+                showModal({
+                    title: 'Nincs cég kiválasztva',
+                    message: '❌ Először válassz ki egy céget!',
+                    type: 'warning',
+                    confirmText: 'Rendben'
+                });
                 return;
             }
-
             window.location.href = "job-upload.html";
         }
-    </script>
 
+        // ========== MENÜ ÉS FELHASZNÁLÓ KEZELÉS ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCompanies();
+            renderJobs();
+
+            const userType = localStorage.getItem('userType');
+            const mainPageLink = document.querySelector('.dynamic-home');
+            
+            if (mainPageLink) {
+                if (userType === 'employer') {
+                    mainPageLink.href = 'allashirdet.html';
+                    mainPageLink.textContent = 'Vezérlőpult';
+                } else {
+                    mainPageLink.href = 'jobs.html';
+                    mainPageLink.textContent = 'Állások';
+                }
+            }
+
+            // Profil ikon frissítése
+            const username = localStorage.getItem('currentUser');
+            const profileIcon = document.getElementById('profileIcon');
+            if (username && profileIcon) {
+                profileIcon.textContent = username.charAt(0).toUpperCase();
+            }
+
+            // Hamburger menü
+            const hamburger = document.querySelector('.jobs-hamburger');
+            const sidebar = document.querySelector('.sidebar-menu');
+            const closeBtn = document.querySelector('.close-btn');
+            
+            if (hamburger && sidebar) {
+                hamburger.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    sidebar.classList.toggle('open');
+                });
+                
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', function() {
+                        sidebar.classList.remove('open');
+                    });
+                }
+                
+                document.addEventListener('click', function(e) {
+                    if (sidebar.classList.contains('open') && 
+                        !sidebar.contains(e.target) && 
+                        e.target !== hamburger) {
+                        sidebar.classList.remove('open');
+                    }
+                });
+            }
+
+            // Kijelentkezés
+            const logoutLink = document.getElementById('sidebarLogout');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showModal({
+                        title: 'Kijelentkezés',
+                        message: 'Biztosan ki szeretnél jelentkezni?',
+                        type: 'confirm',
+                        confirmText: 'Igen, kilépék',
+                        cancelText: 'Mégsem',
+                        onConfirm: () => {
+                            localStorage.removeItem('currentUser');
+                            localStorage.removeItem('userType');
+                            window.location.href = 'index.html';
+                        }
+                    });
+                });
+            }
+
+            // Timer
+            const timerElement = document.querySelector('.jobs-timer .timer-text');
+            if (timerElement) {
+                let timeLeft = 300;
+                setInterval(() => {
+                    const minutes = Math.floor(timeLeft / 60);
+                    const seconds = timeLeft % 60;
+                    timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    if (timeLeft > 0) timeLeft--;
+                }, 1000);
+            }
+        });
+    </script>
     <script src="../js/jobs.js"></script>
 </body>
 </html>

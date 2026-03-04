@@ -1749,3 +1749,735 @@ body.profile-page {
         font-size: 16px;
     }
 }
+
+/* ================================
+   ALLASHIRDET.HTML - Munkáltatói vezérlőpult (egységesített)
+   ================================ */
+
+   .dashboard-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    z-index: 2;
+}
+
+.dashboard-header {
+    text-align: center;
+    margin-bottom: 30px;
+    color: white;
+}
+
+.dashboard-header h1 {
+    font-size: 42px;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.dashboard-header p {
+    font-size: 18px;
+    opacity: 0.9;
+}
+
+/* Aktív cég kijelző */
+.active-company-badge {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(5px);
+    padding: 12px 25px;
+    border-radius: 40px;
+    display: inline-block;
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 25px;
+    border: 1px solid rgba(255,255,255,0.3);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.active-company-badge span {
+    color: #35bd5b;
+    font-weight: 700;
+    margin-left: 5px;
+}
+
+/* Grid rendszer a kártyákhoz */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 25px;
+    margin-bottom: 40px;
+}
+
+/* Egységes kártya stílus (dash-card a profile.html alapján) */
+.dash-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+}
+
+.dash-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+}
+
+.card-header {
+    background: linear-gradient(to right, #4f5e94 0%, #4f5e94 50%, #3f4f85 50%, #3f4f85 100%);
+    padding: 18px 22px;
+    color: white;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.card-header h3 i {
+    font-size: 24px;
+    opacity: 0.9;
+}
+
+.card-body {
+    padding: 22px;
+    flex: 1;
+}
+
+/* Gomb stílusok */
+.dash-btn {
+    background: linear-gradient(135deg, #4f5e94 0%, #3f4f85 100%);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(79, 94, 148, 0.3);
+}
+
+.dash-btn:hover {
+    background: linear-gradient(135deg, #3f4f85 0%, #2f3f75 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(79, 94, 148, 0.4);
+}
+
+.dash-btn-small {
+    padding: 10px 16px;
+    font-size: 14px;
+    background: #35bd5b;
+    box-shadow: 0 4px 12px rgba(53, 189, 91, 0.3);
+    width: auto;
+    display: inline-flex;
+}
+
+.dash-btn-small:hover {
+    background: #2da44e;
+    box-shadow: 0 6px 18px rgba(53, 189, 91, 0.4);
+}
+
+.dash-btn-outline {
+    background: transparent;
+    border: 2px solid #4f5e94;
+    color: #4f5e94;
+    box-shadow: none;
+    margin-top: 10px;
+}
+
+.dash-btn-outline:hover {
+    background: rgba(79, 94, 148, 0.05);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(79, 94, 148, 0.2);
+}
+
+/* Company switcher chip-ek */
+.company-switcher {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 15px 0;
+}
+
+.company-chip {
+    padding: 8px 16px;
+    border-radius: 30px;
+    background: #f0f0f0;
+    color: #333;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: 1px solid #ddd;
+}
+
+.company-chip:hover {
+    background: #e0e0e0;
+    transform: translateY(-2px);
+}
+
+.company-chip.active {
+    background: #35bd5b;
+    color: white;
+    border-color: #35bd5b;
+    box-shadow: 0 4px 10px rgba(53, 189, 91, 0.3);
+}
+
+/* Aktív hirdetések kompakt lista */
+.jobs-list-compact {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 350px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+.jobs-list-compact::-webkit-scrollbar {
+    width: 5px;
+}
+
+.jobs-list-compact::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 10px;
+}
+
+.jobs-list-compact::-webkit-scrollbar-thumb {
+    background: #4f5e94;
+    border-radius: 10px;
+}
+
+.job-mini-card {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 14px;
+    border-left: 4px solid #4f5e94;
+    transition: all 0.2s ease;
+}
+
+.job-mini-card:hover {
+    background: #f0f4ff;
+    transform: translateX(3px);
+}
+
+.job-mini-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.job-mini-title {
+    font-weight: 600;
+    color: #333;
+    font-size: 15px;
+}
+
+.job-mini-badge {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+    background: #4f5e94;
+    color: white;
+}
+
+.job-mini-details {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 8px;
+    display: flex;
+    gap: 12px;
+}
+
+.job-mini-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.delete-mini-btn {
+    background: none;
+    border: none;
+    color: #f44336;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.delete-mini-btn:hover {
+    background: #ffebee;
+}
+
+/* Jelentkező kártya */
+.applicant-card {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 12px;
+    border-left: 4px solid #35bd5b;
+    margin-bottom: 10px;
+}
+
+.applicant-name {
+    font-weight: 600;
+    color: #333;
+    font-size: 15px;
+}
+
+.applicant-date {
+    font-size: 12px;
+    color: #888;
+    margin: 4px 0 8px;
+}
+
+.applicant-badge {
+    background: #35bd5b;
+    color: white;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+/* Körlevél textarea */
+.message-textarea {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid #e8ecf4;
+    border-radius: 12px;
+    font-size: 14px;
+    transition: all 0.3s;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    margin-bottom: 15px;
+    min-height: 100px;
+    resize: vertical;
+    background: #f8fafc;
+}
+
+.message-textarea:focus {
+    outline: none;
+    border-color: #4f5e94;
+    box-shadow: 0 0 0 4px rgba(79, 94, 148, 0.15);
+    background: white;
+}
+
+/* Csomag badge */
+.package-badge {
+    display: inline-block;
+    padding: 8px 20px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 18px;
+    background: #35bd5b;
+    color: white;
+    box-shadow: 0 4px 12px rgba(53, 189, 91, 0.3);
+}
+
+.no-data {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    padding: 20px;
+}
+
+/* Előnézet szekció */
+.preview-section {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    padding: 25px;
+    margin-top: 30px;
+}
+
+.preview-section h3 {
+    color: #4f5e94;
+    font-size: 22px;
+    margin: 0 0 20px 0;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+/* Company Modal */
+.company-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    backdrop-filter: blur(3px);
+}
+
+.company-modal.hidden {
+    display: none !important;
+}
+
+.company-modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+.company-modal-content h3 {
+    color: #4f5e94;
+    margin: 0 0 20px 0;
+    font-size: 22px;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 15px;
+}
+
+.company-modal-content input {
+    width: 100%;
+    margin: 10px 0;
+    padding: 14px;
+    border: 2px solid #e8ecf4;
+    border-radius: 12px;
+    font-size: 15px;
+    box-sizing: border-box;
+    transition: all 0.3s;
+}
+
+.company-modal-content input:focus {
+    outline: none;
+    border-color: #4f5e94;
+    box-shadow: 0 0 0 3px rgba(79, 94, 148, 0.2);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.modal-actions button {
+    flex: 1;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.modal-actions button:first-child {
+    background: #4f5e94;
+    color: white;
+}
+
+.modal-actions button:first-child:hover {
+    background: #3f4f85;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(79, 94, 148, 0.3);
+}
+
+.modal-actions button:last-child {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.modal-actions button:last-child:hover {
+    background: #e0e0e0;
+    transform: translateY(-2px);
+}
+
+#deleteCompanyBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Reszponzivitás */
+@media (max-width: 768px) {
+    .dashboard-header h1 {
+        font-size: 32px;
+    }
+    
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .active-company-badge {
+        font-size: 16px;
+        padding: 10px 18px;
+    }
+    
+    .modal-actions {
+        flex-direction: column;
+    }
+}
+
+/* A job-preview stílusok (ha még nincsenek a style.css-ben) */
+.job-preview {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    font-family: Arial, sans-serif;
+    margin: 0 auto;
+}
+
+.free-style {
+    background: #f3f3f3;
+    border: 2px solid #ccc;
+    color: #333;
+}
+
+.premium-style {
+    background: #e8f2ff;
+    border: 2px solid #2b7cff;
+    color: #1a3e7a;
+}
+
+.pro-style {
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    border: 2px solid gold;
+    color: white;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+}
+
+.job-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.badge {
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: bold;
+    background: #ccc;
+    color: white;
+}
+
+.pro-style .badge {
+    background: gold;
+    color: black;
+}
+
+.premium-style .badge {
+    background: #2b7cff;
+}
+
+
+/* ================================
+   EGYSÉGES POPUP/MODAL RENDSZER
+   ================================ */
+
+   .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(3px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.modal-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-container {
+    background: white;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    transform: scale(0.9) translateY(20px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: hidden;
+}
+
+.modal-overlay.show .modal-container {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+
+.modal-header {
+    background: linear-gradient(to right, #4f5e94 0%, #4f5e94 50%, #3f4f85 50%, #3f4f85 100%);
+    padding: 18px 22px;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.modal-close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s;
+    line-height: 1;
+    padding: 0;
+}
+
+.modal-close-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.modal-body {
+    padding: 25px;
+}
+
+.modal-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+}
+
+.modal-icon.success {
+    background: #d4edda;
+    color: #155724;
+}
+
+.modal-icon.error {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.modal-icon.warning {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.modal-icon.info {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.modal-message {
+    text-align: center;
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.modal-btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 120px;
+}
+
+.modal-btn-primary {
+    background: linear-gradient(135deg, #4f5e94 0%, #3f4f85 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(79, 94, 148, 0.3);
+}
+
+.modal-btn-primary:hover {
+    background: linear-gradient(135deg, #3f4f85 0%, #2f3f75 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(79, 94, 148, 0.4);
+}
+
+.modal-btn-success {
+    background: linear-gradient(135deg, #35bd5b 0%, #2da44e 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(53, 189, 91, 0.3);
+}
+
+.modal-btn-success:hover {
+    background: linear-gradient(135deg, #2da44e 0%, #259845 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(53, 189, 91, 0.4);
+}
+
+.modal-btn-danger {
+    background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+}
+
+.modal-btn-danger:hover {
+    background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(244, 67, 54, 0.4);
+}
+
+.modal-btn-secondary {
+    background: #f0f0f0;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+.modal-btn-secondary:hover {
+    background: #e0e0e0;
+    transform: translateY(-2px);
+}
+
+/* Konfirmációs modal speciális stílus */
+.modal-confirm .modal-body {
+    text-align: center;
+}
+
+.modal-confirm-icon {
+    font-size: 50px;
+    margin-bottom: 15px;
+    color: #ffc107;
+}
