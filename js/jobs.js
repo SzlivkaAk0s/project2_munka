@@ -396,8 +396,19 @@ function renderDynamicJobs(){
 
     jobs.forEach(job => {
 
+
         const card = document.createElement("div");
         card.className = "job-card";
+        
+        if(localStorage.getItem("activePackage") === "Premium"){
+            card.classList.add("premium-style");
+        }
+        else if(localStorage.getItem("activePackage") === "Pro"){
+            card.classList.add("pro-style");
+        }
+        else{
+            card.classList.add("free-style");
+        }
 
         card.innerHTML = `
             ${job.image ? `<img class="job-image" src="${job.image}" alt="">` : ""}
@@ -408,6 +419,68 @@ function renderDynamicJobs(){
             </div>
         `;
 
+        // **Hozzáadjuk a click eseményt a modalhoz**
+        card.addEventListener('click', function() {
+            const modal = document.getElementById('jobModal');
+            if(!modal) return;
+
+            document.getElementById('modal-title').textContent = job.position;
+            document.getElementById('modal-location').textContent = `${job.company} • ${job.location}`;
+            document.getElementById('modal-description').textContent = job.description || "Nincs leírás.";
+            
+            const reqList = document.getElementById('modal-requirements');
+            reqList.innerHTML = '';
+            if(job.requirements && job.requirements.length){
+                job.requirements.forEach(req => {
+                    const li = document.createElement('li');
+                    li.textContent = req;
+                    reqList.appendChild(li);
+                });
+            }
+
+            const benList = document.getElementById('modal-benefits');
+            benList.innerHTML = '';
+            if(job.benefits && job.benefits.length){
+                job.benefits.forEach(ben => {
+                    const li = document.createElement('li');
+                    li.textContent = ben;
+                    benList.appendChild(li);
+                });
+            }
+
+            const tagsContainer = document.getElementById('modal-tags');
+            tagsContainer.innerHTML = '';
+            if(job.tags && job.tags.length){
+                job.tags.forEach(tag => {
+                    const span = document.createElement('span');
+                    span.className = 'tag';
+                    span.textContent = tag;
+                    tagsContainer.appendChild(span);
+                });
+            }
+
+            modal.classList.add('open');
+            document.body.classList.add('modal-open');
+        });
+        
+
         jobsList.appendChild(card);
+    });
+}
+
+const modal = document.getElementById('jobModal');
+const closeModalBtn = document.querySelector('.modal-close-btn');
+
+if (closeModalBtn && modal) {
+    closeModalBtn.addEventListener('click', () => {
+        modal.classList.remove('open');
+        document.body.classList.remove('modal-open');
+    });
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.remove('open');
+            document.body.classList.remove('modal-open');
+        }
     });
 }
