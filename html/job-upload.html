@@ -109,7 +109,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-
         
             const isLoggedIn = () => localStorage.getItem('currentUser') !== null;
 
@@ -211,13 +210,35 @@
 
       
 
-            const companyName = document.getElementById("companyName");
+            const companyName = document.getElementById("companyName"); // Cégnév mező
+            const previewText = document.getElementById("previewText");
+            const imgPreview = document.getElementById("imgPreview");
+
+            const selectedCompanyId = localStorage.getItem("selectedCompanyId");
+            const allCompanies = JSON.parse(localStorage.getItem("companies")) || {};
+            const currentUser = localStorage.getItem("currentUser");
+
+            if(!selectedCompanyId){
+                alert("Nincs kiválasztott cég!");
+                window.location.href = "allashirdet.html";
+                return;
+            }
+
+            if(allCompanies[currentUser]){
+                const company = allCompanies[currentUser]
+                    .find(c => c.id == selectedCompanyId);
+
+                if(company){
+                    companyName.value = company.name;
+                    companyName.readOnly = true;   // NE lehessen szerkeszteni
+                }
+            }
+
             const jobPosition = document.getElementById("jobPosition");
             const jobLocation = document.getElementById("jobLocation");
             const jobImage = document.getElementById("jobImage");
 
-            const previewText = document.getElementById("previewText");
-            const imgPreview = document.getElementById("imgPreview");
+            
 
             const submitBtn = document.getElementById("submitJobBtn");
             const successPopup = document.getElementById("successPopup");
@@ -282,8 +303,11 @@
 
                 if (!ok) return;
 
+                const selectedCompanyId = localStorage.getItem("selectedCompanyId");
+
                 const jobData = {
                     id: Date.now(),
+                    companyId: selectedCompanyId,   // Ez új mező a cég azonosítására
                     company: companyName.value.trim(),
                     position: jobPosition.value.trim(),
                     location: jobLocation.value.trim(),

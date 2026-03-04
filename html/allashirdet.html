@@ -101,6 +101,53 @@
             color: white;
             font-weight: bold;
         }
+
+        .company-modal{
+            position:fixed;
+            top:0;
+            left:0;
+            width:100%;
+            height:100%;
+            background:rgba(0,0,0,0.6);
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            z-index:9999;
+        }
+
+        .hidden{
+            display:none;
+        }
+
+        .company-modal-content{
+            background:#1b1b1b;
+            padding:25px;
+            border-radius:12px;
+            width:300px;
+            color:white;
+        }
+
+        .company-modal-content input{
+            width:100%;
+            margin:8px 0;
+            padding:8px;
+        }
+
+        .modal-actions{
+            display:flex;
+            justify-content:space-between;
+            margin-top:10px;
+        }
+
+        #deleteCompanyBtn{
+            background:#ff4d4d;
+            color:white;
+            border:none;
+            padding:8px 12px;
+            border-radius:6px;
+            cursor:pointer;
+            margin-top: 5px;
+        }
     </style>
 </head>
 
@@ -127,12 +174,14 @@
 
     <h1>Munkáltatói vezérlőpult</h1>
 
+    <h2 id="activeCompanyDisplay" style="color:white; text-align: center;">Nincs kiválasztott cég </h2>
+
     <div class="dashboard">
 
         <div class="dash-card">
             <h3>Hirdetés feladása</h3>
             <p>Új álláshirdetés feltöltése (név, kép, helyszín, pozíció).</p>
-            <button onclick="window.location.href='job-upload.html'">
+            <button onclick="goToUpload()">
                 Új hirdetés létrehozása
             </button>
         </div>
@@ -167,6 +216,14 @@
             <button onclick="kuldes()">Küldés</button>
         </div>
 
+        <div class="dash-card">
+            <h3>Cégkezelő</h3>
+            <div id="companySwitcher" class="company-switcher"></div>
+
+            <button onclick="openCompanyModal()">+ Új cég</button>
+            <button onclick="deleteSelectedCompany()" id="deleteCompanyBtn" disabled>Kiválasztott cég törlése</button>
+        </div>
+
     </div>
 
     <hr>
@@ -179,6 +236,24 @@
             <span id="previewBadge" class="badge">FREE</span>
         </div>
         <p id="previewLocation">Helyszín</p>
+    </div>
+
+     <!--modal cégeknek-->
+    <div id="companyModal" class="company-modal hidden">
+        <div class="company-modal-content">
+
+            <h3>Új cég létrehozása</h3>
+
+            <input id="companyNameInput" placeholder="Cég neve">
+            <input id="companyCityInput" placeholder="Város">
+            <input id="companyFieldInput" placeholder="Iparág">
+
+            <div class="modal-actions">
+                <button onclick="saveCompany()">Mentés</button>
+                <button onclick="closeCompanyModal()">Mégse</button>
+            </div>
+
+        </div>
     </div>
 
     <script>
@@ -241,7 +316,12 @@
         }
 
         function renderJobs() {
-            const jobs = getJobs();
+
+            const selectedCompanyId = localStorage.getItem("selectedCompanyId");
+
+            const allJobs = getJobs();
+            const jobs = allJobs.filter(job => job.companyId == selectedCompanyId);
+
             const jobCards = document.getElementById("jobCards");
             const noJobsText = document.getElementById("noJobsText");
 
@@ -285,37 +365,244 @@
 
         renderJobs();
         document.addEventListener('DOMContentLoaded', function() {
-    const userType = localStorage.getItem('userType');
-    const mainPageLink = document.querySelector('.dynamic-home'); // Módosítva: class alapján keressük
-    
-    console.log('Dinamikus link kezelő - userType:', userType);
-    console.log('Main page link elem:', mainPageLink);
-    
-    if (mainPageLink) {
-        if (userType === 'employer') {
-            mainPageLink.href = 'allashirdet.html';
-            mainPageLink.textContent = 'Vezérlőpult';
-            console.log('Munkáltatói link beállítva: allashirdet.html');
-        } else {
-            mainPageLink.href = 'jobs.html';
-            mainPageLink.textContent = 'Állások';
-            console.log('Munkavállalói link beállítva: jobs.html');
-        }
-    }
-    
-    // Kijelentkezés kezelése
-    const logoutLink = document.getElementById('logoutLink');
-    if (logoutLink) {
-        logoutLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            if (confirm('Biztosan ki szeretnél jelentkezni?')) {
-                localStorage.removeItem('currentUser');
-                localStorage.removeItem('userType');
-                window.location.href = 'index.html';
+            const userType = localStorage.getItem('userType');
+            const mainPageLink = document.querySelector('.dynamic-home'); // Módosítva: class alapján keressük
+            
+            console.log('Dinamikus link kezelő - userType:', userType);
+            console.log('Main page link elem:', mainPageLink);
+            
+            if (mainPageLink) {
+                if (userType === 'employer') {
+                    mainPageLink.href = 'allashirdet.html';
+                    mainPageLink.textContent = 'Vezérlőpult';
+                    console.log('Munkáltatói link beállítva: allashirdet.html');
+                } else {
+                    mainPageLink.href = 'jobs.html';
+                    mainPageLink.textContent = 'Állások';
+                    console.log('Munkavállalói link beállítva: jobs.html');
+                }
+            }
+            
+            // Kijelentkezés kezelése
+            const logoutLink = document.getElementById('logoutLink');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (confirm('Biztosan ki szeretnél jelentkezni?')) {
+                        localStorage.removeItem('currentUser');
+                        localStorage.removeItem('userType');
+                        window.location.href = 'index.html';
+                    }
+                });
             }
         });
-    }
-});
+
+        function getCurrentUser(){
+            return localStorage.getItem("currentUser") || "guest";
+        }
+
+        function getUserPackage(){
+            return localStorage.getItem("activePackage") || "Free";
+        }
+
+        // Cégek kezelése
+        const currentUser = localStorage.getItem("currentUser");
+        function getCompanyLimit(){
+            const pack = getUserPackage();
+
+            if(pack==="Pro") return Infinity;
+            if(pack==="Premium") return 2;
+            return 1;
+        }
+        function getCompanies(){
+            const all = JSON.parse(localStorage.getItem("companies")) || {};
+            return all[getCurrentUser()] || [];
+        }
+
+        function saveCompanies(list){
+            const all = JSON.parse(localStorage.getItem("companies")) || {};
+            all[getCurrentUser()] = list;
+            localStorage.setItem("companies", JSON.stringify(all));
+        }
+        
+
+        function addCompany() {
+
+            const companies = getCompanies();
+            const limit = getCompanyLimit();
+
+            if (companies.length >= limit) {
+                alert("Elérted a csomagod céglimitjét!");
+                return;
+            }
+
+            const name = prompt("Cég neve:");
+
+            if (!name) return;
+
+            companies.push({
+                id: Date.now(),
+                name: name
+            });
+
+            saveCompanies(companies);
+            renderCompanies();
+        }
+
+        const companyModal = document.getElementById("companyModal");
+        const companyNameInput = document.getElementById("companyNameInput");
+        const companyCityInput = document.getElementById("companyCityInput");
+        const companyFieldInput = document.getElementById("companyFieldInput");
+        const previewCompany = document.getElementById("previewCompany");
+
+        function openCompanyModal(){
+            companyModal.classList.remove("hidden");
+        }
+
+        function closeCompanyModal(){
+            companyModal.classList.add("hidden");
+        }
+
+        let selectedCompanyId = null;
+
+        function saveCompany(){
+
+            const companies = getCompanies();
+
+            if(companies.length >= getCompanyLimit()){
+                alert("Csomag limit elérve!");
+                return;
+            }
+
+            const company = {
+                id: Date.now(),
+                name: companyNameInput.value,
+                city: companyCityInput.value,
+                field: companyFieldInput.value
+            };
+
+            companies.push(company);
+            saveCompanies(companies);
+
+            closeCompanyModal();
+            renderCompanies();
+        }
+
+        function renderCompanies(){
+
+            const container = document.getElementById("companySwitcher");
+            container.innerHTML="";
+
+            getCompanies().forEach(c=>{
+
+                const chip=document.createElement("div");
+                chip.className="company-chip";
+                chip.textContent=c.name;
+
+                chip.onclick = () => {
+
+                    selectedCompanyId = c.id;
+
+                    localStorage.setItem("selectedCompanyId", c.id);
+                    renderJobs();
+
+                    document
+                        .querySelectorAll(".company-chip")
+                        .forEach(el => el.classList.remove("active"));
+
+                    chip.classList.add("active");
+
+                    document.getElementById("activeCompanyDisplay").textContent =
+                        "Aktív cég: " + c.name;
+
+                    document.getElementById("deleteCompanyBtn").disabled = false;
+                };
+
+                container.appendChild(chip);
+            });
+
+            // visszaállítjuk az aktív céget ha van
+            const savedId = localStorage.getItem("selectedCompanyId");
+
+            if(savedId){
+                const active = getCompanies().find(c => c.id == savedId);
+
+                if(active){
+                    selectedCompanyId = active.id;
+
+                    document.getElementById("activeCompanyDisplay").textContent =
+                        "Aktív cég: " + active.name;
+
+                    document.getElementById("deleteCompanyBtn").disabled = false;
+
+                    // aktív chip kijelölése
+                    document.querySelectorAll(".company-chip").forEach(chip=>{
+                        if(chip.textContent === active.name){
+                            chip.classList.add("active");
+                        }
+                    });
+                }
+            }
+        }
+
+        renderCompanies();
+
+        function enforceCompanyLimit(){
+
+            const companies = getCompanies();
+            const limit = getCompanyLimit();
+
+            if(companies.length > limit){
+
+                alert(
+                    "Több céged van mint amit a jelenlegi csomag enged.\n" +
+                    "Új céget nem adhatsz hozzá amíg nem törölsz."
+                );
+            }
+        }
+
+        enforceCompanyLimit();
+        if(getCompanies().length >= getCompanyLimit()){
+            document.querySelector(".dash-card button[onclick='openCompanyModal()']").disabled = true;
+        }
+
+        function deleteSelectedCompany(){
+
+            if(!selectedCompanyId){
+                alert("Nincs kiválasztott cég!");
+                return;
+            }
+
+            let companies = getCompanies();
+
+            // tényleges törlés
+            companies = companies.filter(c => c.id !== selectedCompanyId);
+
+            saveCompanies(companies);
+
+            // kijelölés törlése
+            localStorage.removeItem("selectedCompanyId");
+            selectedCompanyId = null;
+
+            document.getElementById("activeCompanyDisplay").textContent =
+                "Nincs kiválasztott cég";
+
+            document.getElementById("deleteCompanyBtn").disabled = true;
+
+            renderCompanies();
+        }
+
+        function goToUpload(){
+
+            const selected = localStorage.getItem("selectedCompanyId");
+
+            if(!selected){
+                alert("Először válassz ki egy céget!");
+                return;
+            }
+
+            window.location.href = "job-upload.html";
+        }
     </script>
 
     <script src="../js/jobs.js"></script>

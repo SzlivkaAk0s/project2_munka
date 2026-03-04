@@ -289,6 +289,8 @@ document.addEventListener('DOMContentLoaded', function() {
             section.classList.toggle('collapsed');
         });
     });
+
+    renderDynamicJobs();
 });
 
 
@@ -375,5 +377,37 @@ function filterCards() {
                 card.style.display = 'none';
             }, 300);
         }
+    });
+}
+
+function renderDynamicJobs(){
+
+    const jobsList = document.getElementById("jobsList");
+    if(!jobsList) return;
+
+    const jobs = JSON.parse(localStorage.getItem("jobs")) || [];
+
+    jobsList.innerHTML = "";
+
+    if(jobs.length === 0){
+        jobsList.innerHTML = "<p style='color:white;'>Még nincs feltöltött álláshirdetés.</p>";
+        return;
+    }
+
+    jobs.forEach(job => {
+
+        const card = document.createElement("div");
+        card.className = "job-card";
+
+        card.innerHTML = `
+            ${job.image ? `<img class="job-image" src="${job.image}" alt="">` : ""}
+
+            <div class="job-content">
+                <h3>${job.position}</h3>
+                <p>${job.company} • ${job.location}</p>
+            </div>
+        `;
+
+        jobsList.appendChild(card);
     });
 }
