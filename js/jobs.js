@@ -266,11 +266,14 @@ document.addEventListener('DOMContentLoaded', function() {
         applyFiltersBtn.addEventListener('click', filterCards);
     }
     
-    if (resetFiltersBtn) {
+   if (resetFiltersBtn) {
         resetFiltersBtn.addEventListener('click', function() {
+           
             document.querySelectorAll('.filter-checkbox input').forEach(checkbox => {
-                checkbox.checked = true;
+                checkbox.checked = false; 
             });
+            
+           
             filterCards();
         });
     }
@@ -336,6 +339,7 @@ function filterCards() {
     filterSections.forEach(section => {
         const header = section.querySelector('h4').textContent;
         const checkedInputs = Array.from(section.querySelectorAll('input:checked')).map(cb => cb.value);
+        
         if (header.includes('Munkavégzés')) selectedLocations = checkedInputs;
         else if (header.includes('Pozíció')) selectedTypes = checkedInputs;
         else if (header.includes('Technológiák')) selectedTechs = checkedInputs;
@@ -343,11 +347,23 @@ function filterCards() {
 
     let visibleCount = 0;
     jobCards.forEach(card => {
+        
+        const isFilterEmpty = selectedLocations.length === 0 && 
+                               selectedTypes.length === 0 && 
+                               selectedTechs.length === 0;
+
+        if (isFilterEmpty) {
+            card.style.display = 'block';
+            visibleCount++;
+            return;
+        }
+
         const loc = card.getAttribute('data-location');
         const type = card.getAttribute('data-type');
         const techAttr = card.getAttribute('data-tech') || "";
         const cardTechs = techAttr.split(',');
 
+       
         const matchLoc = selectedLocations.length === 0 || selectedLocations.includes(loc);
         const matchType = selectedTypes.length === 0 || selectedTypes.includes(type);
         const matchTech = selectedTechs.length === 0 || selectedTechs.some(t => cardTechs.includes(t));
@@ -360,6 +376,7 @@ function filterCards() {
         }
     });
 
+ 
     let noResultMsg = document.getElementById('no-results-message');
     if (!noResultMsg) {
         noResultMsg = document.createElement('p');
