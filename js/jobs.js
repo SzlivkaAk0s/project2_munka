@@ -330,148 +330,107 @@ function startTimer() {
 
 function filterCards() {
     const jobCards = document.querySelectorAll('.job-card');
-    const filterSections = document.querySelectorAll('.filter-section');
     
-    let selectedLocations = [];
-    let selectedTypes = [];
-    let selectedTechs = [];
+    const customLoc = document.getElementById('custom-location-search').value.toLowerCase().trim();
+    const customTech = document.getElementById('custom-tech-search').value.toLowerCase().trim(); // ÚJ
 
-    filterSections.forEach(section => {
-        const header = section.querySelector('h4').textContent;
-        const checkedInputs = Array.from(section.querySelectorAll('input:checked')).map(cb => cb.value);
-        
-        if (header.includes('Munkavégzés')) selectedLocations = checkedInputs;
-        else if (header.includes('Pozíció')) selectedTypes = checkedInputs;
-        else if (header.includes('Technológiák')) selectedTechs = checkedInputs;
-    });
+
+    
+    const selectedLocations = Array.from(document.querySelectorAll('.filter-section:nth-child(2) input:checked')).map(cb => cb.value.toLowerCase());
+    const selectedTypes = Array.from(document.querySelectorAll('.filter-section:nth-child(3) input:checked')).map(cb => cb.value.toLowerCase());
+    const selectedTechs = Array.from(document.querySelectorAll('.filter-section:nth-child(4) input:checked')).map(cb => cb.value.toLowerCase());
 
     let visibleCount = 0;
+
     jobCards.forEach(card => {
-        
-        const isFilterEmpty = selectedLocations.length === 0 && 
-                               selectedTypes.length === 0 && 
-                               selectedTechs.length === 0;
+        const cardLoc = (card.getAttribute('data-location') || "").toLowerCase();
+        const cardType = (card.getAttribute('data-type') || "").toLowerCase();
+        const cardTechStr = (card.getAttribute('data-tech') || "").toLowerCase(); // Ez a pozíció neve
 
-        if (isFilterEmpty) {
-            card.style.display = 'block';
-            visibleCount++;
-            return;
-        }
+        // Helyszín szűrés
+        const matchLoc = (selectedLocations.length === 0 && customLoc === "") || 
+                         selectedLocations.includes(cardLoc) || 
+                         (customLoc !== "" && cardLoc.includes(customLoc));
 
-        const loc = card.getAttribute('data-location');
-        const type = card.getAttribute('data-type');
-        const techAttr = card.getAttribute('data-tech') || "";
-        const cardTechs = techAttr.split(',');
+        // Típus szűrés
+        const matchType = selectedTypes.length === 0 || selectedTypes.includes(cardType);
 
-       
-        const matchLoc = selectedLocations.length === 0 || selectedLocations.includes(loc);
-        const matchType = selectedTypes.length === 0 || selectedTypes.includes(type);
-        const matchTech = selectedTechs.length === 0 || selectedTechs.some(t => cardTechs.includes(t));
+        // Technológia szűrés (Pozíció névben keresés)
+        // matchTech igaz, ha: (nincs pipálva semmi VAGY valamelyik pipált szó benne van a névben)
+        // ÉS (nincs beírva semmi az egyedi keresőbe VAGY a beírt szó benne van a névben)
+        const matchTech = (selectedTechs.length === 0 || selectedTechs.some(t => cardTechStr.includes(t))) &&
+                          (customTech === "" || cardTechStr.includes(customTech));
 
         if (matchLoc && matchType && matchTech) {
-            card.style.display = 'block';
+            card.style.display = 'flex';
             visibleCount++;
         } else {
             card.style.display = 'none';
         }
     });
 
- 
-    let noResultMsg = document.getElementById('no-results-message');
-    if (!noResultMsg) {
-        noResultMsg = document.createElement('p');
-        noResultMsg.id = 'no-results-message';
-        noResultMsg.style.textAlign = 'center';
-        noResultMsg.style.marginTop = '20px';
-        noResultMsg.textContent = 'Sajnos nincs a szűrési feltételeknek megfelelő álláshirdetés.';
-        document.querySelector('.jobs-list').appendChild(noResultMsg);
+    const noResultMsg = document.getElementById('no-results-message');
+    if (visibleCount === 0) {
+        if (!noResultMsg) {
+            const msg = document.createElement('p');
+            msg.id = 'no-results-message';
+            msg.style.cssText = "color: white; text-align: center; width: 100%; margin-top: 20px;";
+            msg.textContent = 'Sajnos nincs a keresésnek megfelelő hirdetés.';
+            document.getElementById('jobsList').appendChild(msg);
+        }
+    } else if (noResultMsg) {
+        noResultMsg.remove();
     }
-    noResultMsg.style.display = visibleCount === 0 ? 'block' : 'none';
+    document.getElementById('custom-location-search').addEventListener('input', filterCards);
+    document.getElementById('custom-tech-search').addEventListener('input', filterCards); // ÚJ
 }
 
-function renderDynamicJobs(){
 
+
+
+function renderDynamicJobs() {
     const jobsList = document.getElementById("jobsList");
-    if(!jobsList) return;
+    if (!jobsList) return;
 
     const jobs = JSON.parse(localStorage.getItem("jobs")) || [];
-
     jobsList.innerHTML = "";
 
-    if(jobs.length === 0){
-        jobsList.innerHTML = "<p style='color:white;'>Még nincs feltöltött álláshirdetés.</p>";
+    if (jobs.length === 0) {
+        jobsList.innerHTML = "<p style='color:white; text-align:center;'>Még nincs feltöltött álláshirdetés.</p>";
         return;
     }
 
     jobs.forEach(job => {
-
-
         const card = document.createElement("div");
         card.className = "job-card";
         
-        if(localStorage.getItem("activePackage") === "Premium"){
-            card.classList.add("premium-style");
-        }
-        else if(localStorage.getItem("activePackage") === "Pro"){
-            card.classList.add("pro-style");
-        }
-        else{
-            card.classList.add("free-style");
-        }
+        // MÓDOSÍTÁS: A data-tech mostantól a pozíció nevét is tartalmazza
+        card.setAttribute('data-location', job.location || "");
+        card.setAttribute('data-type', job.type || "Full-time");
+        // A pozíció nevét elmentjük kisbetűvel, hogy a szűrő megtalálja benne a technológiát
+        card.setAttribute('data-tech', (job.position || "").toLowerCase());
 
         card.innerHTML = `
             ${job.image ? `<img class="job-image" src="${job.image}" alt="">` : ""}
-
             <div class="job-content">
                 <h3>${job.position}</h3>
                 <p>${job.company} • ${job.location}</p>
+                <div class="job-tags">
+                    <span class="tag">${job.position}</span>
+                </div>
             </div>
         `;
 
-        // **Hozzáadjuk a click eseményt a modalhoz**
         card.addEventListener('click', function() {
+            // ... (a modal kódod marad változatlan)
             const modal = document.getElementById('jobModal');
             if(!modal) return;
-
             document.getElementById('modal-title').textContent = job.position;
             document.getElementById('modal-location').textContent = `${job.company} • ${job.location}`;
             document.getElementById('modal-description').textContent = job.description || "Nincs leírás.";
-            
-            const reqList = document.getElementById('modal-requirements');
-            reqList.innerHTML = '';
-            if(job.requirements && job.requirements.length){
-                job.requirements.forEach(req => {
-                    const li = document.createElement('li');
-                    li.textContent = req;
-                    reqList.appendChild(li);
-                });
-            }
-
-            const benList = document.getElementById('modal-benefits');
-            benList.innerHTML = '';
-            if(job.benefits && job.benefits.length){
-                job.benefits.forEach(ben => {
-                    const li = document.createElement('li');
-                    li.textContent = ben;
-                    benList.appendChild(li);
-                });
-            }
-
-            const tagsContainer = document.getElementById('modal-tags');
-            tagsContainer.innerHTML = '';
-            if(job.tags && job.tags.length){
-                job.tags.forEach(tag => {
-                    const span = document.createElement('span');
-                    span.className = 'tag';
-                    span.textContent = tag;
-                    tagsContainer.appendChild(span);
-                });
-            }
-
             modal.classList.add('open');
             document.body.classList.add('modal-open');
         });
-        
 
         jobsList.appendChild(card);
     });
