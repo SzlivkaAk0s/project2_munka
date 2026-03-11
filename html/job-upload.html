@@ -56,18 +56,33 @@
                     <small class="error-message"></small>
                 </div>
 
-                <div class="field">
-                    <label class="required" for="jobPosition">Pozíció neve:</label>
-                    <input id="jobPosition" type="text" placeholder="Pl. Raktáros" />
-                    <small class="error-message"></small>
-                </div>
+               <div class="field">
+    <label class="required" for="jobPosition">Pozíció neve:</label>
+    <input id="jobPosition" type="text" list="techList" placeholder="Pl. Raktáros" />
+    
+    <datalist id="techList">
+        <option value="React">
+        <option value="JavaScript">
+        <option value="Node.js">
+        <option value="Python">
+    </datalist>
+    
+    <small class="error-message"></small>
+</div>
 
                 <div class="field">
-                    <label class="required" for="jobLocation">Helyszín:</label>
-                    <input id="jobLocation" type="text" placeholder="Pl. Budapest" />
-                    <small class="error-message"></small>
-                </div>
-
+    <label class="required" for="jobLocation">Helyszín:</label>
+    <input id="jobLocation" type="text" list="locationOptions" placeholder="Pl. Budapest" />
+    
+    <datalist id="locationOptions">
+        <option value="Budapest">
+        <option value="Remote">
+        <option value="Szeged">
+        <option value="Hybrid">
+    </datalist>
+    
+    <small class="error-message"></small>
+</div>
                 <div class="field job-upload-file">
                     <label for="jobImage">Kép (opcionális):</label>
                     <input id="jobImage" type="file" accept="image/*" />
