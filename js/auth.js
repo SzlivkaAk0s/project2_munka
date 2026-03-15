@@ -2,7 +2,6 @@ console.log('Auth.js betöltődött - GitHub Pages debug');
 console.log('LocalStorage elérhető?', typeof localStorage !== 'undefined');
 console.log('Window location:', window.location.href);
 
-
 const isGitHubPages = window.location.hostname.includes('github.io');
 console.log('GitHub Pages?', isGitHubPages);
 
@@ -35,18 +34,41 @@ document.addEventListener('DOMContentLoaded', function() {
                 return { success: false, message: 'Ez a felhasználónév már foglalt!' };
             }
             
- 
-            users[username] = {
+            // Alap felhasználói objektum
+            const userObject = {
                 password,
                 userType,
-                companyName: extra.companyName || null,
-                companyEmail: extra.companyEmail || null,
                 createdAt: new Date().toISOString()
             };
             
+            // Munkavállaló esetén profile objektum
+            if (userType === 'employee') {
+                userObject.profile = {
+                    fullName: extra.fullName || '',
+                    birthName: extra.birthName || '',
+                    birthDate: extra.birthDate || '',
+                    phone: extra.phone || '',
+                    email: extra.email || '',
+                    address: extra.address || { zipCode: '', city: '', street: '' },
+                    education: extra.education || '',
+                    experience: extra.experience || 0,
+                    preferences: extra.preferences || [],
+                    cvFileName: extra.cvFileName || null,
+                    profileImageName: extra.profileImageName || null,
+                    applications: [],
+                    savedJobs: []
+                };
+            } else {
+                // Munkáltató esetén a régi mezők
+                userObject.companyName = extra.companyName || null;
+                userObject.companyEmail = extra.companyEmail || null;
+            }
+            
+            // Felhasználó mentése
+            users[username] = userObject;
             this.saveUsers(users);
             
-
+            // Statisztika inicializálása
             this.initUserStats(username, userType);
             
             return { success: true, message: 'Sikeres regisztráció!' };
@@ -147,7 +169,8 @@ document.addEventListener('DOMContentLoaded', function() {
             return user ? {
                 username: username,
                 userType: user.userType,
-                createdAt: user.createdAt
+                createdAt: user.createdAt,
+                profile: user.profile || null
             } : null;
         },
         
@@ -166,6 +189,24 @@ document.addEventListener('DOMContentLoaded', function() {
             const statsKey = `user_stats_${username}`;
             const statsJSON = localStorage.getItem(statsKey);
             return statsJSON ? JSON.parse(statsJSON) : null;
+        },
+        
+        // ÚJ: Felhasználó profiljának lekérése
+        getUserProfile: function(username) {
+            const users = this.getUsers();
+            const user = users[username];
+            return user && user.profile ? user.profile : null;
+        },
+        
+        // ÚJ: Profil frissítése
+        updateUserProfile: function(username, profileData) {
+            const users = this.getUsers();
+            if (users[username]) {
+                users[username].profile = { ...users[username].profile, ...profileData };
+                this.saveUsers(users);
+                return true;
+            }
+            return false;
         }
     };
     
@@ -213,13 +254,20 @@ document.addEventListener('DOMContentLoaded', function() {
         registerForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
+            // Alap adatok - .trim() MINDEN szöveges mezőnél!
             const username = document.getElementById('registerUsername').value.trim();
-            const password = document.getElementById('registerPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
+            const password = document.getElementById('registerPassword').value; // Itt NE trim, mert a jelszó tartalmazhat space-t
+            const confirmPassword = document.getElementById('confirmPassword').value; // Itt NE trim
+            const userType = localStorage.getItem('selectedUserType') || 'employee';
             
+            // DEBUG - írassuk ki, hogy látjuk mi a probléma
+            console.log('Jelszó:', password);
+            console.log('Jelszó megerősítés:', confirmPassword);
+            console.log('Hossz - jelszó:', password.length, 'megerősítés:', confirmPassword.length);
             
+            // Alap validáció
             if (!username || !password || !confirmPassword) {
-                showMessage('registerMessage', 'Kérlek töltsd ki minden mezőt!', 'error');
+                showMessage('registerMessage', 'Kérlek töltsd ki a kötelező mezőket!', 'error');
                 return;
             }
             
@@ -233,30 +281,98 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
+            // JELSZÓ ÖSSZEHASONLÍTÁS - JAVÍTVA
             if (password !== confirmPassword) {
+                console.log('Jelszavak NEM egyeznek!');
+                console.log('Jelszó:', password);
+                console.log('Megerősítés:', confirmPassword);
                 showMessage('registerMessage', 'A jelszavak nem egyeznek!', 'error');
                 return;
             }
             
-         
-            const userType = localStorage.getItem('selectedUserType') || 'employee';
+            console.log('Jelszavak egyeznek, folytatódik a regisztráció...');
             
-     
-            const extra = {
-                companyName: document.getElementById('companyName')?.value || '',
-                companyEmail: document.getElementById('companyEmail')?.value || ''
-            };
-
+            // MUNKAVÁLLALÓ ESETÉN extra validációk
+            let extra = {};
+            
+            if (userType === 'employee') {
+                // Kötelező mezők ellenőrzése munkavállalóknál
+                const fullName = document.getElementById('fullName')?.value.trim();
+                const email = document.getElementById('email')?.value.trim();
+                
+                if (!fullName) {
+                    showMessage('registerMessage', 'Kérlek add meg a teljes neved!', 'error');
+                    return;
+                }
+                
+                if (!email) {
+                    showMessage('registerMessage', 'Kérlek add meg az email címed!', 'error');
+                    return;
+                }
+                
+                // Email formátum ellenőrzés
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    showMessage('registerMessage', 'Kérlek érvényes email címet adj meg!', 'error');
+                    return;
+                }
+                
+                // Telefonszám formátum ellenőrzés (ha meg van adva)
+                const phone = document.getElementById('phone')?.value.trim();
+                if (phone) {
+                    const phoneRegex = /^(\+36|06)[0-9]{1,4}[0-9]{6,7}$/;
+                    if (!phoneRegex.test(phone.replace(/\s/g, ''))) {
+                        showMessage('registerMessage', 'Kérlek érvényes telefonszámot adj meg (+36 vagy 06 formátumban)!', 'error');
+                        return;
+                    }
+                }
+                
+                // Preferenciák összegyűjtése
+                const preferences = [];
+                document.querySelectorAll('input[name="preferences"]:checked').forEach(cb => {
+                    preferences.push(cb.value);
+                });
+                
+                // File-ok kezelése (jelenleg csak a fájlneveket tároljuk)
+                const cvFile = document.getElementById('cv')?.files[0];
+                const profileImage = document.getElementById('profileImage')?.files[0];
+                
+                // Munkavállalói adatok összegyűjtése
+                extra = {
+                    fullName: fullName,
+                    birthName: document.getElementById('birthName')?.value.trim() || '',
+                    birthDate: document.getElementById('birthDate')?.value || '',
+                    phone: phone || '',
+                    email: email,
+                    address: {
+                        zipCode: document.getElementById('zipCode')?.value.trim() || '',
+                        city: document.getElementById('city')?.value.trim() || '',
+                        street: document.getElementById('street')?.value.trim() || ''
+                    },
+                    education: document.getElementById('education')?.value || '',
+                    experience: document.getElementById('experience')?.value || 0,
+                    preferences: preferences,
+                    cvFileName: cvFile ? cvFile.name : null,
+                    profileImageName: profileImage ? profileImage.name : null
+                };
+            } else {
+                // Munkáltató esetén a régi mezők
+                extra = {
+                    companyName: document.getElementById('companyName')?.value || '',
+                    companyEmail: document.getElementById('companyEmail')?.value || ''
+                };
+            }
+            
+            // Regisztráció az authManager-rel
             const result = authManager.registerUser(username, password, userType, extra);
             
             if (result.success) {
-                // AUTOMATIKUS BEJELENTKEZÉS ÉS ÁTIRÁNYÍTÁS
+                // Automatikus bejelentkezés
                 const loginResult = authManager.loginUser(username, password);
                 
                 if (loginResult.success) {
                     showMessage('registerMessage', 'Sikeres regisztráció! Automatikusan bejelentkeztél. Átirányítás...', 'success');
                     
-                    // Azonnal átirányítás jobs.html-re
                     setTimeout(() => {
                         if (userType === 'employer') {
                             window.location.href = 'allashirdet.html';
@@ -264,8 +380,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             window.location.href = 'jobs.html';
                         }
                     }, 1500);
-                } else {
-                    showMessage('registerMessage', 'Sikeres regisztráció! Most már bejelentkezhetsz.', 'success');
                 }
             } else {
                 showMessage('registerMessage', result.message, 'error');

@@ -6,11 +6,382 @@
     <title>Álláshirdetés feltöltése - WorkConnect</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="icon" href="../images/favicon.ico">
+    <style>
+        /* ===== JOBS UPLOAD SPECIFIKUS STÍLUSOK ===== */
+        .upload-container {
+            max-width: 1200px;
+            margin: 100px auto 40px;
+            position: relative;
+            z-index: 2;
+            padding: 0 20px;
+        }
+
+        .upload-header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .upload-header h1 {
+            font-size: 42px;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            font-weight: 700;
+        }
+
+        .upload-header p {
+            font-size: 20px;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .upload-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        /* Kártya stílus - megegyezik a regisztációs modal designnal */
+        .upload-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: fit-content;
+        }
+
+        .upload-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+        }
+
+        .card-header {
+            background: linear-gradient(to right, #4f5e94 0%, #4f5e94 50%, #3f4f85 50%, #3f4f85 100%);
+            padding: 20px 25px;
+            color: white;
+        }
+
+        .card-header h2 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-header h2 i {
+            font-size: 24px;
+            opacity: 0.9;
+        }
+
+        .card-body {
+            padding: 30px;
+        }
+
+        /* Form mezők - megegyeznek a regisztrációs form mezőivel */
+        .upload-field {
+            margin-bottom: 25px;
+        }
+
+        .upload-field label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .upload-field label.required::after {
+            content: " *";
+            color: #f44336;
+            font-weight: bold;
+        }
+
+        .upload-field input,
+        .upload-field select,
+        .upload-field textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            background: #f8fafc;
+        }
+
+        .upload-field input:focus,
+        .upload-field select:focus,
+        .upload-field textarea:focus {
+            outline: none;
+            border-color: #4f5e94;
+            box-shadow: 0 0 0 3px rgba(79, 94, 148, 0.2);
+            background: white;
+        }
+
+        .upload-field input:hover,
+        .upload-field select:hover,
+        .upload-field textarea:hover {
+            border-color: #6c7aa0;
+        }
+
+        .upload-field input[readonly] {
+            background: #f0f0f0;
+            border-color: #ddd;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        /* File input speciális stílus */
+        .upload-field.file-input input[type="file"] {
+            padding: 12px;
+            background: #f8f9fa;
+            border: 2px dashed #4f5e94;
+            cursor: pointer;
+        }
+
+        .upload-field.file-input input[type="file"]:hover {
+            background: #f0f4ff;
+            border-style: solid;
+        }
+
+        .upload-field small {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-top: 6px;
+            font-style: italic;
+        }
+
+        .error-message {
+            color: #f44336;
+            font-size: 13px;
+            margin-top: 5px;
+            display: block;
+            min-height: 20px;
+        }
+
+        /* Datalist styling */
+        datalist {
+            display: none;
+        }
+
+        /* Előnézet doboz */
+        .preview-box {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 4px solid #4f5e94;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        .preview-content {
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .preview-content p {
+            margin: 12px 0;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .preview-content b {
+            color: #4f5e94;
+            min-width: 100px;
+            display: inline-block;
+        }
+
+        #imgPreview {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 10px;
+            margin-top: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 3px solid white;
+        }
+
+        .preview-hint {
+            background: #e8f4fd;
+            border-radius: 10px;
+            padding: 15px 20px;
+            border-left: 4px solid #2196F3;
+        }
+
+        .preview-hint p {
+            margin: 0;
+            color: #0c5460;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .preview-hint i {
+            font-style: italic;
+        }
+
+        /* Gomb */
+        .upload-submit-btn {
+            background: linear-gradient(135deg, #35bd5b 0%, #2da44e 100%);
+            color: white;
+            border: none;
+            padding: 18px 30px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            display: block;
+            margin-top: 20px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            box-shadow: 0 5px 20px rgba(53, 189, 91, 0.3);
+        }
+
+        .upload-submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(53, 189, 91, 0.4);
+            background: linear-gradient(135deg, #2da44e 0%, #259845 100%);
+        }
+
+        .upload-submit-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* Reszponzív */
+        @media (max-width: 768px) {
+            .upload-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .upload-header h1 {
+                font-size: 32px;
+            }
+            
+            .upload-header p {
+                font-size: 18px;
+            }
+            
+            .card-body {
+                padding: 20px;
+            }
+            
+            .preview-content b {
+                min-width: 80px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .upload-container {
+                padding: 0 15px;
+            }
+            
+            .upload-header h1 {
+                font-size: 28px;
+            }
+            
+            .card-header h2 {
+                font-size: 20px;
+            }
+            
+            .upload-field input {
+                padding: 12px 14px;
+                font-size: 15px;
+            }
+            
+            .upload-submit-btn {
+                padding: 16px 25px;
+                font-size: 16px;
+            }
+        }
+
+        /* Popup stílus - egységesítve */
+        .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(3px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 10000;
+        }
+
+        .popup.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .popup-content {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            transform: scale(0.9) translateY(20px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .popup.show .popup-content {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+
+        .popup-content h3 {
+            color: #4f5e94;
+            font-size: 24px;
+            margin: 0 0 15px 0;
+        }
+
+        .popup-content p {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .popup-content .buy-btn {
+            background: linear-gradient(135deg, #35bd5b 0%, #2da44e 100%);
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(53, 189, 91, 0.3);
+        }
+
+        .popup-content .buy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(53, 189, 91, 0.4);
+        }
+    </style>
 </head>
 
 <body class="jobs-page">
-
- 
+    <!-- Háttér -->
+    <div class="split-bg"></div>
+    
+    <!-- Felső sáv -->
     <div class="jobs-topbar">
         <div class="jobs-hamburger">☰</div>
 
@@ -21,118 +392,125 @@
         <a href="profile.html" class="jobs-profile-circle"></a>
     </div>
 
-  
+    <!-- Oldalsó menü -->
     <div class="sidebar-menu">
         <button class="close-btn">×</button>
         <h3>Menü</h3>
         <ul>
-            <li><a href="jobs.html" class="dynamic-home" data-employer="allashirdet.html" data-employee="jobs.html">Állások</a></li>
+            <li><a href="jobs.html" class="dynamic-home">Állások</a></li>
             <li><a href="premium.html">Premium</a></li>
             <li><a href="profile.html">Profil</a></li>
             <li><a href="profile.html">Beállítások</a></li>
-            <li><a href="profile.html">Kijelentkezés</a></li>
+            <li><a href="#" id="logoutBtnSidebar">Kijelentkezés</a></li>
         </ul>
     </div>
 
-  
-    <div class="application-container">
+    <!-- Fő tartalom -->
+    <div class="upload-container">
+        <a href="allashirdet.html" class="back-button">← Vissza a vezérlőpulthoz</a>
 
-        <a href="allashirdet.html" class="back-button">Vissza a vezérlőpulthoz</a>
-
-        <div class="application-header">
+        <div class="upload-header">
             <h1>Álláshirdetés feltöltése</h1>
-            <p>Add meg az adatokat, és nézd meg előnézetben.</p>
+            <p>Add meg az adatokat, és nézd meg előnézetben, hogyan fog megjelenni</p>
         </div>
 
-        <div class="form-section job-upload-grid">
-
-          
-            <div class="job-upload-card">
-                <h2>Űrlap</h2>
-
-                <div class="field">
-                    <label class="required" for="companyName">Cég neve:</label>
-                    <input id="companyName" type="text" placeholder="Pl. WorkConnect Kft." />
-                    <small class="error-message"></small>
+        <div class="upload-grid">
+            <!-- Bal oldal: Űrlap -->
+            <div class="upload-card">
+                <div class="card-header">
+                    <h2>📋 Hirdetés adatai</h2>
                 </div>
+                <div class="card-body">
+                    <div class="upload-field">
+                        <label class="required" for="companyName">Cég neve:</label>
+                        <input id="companyName" type="text" placeholder="Pl. WorkConnect Kft." readonly />
+                        <small class="error-message"></small>
+                    </div>
 
-               <div class="field">
-    <label class="required" for="jobPosition">Pozíció neve:</label>
-    <input id="jobPosition" type="text" list="techList" placeholder="Pl. Raktáros" />
-    
-    <datalist id="techList">
-        <option value="React">
-        <option value="JavaScript">
-        <option value="Node.js">
-        <option value="Python">
-    </datalist>
-    
-    <small class="error-message"></small>
-</div>
+                    <div class="upload-field">
+                        <label class="required" for="jobPosition">Pozíció neve:</label>
+                        <input id="jobPosition" type="text" list="techList" placeholder="Pl. Frontend fejlesztő" />
+                        <datalist id="techList">
+                            <option value="Frontend fejlesztő">
+                            <option value="Backend fejlesztő">
+                            <option value="Full-stack fejlesztő">
+                            <option value="Rendszergazda">
+                            <option value="Ügyfélszolgálatos">
+                            <option value="Értékesítő">
+                            <option value="Marketing menedzser">
+                            <option value="HR általános">
+                        </datalist>
+                        <small class="error-message"></small>
+                    </div>
 
-                <div class="field">
-    <label class="required" for="jobLocation">Helyszín:</label>
-    <input id="jobLocation" type="text" list="locationOptions" placeholder="Pl. Budapest" />
-    
-    <datalist id="locationOptions">
-        <option value="Budapest">
-        <option value="Remote">
-        <option value="Szeged">
-        <option value="Hybrid">
-    </datalist>
-    
-    <small class="error-message"></small>
-</div>
-                <div class="field job-upload-file">
-                    <label for="jobImage">Kép (opcionális):</label>
-                    <input id="jobImage" type="file" accept="image/*" />
-                    <small>Ajánlott: 1:1 arány, max 5MB</small>
-                </div>
+                    <div class="upload-field">
+                        <label class="required" for="jobLocation">Helyszín:</label>
+                        <input id="jobLocation" type="text" list="locationOptions" placeholder="Pl. Budapest" />
+                        <datalist id="locationOptions">
+                            <option value="Budapest">
+                            <option value="Remote - Távmunka">
+                            <option value="Hybrid - Hibrid">
+                            <option value="Debrecen">
+                            <option value="Szeged">
+                            <option value="Pécs">
+                            <option value="Győr">
+                            <option value="Miskolc">
+                        </datalist>
+                        <small class="error-message"></small>
+                    </div>
 
-                <button class="apply-submit-btn" id="submitJobBtn">
-                    Hirdetés feladása
-                </button>
-            </div>
+                    <div class="upload-field file-input">
+                        <label for="jobImage">Kép feltöltése:</label>
+                        <input id="jobImage" type="file" accept="image/*" />
+                        <small>Ajánlott: 1:1 arány, max 5MB • Opcionális</small>
+                    </div>
 
-     
-            <div class="job-upload-card preview-card">
-                <h2>Előnézet</h2>
-
-                <div class="job-preview-box">
-                    <div id="previewText"></div>
-                    <img id="imgPreview" style="display:none;" />
-                </div>
-
-                <div class="job-preview-hint">
-                    <p>
-                        Ez az előnézet azt mutatja, hogyan fog megjelenni az állás az álláslistában.
-                    </p>
+                    <button class="upload-submit-btn" id="submitJobBtn">
+                        Hirdetés feladása
+                    </button>
                 </div>
             </div>
 
+            <!-- Jobb oldal: Előnézet -->
+            <div class="upload-card">
+                <div class="card-header">
+                    <h2>👁️ Élő előnézet</h2>
+                </div>
+                <div class="card-body">
+                    <div class="preview-box">
+                        <div class="preview-content" id="previewText"></div>
+                        <img id="imgPreview" style="display:none;" />
+                    </div>
+
+                    <div class="preview-hint">
+                        <p>
+                            <i>💡 Ez az előnézet mutatja, hogyan fog megjelenni az állás az álláslistában. 
+                            A mezők módosításával az előnézet azonnal frissül.</i>
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-  
+    <!-- Sikeres feltöltés popup -->
     <div id="successPopup" class="popup">
         <div class="popup-content">
-            <h3>Sikeresen feltöltve! 🎉</h3>
-            <p>Az álláshirdetés bekerült a listába.</p>
+            <h3>Sikeres feltöltés! 🎉</h3>
+            <p>Az álláshirdetés bekerült a listába és már meg is jelenik a munkavállalóknak.</p>
             <button onclick="closePopup()" class="buy-btn">Rendben</button>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-        
-            const isLoggedIn = () => localStorage.getItem('currentUser') !== null;
-
-            if (!isLoggedIn()) {
+            // ===== BEJELENTKEZÉS ELLENŐRZÉS =====
+            if (!localStorage.getItem('currentUser')) {
                 window.location.href = 'index.html';
                 return;
             }
 
-         
+            // ===== PROFIL IKON =====
             const profileCircle = document.querySelector('.jobs-profile-circle');
             if (profileCircle) {
                 const username = localStorage.getItem('currentUser');
@@ -144,7 +522,7 @@
                 }
             }
 
-            
+            // ===== HAMBURGER MENÜ =====
             const hamburger = document.querySelector('.jobs-hamburger');
             const sidebar = document.querySelector('.sidebar-menu');
             const closeBtn = document.querySelector('.close-btn');
@@ -163,15 +541,15 @@
                 }
 
                 document.addEventListener('click', function (e) {
-                    if (sidebar.classList.contains('open')) {
-                        if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
-                            sidebar.classList.remove('open');
-                        }
+                    if (sidebar.classList.contains('open') && 
+                        !sidebar.contains(e.target) && 
+                        e.target !== hamburger) {
+                        sidebar.classList.remove('open');
                     }
                 });
             }
 
-        
+            // ===== KIJELENTKEZÉS =====
             const logoutBtnSidebar = document.getElementById('logoutBtnSidebar');
             if (logoutBtnSidebar) {
                 logoutBtnSidebar.addEventListener('click', function (e) {
@@ -184,7 +562,7 @@
                 });
             }
 
-    
+            // ===== TIMER =====
             let timerInterval = null;
             let timeLeft = 300;
 
@@ -223,46 +601,55 @@
                 });
             }
 
-      
+            // ===== DINAMIKUS LINK =====
+            const userType = localStorage.getItem('userType');
+            const mainPageLink = document.querySelector('.dynamic-home');
+            
+            if (mainPageLink) {
+                if (userType === 'employer') {
+                    mainPageLink.href = 'allashirdet.html';
+                    mainPageLink.textContent = 'Vezérlőpult';
+                } else {
+                    mainPageLink.href = 'jobs.html';
+                    mainPageLink.textContent = 'Állások';
+                }
+            }
 
-            const companyName = document.getElementById("companyName"); // Cégnév mező
+            // ===== JOB UPLOAD FUNKCIÓK =====
+            const companyName = document.getElementById("companyName");
+            const jobPosition = document.getElementById("jobPosition");
+            const jobLocation = document.getElementById("jobLocation");
+            const jobImage = document.getElementById("jobImage");
             const previewText = document.getElementById("previewText");
             const imgPreview = document.getElementById("imgPreview");
+            const submitBtn = document.getElementById("submitJobBtn");
+            const successPopup = document.getElementById("successPopup");
 
+            // Cég adatok betöltése
             const selectedCompanyId = localStorage.getItem("selectedCompanyId");
             const allCompanies = JSON.parse(localStorage.getItem("companies")) || {};
             const currentUser = localStorage.getItem("currentUser");
 
-            if(!selectedCompanyId){
-                alert("Nincs kiválasztott cég!");
+            if (!selectedCompanyId) {
+                alert("Nincs kiválasztott cég! Előbb válassz vagy hozz létre egy céget.");
                 window.location.href = "allashirdet.html";
                 return;
             }
 
-            if(allCompanies[currentUser]){
-                const company = allCompanies[currentUser]
-                    .find(c => c.id == selectedCompanyId);
-
-                if(company){
+            if (allCompanies[currentUser]) {
+                const company = allCompanies[currentUser].find(c => c.id == selectedCompanyId);
+                if (company) {
                     companyName.value = company.name;
-                    companyName.readOnly = true;   // NE lehessen szerkeszteni
+                    companyName.readOnly = true;
                 }
             }
 
-            const jobPosition = document.getElementById("jobPosition");
-            const jobLocation = document.getElementById("jobLocation");
-            const jobImage = document.getElementById("jobImage");
-
-            
-
-            const submitBtn = document.getElementById("submitJobBtn");
-            const successPopup = document.getElementById("successPopup");
-
+            // Előnézet frissítése
             function updatePreview() {
                 previewText.innerHTML = `
-                    <p><b>Cég:</b> ${companyName.value || "-"}</p>
-                    <p><b>Pozíció:</b> ${jobPosition.value || "-"}</p>
-                    <p><b>Helyszín:</b> ${jobLocation.value || "-"}</p>
+                    <p><b>Cég:</b> ${companyName.value || '-'}</p>
+                    <p><b>Pozíció:</b> ${jobPosition.value || '-'}</p>
+                    <p><b>Helyszín:</b> ${jobLocation.value || '-'}</p>
                 `;
             }
 
@@ -270,11 +657,14 @@
             jobPosition.addEventListener("input", updatePreview);
             jobLocation.addEventListener("input", updatePreview);
 
+            // Kép előnézet
             jobImage.addEventListener("change", () => {
                 const file = jobImage.files[0];
-                if (!file) return;
+                if (!file) {
+                    imgPreview.style.display = "none";
+                    return;
+                }
 
-                // (Opcionális) méret limit
                 if (file.size > 5 * 1024 * 1024) {
                     alert("A kép túl nagy! Maximum 5MB lehet.");
                     jobImage.value = "";
@@ -286,16 +676,19 @@
                 reader.onload = function (e) {
                     imgPreview.src = e.target.result;
                     imgPreview.style.display = "block";
+                    imgPreview.style.marginTop = "15px";
                 };
                 reader.readAsDataURL(file);
             });
 
             updatePreview();
 
+            // Hibák törlése
             function clearErrors() {
                 document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
             }
 
+            // Hirdetés feladása
             function submitJob() {
                 clearErrors();
 
@@ -322,11 +715,13 @@
 
                 const jobData = {
                     id: Date.now(),
-                    companyId: selectedCompanyId,   // Ez új mező a cég azonosítására
+                    companyId: selectedCompanyId,
                     company: companyName.value.trim(),
                     position: jobPosition.value.trim(),
                     location: jobLocation.value.trim(),
-                    image: imgPreview.src || null
+                    image: imgPreview.src || null,
+                    postedBy: currentUser,
+                    postedAt: new Date().toISOString()
                 };
 
                 const jobs = JSON.parse(localStorage.getItem("jobs")) || [];
@@ -347,40 +742,6 @@
         function closePopup() {
             document.getElementById('successPopup').classList.remove('show');
         }
-
-        document.addEventListener('DOMContentLoaded', function() {
-    const userType = localStorage.getItem('userType');
-    const mainPageLink = document.querySelector('.dynamic-home'); // Módosítva: class alapján keressük
-    
-    console.log('Dinamikus link kezelő - userType:', userType);
-    console.log('Main page link elem:', mainPageLink);
-    
-    if (mainPageLink) {
-        if (userType === 'employer') {
-            mainPageLink.href = 'allashirdet.html';
-            mainPageLink.textContent = 'Vezérlőpult';
-            console.log('Munkáltatói link beállítva: allashirdet.html');
-        } else {
-            mainPageLink.href = 'jobs.html';
-            mainPageLink.textContent = 'Állások';
-            console.log('Munkavállalói link beállítva: jobs.html');
-        }
-    }
-    
-    // Kijelentkezés kezelése
-    const logoutLink = document.getElementById('logoutLink');
-    if (logoutLink) {
-        logoutLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            if (confirm('Biztosan ki szeretnél jelentkezni?')) {
-                localStorage.removeItem('currentUser');
-                localStorage.removeItem('userType');
-                window.location.href = 'index.html';
-            }
-        });
-    }
-});
     </script>
-
 </body>
 </html>

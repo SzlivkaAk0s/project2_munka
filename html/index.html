@@ -74,40 +74,156 @@
             </form>
             
         
-            <form id="registerForm" class="login-form">
-                <div class="form-group">
-                    <label for="registerUsername">Felhasználónév:</label>
-                    <input type="text" id="registerUsername" required minlength="3">
-                    <small class="hint">Minimum 3 karakter</small>
-                </div>
-                <div class="form-group">
-                    <label for="registerPassword">Jelszó:</label>
-                    <input type="password" id="registerPassword" required minlength="4">
-                    <small class="hint">Minimum 4 karakter</small>
-                </div>
-                <div id="employerFields" style="display:none">
-                    <div class="form-group">
-                        <label>Cégnév:</label>
-                        <input type="text" id="companyName">
-                    </div>
-                    <div class="form-group">
-                        <label>Email:</label>
-                        <input type="email" id="companyEmail">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="confirmPassword">Jelszó megerősítése:</label>
-                    <input type="password" id="confirmPassword" required>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="login-btn">Regisztráció</button>
-                    <button type="button" class="switch-form-btn" id="showLogin">Vissza a bejelentkezéshez</button>
-                </div>
-                <div id="registerMessage" class="message"></div>
-            </form>
+<!-- REGISZTRÁCIÓS FORM - Munkavállaló és Munkáltató egyben -->
+<form id="registerForm" class="login-form">
+    <!-- Alap adatok (mindkét típushoz) -->
+    <div class="form-grid">
+        <div class="form-group full-width">
+            <label for="registerUsername">Felhasználónév:</label>
+            <input type="text" id="registerUsername" required minlength="3">
+            <small class="hint">Minimum 3 karakter</small>
         </div>
     </div>
-</div>
+    
+    <!-- MUNKAVÁLLALÓ SPECIFIKUS MEZŐK (alapból látszanak, de employer-nél elrejtjük) -->
+    <div id="employeeFields" class="employee-fields">
+        <h4>Személyes adatok</h4>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="fullName">Teljes név:</label>
+                <input type="text" id="fullName">
+            </div>
+            
+            <div class="form-group">
+                <label for="birthName">Születési név:</label>
+                <input type="text" id="birthName">
+            </div>
+            
+            <div class="form-group">
+                <label for="birthDate">Születési dátum:</label>
+                <input type="date" id="birthDate">
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Telefonszám:</label>
+                <input type="tel" id="phone" placeholder="+36 30 123 4567">
+                <small class="hint">Opcionális</small>
+            </div>
+            
+            <div class="form-group full-width">
+                <label for="email">Email cím:</label>
+                <input type="email" id="email" required>
+                <small class="hint">Kötelező, érvényes email formátumban</small>
+            </div>
+        </div>
+        
+        <h4>Lakcím</h4>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="zipCode">Irányítószám:</label>
+                <input type="text" id="zipCode" maxlength="4">
+            </div>
+            
+            <div class="form-group">
+                <label for="city">Város:</label>
+                <input type="text" id="city">
+            </div>
+            
+            <div class="form-group full-width">
+                <label for="street">Utca, házszám:</label>
+                <input type="text" id="street">
+            </div>
+        </div>
+        
+        <h4>Szakképzettség</h4>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="education">Legmagasabb iskolai végzettség:</label>
+                <select id="education">
+                    <option value="">Válassz...</option>
+                    <option value="alap">Általános iskola</option>
+                    <option value="kozep">Középiskola / Szakmunkás</option>
+                    <option value="erettsegi">Érettségi</option>
+                    <option value="szakma">Szakképesítés</option>
+                    <option value="foiskola">Főiskola / Bachelor</option>
+                    <option value="egyetem">Egyetem / Master</option>
+                    <option value="doktori">Doktori / PhD</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="experience">Szakmai tapasztalat (évek):</label>
+                <input type="number" id="experience" min="0" max="50" step="1">
+            </div>
+        </div>
+        
+        <h4>Szakterület / Preferenciák</h4>
+        <div class="checkbox-grid">
+            <label><input type="checkbox" name="preferences" value="IT"> Informatika / IT</label>
+            <label><input type="checkbox" name="preferences" value="Sales"> Értékesítés / Sales</label>
+            <label><input type="checkbox" name="preferences" value="Marketing"> Marketing / PR</label>
+            <label><input type="checkbox" name="preferences" value="Finance"> Pénzügy / Számvitel</label>
+            <label><input type="checkbox" name="preferences" value="HR"> Humán Erőforrás (HR)</label>
+            <label><input type="checkbox" name="preferences" value="Admin"> Adminisztráció / Ügyfélszolgálat</label>
+            <label><input type="checkbox" name="preferences" value="Vendeglatas"> Vendéglátás / Turizmus</label>
+            <label><input type="checkbox" name="preferences" value="Egeszsegugy"> Egészségügy / Szociális</label>
+            <label><input type="checkbox" name="preferences" value="Oktatas"> Oktatás / Képzés</label>
+            <label><input type="checkbox" name="preferences" value="Logisztika"> Logisztika / Szállítmányozás</label>
+            <label><input type="checkbox" name="preferences" value="Egyeb"> Egyéb</label>
+        </div>
+        
+        <h4>Dokumentumok</h4>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="cv">Önéletrajz:</label>
+                <input type="file" id="cv" accept=".pdf,.doc,.docx">
+                <small class="hint">PDF vagy Word</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="profileImage">Profilkép:</label>
+                <input type="file" id="profileImage" accept="image/*">
+                <small class="hint">JPG, PNG</small>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MUNKÁLTATÓ SPECIFIKUS MEZŐK (alapból rejtve) -->
+    <div id="employerFields" style="display:none">
+        <h4>Cégadatok</h4>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Cégnév:</label>
+                <input type="text" id="companyName">
+            </div>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" id="companyEmail">
+            </div>
+        </div>
+    </div>
+    
+    <!-- JELSZÓ MEZŐK (közösek) -->
+    <h4>Biztonsági adatok</h4>
+    <div class="form-grid">
+        <div class="form-group">
+            <label for="registerPassword">Jelszó:</label>
+            <input type="password" id="registerPassword" required minlength="4">
+            <small class="hint">Minimum 4 karakter</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="confirmPassword">Jelszó megerősítése:</label>
+            <input type="password" id="confirmPassword" required>
+        </div>
+    </div>
+    
+    <div class="form-actions">
+        <button type="submit" class="login-btn">Regisztráció</button>
+        <button type="button" class="switch-form-btn" id="showLogin">Vissza a bejelentkezéshez</button>
+    </div>
+    <div id="registerMessage" class="message"></div>
+</form>
 
 <script src="../js/auth.js"></script>
 <script>

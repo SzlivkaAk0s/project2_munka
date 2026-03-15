@@ -121,23 +121,30 @@
                     <button class="dash-btn dash-btn-small" onclick="window.location.href='premium.html'">Csomag váltás</button>
                 </div>
             </div>
-
-            <!-- Cégkezelő kártya -->
-            <div class="dash-card">
-                <div class="card-header">
-                    <h3>🏢 Cégkezelő</h3>
-                </div>
-                <div class="card-body">
-                    <div id="companySwitcher" class="company-switcher"></div>
-                    <button class="dash-btn dash-btn-small" onclick="openCompanyModal()" style="width: 100%; margin-bottom: 8px;">
-                        + Új cég hozzáadása
-                    </button>
-                    <button class="dash-btn dash-btn-small dash-btn-outline" onclick="deleteSelectedCompany()" id="deleteCompanyBtn" disabled>
-                        🗑️ Kiválasztott cég törlése
-                    </button>
-                </div>
-            </div>
-
+<!-- Cégkezelő kártya -->
+<div class="dash-card">
+    <div class="card-header">
+        <h3>🏢 Cégkezelő</h3>
+    </div>
+    <div class="card-body">
+        <div id="companySwitcher" class="company-switcher"></div>
+        
+        <!-- Gombok konténer -->
+        <div style="display: flex; flex-direction: column; gap: 8px; margin-top: auto;">
+            <button class="dash-btn dash-btn-small" onclick="openCompanyModal()" style="width: 100%;">
+                + Új cég hozzáadása
+            </button>
+            
+            <button class="dash-btn dash-btn-small dash-btn-outline" onclick="editSelectedCompany()" id="editCompanyBtn" disabled style="width: 100%;">
+                ✏️ Kiválasztott cég szerkesztése
+            </button>
+            
+            <button class="dash-btn dash-btn-small dash-btn-outline" onclick="deleteSelectedCompany()" id="deleteCompanyBtn" disabled style="width: 100%;">
+                🗑️ Kiválasztott cég törlése
+            </button>
+        </div>
+    </div>
+</div>
             <!-- Körlevél kártya (csak Premium/Pro) -->
             <div class="dash-card" id="levelPrem">
                 <div class="card-header">
@@ -163,20 +170,267 @@
         </div>
     </div>
 
-    <!-- Modal cégeknek (ez a meglévő céges modal) -->
-    <div id="companyModal" class="company-modal hidden">
-        <div class="company-modal-content">
+<!-- Kibővített céges modal -->
+<div id="companyModal" class="modal-overlay" style="display: none;">
+    <div class="modal-container" style="max-width: 600px;">
+        <div class="modal-header">
             <h3>➕ Új cég létrehozása</h3>
-            <input id="companyNameInput" placeholder="Cég neve *" value="Teszt Kft.">
-            <input id="companyCityInput" placeholder="Város" value="Budapest">
-            <input id="companyFieldInput" placeholder="Iparág" value="IT">
-            <div class="modal-actions">
-                <button onclick="saveCompany()">Mentés</button>
-                <button onclick="closeCompanyModal()">Mégse</button>
-            </div>
+            <button class="modal-close-btn" onclick="closeCompanyModal()">×</button>
+        </div>
+        <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+            <form id="companyForm" onsubmit="event.preventDefault(); saveCompany();">
+                <!-- Alapadatok -->
+                <h4 style="color: #4f5e94; margin: 0 0 20px 0; border-bottom: 2px solid #4f5e94; padding-bottom: 10px;">Alapadatok</h4>
+                
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label class="required" for="companyNameInput">Cég neve:</label>
+                        <input type="text" id="companyNameInput" placeholder="Pl. WorkConnect Kft." required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required" for="companyVatInput">Adószám:</label>
+                        <input type="text" id="companyVatInput" placeholder="12345678-2-41" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required" for="companyRegistrationInput">Cégjegyzékszám:</label>
+                        <input type="text" id="companyRegistrationInput" placeholder="01-09-123456" required>
+                    </div>
+                </div>
+                
+                <!-- Elérhetőség -->
+                <h4 style="color: #4f5e94; margin: 30px 0 20px 0; border-bottom: 2px solid #4f5e94; padding-bottom: 10px;">Elérhetőség</h4>
+                
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label class="required" for="companyEmailInput">Email cím:</label>
+                        <input type="email" id="companyEmailInput" placeholder="info@ceged.hu" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required" for="companyPhoneInput">Telefonszám:</label>
+                        <input type="tel" id="companyPhoneInput" placeholder="+36 1 234 5678" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="companyWebInput">Weboldal:</label>
+                        <input type="url" id="companyWebInput" placeholder="https://www.ceged.hu">
+                        <small class="hint">Opcionális</small>
+                    </div>
+                </div>
+                
+                <!-- Cím -->
+                <h4 style="color: #4f5e94; margin: 30px 0 20px 0; border-bottom: 2px solid #4f5e94; padding-bottom: 10px;">Cím</h4>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="required" for="companyCountryInput">Ország:</label>
+                        <input type="text" id="companyCountryInput" value="Magyarország" placeholder="Ország" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required" for="companyZipInput">Irányítószám:</label>
+                        <input type="text" id="companyZipInput" placeholder="1011" maxlength="4" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required" for="companyCityInput">Város:</label>
+                        <input type="text" id="companyCityInput" placeholder="Budapest" required>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label class="required" for="companyAddressInput">Cím (utca, házszám):</label>
+                        <input type="text" id="companyAddressInput" placeholder="Andrássy út 123." required>
+                    </div>
+                </div>
+                
+                <!-- További adatok -->
+                <h4 style="color: #4f5e94; margin: 30px 0 20px 0; border-bottom: 2px solid #4f5e94; padding-bottom: 10px;">További adatok</h4>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="required" for="companyIndustryInput">Iparág:</label>
+                        <input type="text" id="companyIndustryInput" list="industryOptions" placeholder="Válassz vagy írd be" required>
+                        <datalist id="industryOptions">
+                            <option value="Informatika / IT">
+                            <option value="Értékesítés / Kereskedelem">
+                            <option value="Marketing / PR">
+                            <option value="Pénzügy / Számvitel">
+                            <option value="HR / Humán erőforrás">
+                            <option value="Gyártás / Termelés">
+                            <option value="Logisztika / Szállítmányozás">
+                            <option value="Egészségügy / Szociális">
+                            <option value="Oktatás / Képzés">
+                            <option value="Vendéglátás / Turizmus">
+                            <option value="Építőipar">
+                            <option value="Mezőgazdaság">
+                            <option value="Egyéb szolgáltatás">
+                        </datalist>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required" for="companySizeInput">Cég mérete:</label>
+                        <select id="companySizeInput" required>
+                            <option value="">Válassz...</option>
+                            <option value="mikro">Mikrovállalkozás (1-9 fő)</option>
+                            <option value="kis">Kisvállalkozás (10-49 fő)</option>
+                            <option value="kozep">Középvállalkozás (50-249 fő)</option>
+                            <option value="nagy">Nagyvállalat (250+ fő)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required" for="companyFoundedInput">Alapítás éve:</label>
+                        <input type="number" id="companyFoundedInput" min="1900" max="2025" step="1" placeholder="2020" required>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="companyDescriptionInput">Rövid leírás:</label>
+                        <textarea id="companyDescriptionInput" rows="3" placeholder="Írj pár mondatot a cégről..."></textarea>
+                        <small class="hint">Opcionális</small>
+                    </div>
+                </div>
+                
+                <div class="modal-actions" style="margin-top: 30px;">
+                    <button type="submit" class="modal-btn modal-btn-success" style="flex: 2;">Cég mentése</button>
+                    <button type="button" class="modal-btn modal-btn-secondary" onclick="closeCompanyModal()" style="flex: 1;">Mégsem</button>
+                </div>
+            </form>
         </div>
     </div>
-
+</div>
+<!-- Cég szerkesztése modal -->
+<div id="editCompanyModal" class="modal-overlay" style="display: none;">
+    <div class="modal-container" style="max-width: 600px;">
+        <div class="modal-header">
+            <h3>✏️ Cég szerkesztése</h3>
+            <button class="modal-close-btn" onclick="closeEditCompanyModal()">×</button>
+        </div>
+        <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+            <form id="editCompanyForm" onsubmit="event.preventDefault(); updateCompany();">
+                <!-- Alapadatok -->
+                <h4 style="color: #4f5e94; margin: 0 0 20px 0; border-bottom: 2px solid #4f5e94; padding-bottom: 10px;">Alapadatok</h4>
+                
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label class="required" for="editCompanyNameInput">Cég neve:</label>
+                        <input type="text" id="editCompanyNameInput" placeholder="Pl. WorkConnect Kft." required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required" for="editCompanyVatInput">Adószám:</label>
+                        <input type="text" id="editCompanyVatInput" placeholder="12345678-2-41" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required" for="editCompanyRegistrationInput">Cégjegyzékszám:</label>
+                        <input type="text" id="editCompanyRegistrationInput" placeholder="01-09-123456" required>
+                    </div>
+                </div>
+                
+                <!-- Elérhetőség -->
+                <h4 style="color: #4f5e94; margin: 30px 0 20px 0; border-bottom: 2px solid #4f5e94; padding-bottom: 10px;">Elérhetőség</h4>
+                
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label class="required" for="editCompanyEmailInput">Email cím:</label>
+                        <input type="email" id="editCompanyEmailInput" placeholder="info@ceged.hu" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required" for="editCompanyPhoneInput">Telefonszám:</label>
+                        <input type="tel" id="editCompanyPhoneInput" placeholder="+36 1 234 5678" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editCompanyWebInput">Weboldal:</label>
+                        <input type="url" id="editCompanyWebInput" placeholder="https://www.ceged.hu">
+                        <small class="hint">Opcionális</small>
+                    </div>
+                </div>
+                
+                <!-- Cím -->
+                <h4 style="color: #4f5e94; margin: 30px 0 20px 0; border-bottom: 2px solid #4f5e94; padding-bottom: 10px;">Cím</h4>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="required" for="editCompanyCountryInput">Ország:</label>
+                        <input type="text" id="editCompanyCountryInput" value="Magyarország" placeholder="Ország" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required" for="editCompanyZipInput">Irányítószám:</label>
+                        <input type="text" id="editCompanyZipInput" placeholder="1011" maxlength="4" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required" for="editCompanyCityInput">Város:</label>
+                        <input type="text" id="editCompanyCityInput" placeholder="Budapest" required>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label class="required" for="editCompanyAddressInput">Cím (utca, házszám):</label>
+                        <input type="text" id="editCompanyAddressInput" placeholder="Andrássy út 123." required>
+                    </div>
+                </div>
+                
+                <!-- További adatok -->
+                <h4 style="color: #4f5e94; margin: 30px 0 20px 0; border-bottom: 2px solid #4f5e94; padding-bottom: 10px;">További adatok</h4>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="required" for="editCompanyIndustryInput">Iparág:</label>
+                        <input type="text" id="editCompanyIndustryInput" list="editIndustryOptions" placeholder="Válassz vagy írd be" required>
+                        <datalist id="editIndustryOptions">
+                            <option value="Informatika / IT">
+                            <option value="Értékesítés / Kereskedelem">
+                            <option value="Marketing / PR">
+                            <option value="Pénzügy / Számvitel">
+                            <option value="HR / Humán erőforrás">
+                            <option value="Gyártás / Termelés">
+                            <option value="Logisztika / Szállítmányozás">
+                            <option value="Egészségügy / Szociális">
+                            <option value="Oktatás / Képzés">
+                            <option value="Vendéglátás / Turizmus">
+                            <option value="Építőipar">
+                            <option value="Mezőgazdaság">
+                            <option value="Egyéb szolgáltatás">
+                        </datalist>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required" for="editCompanySizeInput">Cég mérete:</label>
+                        <select id="editCompanySizeInput" required>
+                            <option value="">Válassz...</option>
+                            <option value="mikro">Mikrovállalkozás (1-9 fő)</option>
+                            <option value="kis">Kisvállalkozás (10-49 fő)</option>
+                            <option value="kozep">Középvállalkozás (50-249 fő)</option>
+                            <option value="nagy">Nagyvállalat (250+ fő)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="required" for="editCompanyFoundedInput">Alapítás éve:</label>
+                        <input type="number" id="editCompanyFoundedInput" min="1900" max="2025" step="1" placeholder="2020" required>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="editCompanyDescriptionInput">Rövid leírás:</label>
+                        <textarea id="editCompanyDescriptionInput" rows="3" placeholder="Írj pár mondatot a cégről..."></textarea>
+                        <small class="hint">Opcionális</small>
+                    </div>
+                </div>
+                
+                <div class="modal-actions" style="margin-top: 30px;">
+                    <button type="submit" class="modal-btn modal-btn-success" style="flex: 2;">Módosítások mentése</button>
+                    <button type="button" class="modal-btn modal-btn-secondary" onclick="closeEditCompanyModal()" style="flex: 1;">Mégsem</button>
+                </div>
+                <div id="editCompanyMessage" class="message" style="margin-top: 20px;"></div>
+            </form>
+        </div>
+    </div>
+</div>
     <script>
         // ========== MODAL KEZELŐ FÜGGVÉNYEK ==========
         const modalOverlay = document.getElementById('customModal');
@@ -422,6 +676,8 @@
         }
 
         // ========== CÉG KEZELÉS ==========
+        let selectedCompanyId = localStorage.getItem("selectedCompanyId") || null;
+
         function getCurrentUser() {
             return localStorage.getItem("currentUser") || "guest";
         }
@@ -448,14 +704,10 @@
             localStorage.setItem("companies", JSON.stringify(all));
         }
 
-        const companyModal = document.getElementById("companyModal");
-        const companyNameInput = document.getElementById("companyNameInput");
-        const companyCityInput = document.getElementById("companyCityInput");
-        const companyFieldInput = document.getElementById("companyFieldInput");
-
         function openCompanyModal() {
             const companies = getCompanies();
             const limit = getCompanyLimit();
+            
             if (companies.length >= limit) {
                 showModal({
                     title: 'Limit elérve',
@@ -465,70 +717,237 @@
                 });
                 return;
             }
-            companyModal.classList.remove("hidden");
+            
+            // Modal megjelenítése
+            const modal = document.getElementById('companyModal');
+            modal.style.display = 'flex';
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
         }
 
         function closeCompanyModal() {
-            companyModal.classList.add("hidden");
-            companyNameInput.value = "";
-            companyCityInput.value = "";
-            companyFieldInput.value = "";
+            const modal = document.getElementById('companyModal');
+            modal.style.display = 'none';
+            modal.classList.remove('show');
+            document.body.style.overflow = 'auto';
+            
+            // Űrlap alaphelyzetbe állítása
+            document.getElementById('companyForm').reset();
         }
-
-        let selectedCompanyId = null;
 
         function saveCompany() {
-            if (!companyNameInput.value.trim()) {
-                showModal({
-                    title: 'Hiányzó adat',
-                    message: 'A cég neve kötelező!',
-                    type: 'warning',
-                    confirmText: 'Rendben'
-                });
-                return;
-            }
+    // Kötelező mezők ellenőrzése
+    const companyName = document.getElementById('companyNameInput').value.trim();
+    const vatNumber = document.getElementById('companyVatInput').value.trim();
+    const registrationNumber = document.getElementById('companyRegistrationInput').value.trim();
+    const email = document.getElementById('companyEmailInput').value.trim();
+    const phone = document.getElementById('companyPhoneInput').value.trim();
+    const country = document.getElementById('companyCountryInput').value.trim();
+    const zipCode = document.getElementById('companyZipInput').value.trim();
+    const city = document.getElementById('companyCityInput').value.trim();
+    const address = document.getElementById('companyAddressInput').value.trim();
+    const industry = document.getElementById('companyIndustryInput').value.trim();
+    const size = document.getElementById('companySizeInput').value;
+    const founded = document.getElementById('companyFoundedInput').value;
+    
+    if (!companyName) {
+        showModal({
+            title: 'Hiányzó adat',
+            message: 'A cég neve kötelező!',
+            type: 'warning',
+            confirmText: 'Rendben'
+        });
+        return;
+    }
+    
+    if (!vatNumber) {
+        showModal({
+            title: 'Hiányzó adat',
+            message: 'Az adószám kötelező!',
+            type: 'warning',
+            confirmText: 'Rendben'
+        });
+        return;
+    }
+    
+    if (!registrationNumber) {
+        showModal({
+            title: 'Hiányzó adat',
+            message: 'A cégjegyzékszám kötelező!',
+            type: 'warning',
+            confirmText: 'Rendben'
+        });
+        return;
+    }
+    
+    if (!email) {
+        showModal({
+            title: 'Hiányzó adat',
+            message: 'Az email cím kötelező!',
+            type: 'warning',
+            confirmText: 'Rendben'
+        });
+        return;
+    }
+    
+    if (!phone) {
+        showModal({
+            title: 'Hiányzó adat',
+            message: 'A telefonszám kötelező!',
+            type: 'warning',
+            confirmText: 'Rendben'
+        });
+        return;
+    }
+    
+    if (!country) {
+        showModal({
+            title: 'Hiányzó adat',
+            message: 'Az ország megadása kötelező!',
+            type: 'warning',
+            confirmText: 'Rendben'
+        });
+        return;
+    }
+    
+    if (!zipCode) {
+        showModal({
+            title: 'Hiányzó adat',
+            message: 'Az irányítószám kötelező!',
+            type: 'warning',
+            confirmText: 'Rendben'
+        });
+        return;
+    }
+    
+    if (!city) {
+        showModal({
+            title: 'Hiányzó adat',
+            message: 'A város megadása kötelező!',
+            type: 'warning',
+            confirmText: 'Rendben'
+        });
+        return;
+    }
+    
+    if (!address) {
+        showModal({
+            title: 'Hiányzó adat',
+            message: 'A cím megadása kötelező!',
+            type: 'warning',
+            confirmText: 'Rendben'
+        });
+        return;
+    }
+    
+    if (!industry) {
+        showModal({
+            title: 'Hiányzó adat',
+            message: 'Az iparág megadása kötelező!',
+            type: 'warning',
+            confirmText: 'Rendben'
+        });
+        return;
+    }
+    
+    if (!size) {
+        showModal({
+            title: 'Hiányzó adat',
+            message: 'A cég méretének kiválasztása kötelező!',
+            type: 'warning',
+            confirmText: 'Rendben'
+        });
+        return;
+    }
+    
+    if (!founded) {
+        showModal({
+            title: 'Hiányzó adat',
+            message: 'Az alapítás évének megadása kötelező!',
+            type: 'warning',
+            confirmText: 'Rendben'
+        });
+        return;
+    }
 
-            const companies = getCompanies();
+    const companies = getCompanies();
 
-            if (companies.length >= getCompanyLimit()) {
-                showModal({
-                    title: 'Limit elérve',
-                    message: '❌ Csomag limit elérve!',
-                    type: 'warning',
-                    confirmText: 'Rendben'
-                });
-                return;
-            }
+    if (companies.length >= getCompanyLimit()) {
+        showModal({
+            title: 'Limit elérve',
+            message: '❌ Csomag limit elérve!',
+            type: 'warning',
+            confirmText: 'Rendben'
+        });
+        return;
+    }
 
-            const company = {
-                id: Date.now(),
-                name: companyNameInput.value.trim(),
-                city: companyCityInput.value.trim(),
-                field: companyFieldInput.value.trim()
-            };
+    // Adatok összegyűjtése
+    const company = {
+        id: Date.now(),
+        name: companyName,
+        vatNumber: vatNumber,
+        registrationNumber: registrationNumber,
+        email: email,
+        phone: phone,
+        website: document.getElementById('companyWebInput').value.trim() || null, // csak a weboldal lehet üres
+        country: country,
+        zipCode: zipCode,
+        city: city,
+        address: address,
+        industry: industry,
+        size: size,
+        founded: founded,
+        description: document.getElementById('companyDescriptionInput').value.trim() || null,
+        createdAt: new Date().toISOString(),
+        createdBy: getCurrentUser()
+    };
 
-            companies.push(company);
-            saveCompanies(companies);
+    companies.push(company);
+    saveCompanies(companies);
 
-            closeCompanyModal();
-            renderCompanies();
-            
-            showModal({
-                title: 'Siker!',
-                message: `✅ A(z) "${company.name}" cég sikeresen létrehozva!`,
-                type: 'success',
-                confirmText: 'Rendben'
-            });
-        }
+    closeCompanyModal();
+    renderCompanies();
+    
+    localStorage.setItem("selectedCompanyId", company.id);
+    selectedCompanyId = company.id;
+    document.getElementById("activeCompanyDisplay").innerHTML = `Aktív cég: <span>${company.name}</span>`;
+    document.getElementById("deleteCompanyBtn").disabled = false;
+    document.getElementById("editCompanyBtn").disabled = false;
+    
+    renderJobs();
+    
+    showModal({
+        title: 'Siker!',
+        message: `✅ A(z) "${company.name}" cég sikeresen létrehozva!`,
+        type: 'success',
+        confirmText: 'Rendben'
+    });
+}
 
+        // Cégek megjelenítése a switcherben
         function renderCompanies() {
             const container = document.getElementById("companySwitcher");
             container.innerHTML = "";
 
-            getCompanies().forEach(c => {
+            const companies = getCompanies();
+            
+            if (companies.length === 0) {
+                container.innerHTML = '<p class="no-data">Még nincs cég létrehozva</p>';
+                return;
+            }
+
+            companies.forEach(c => {
                 const chip = document.createElement("div");
                 chip.className = "company-chip";
                 chip.textContent = c.name;
+                
+                // Tooltip a részletes adatokhoz
+                let tooltip = `${c.name}\n`;
+                if (c.city) tooltip += `📍 ${c.city}\n`;
+                if (c.industry) tooltip += `🏭 ${c.industry}\n`;
+                if (c.email) tooltip += `📧 ${c.email}`;
+                chip.title = tooltip;
 
                 chip.onclick = () => {
                     selectedCompanyId = c.id;
@@ -548,7 +967,7 @@
             // Visszaállítjuk az aktív céget ha van
             const savedId = localStorage.getItem("selectedCompanyId");
             if (savedId) {
-                const active = getCompanies().find(c => c.id == savedId);
+                const active = companies.find(c => c.id == savedId);
                 if (active) {
                     selectedCompanyId = active.id;
                     document.getElementById("activeCompanyDisplay").innerHTML = `Aktív cég: <span>${active.name}</span>`;
@@ -563,44 +982,63 @@
             }
         }
 
+        // ========== CÉG TÖRLÉS FÜGGVÉNY ==========
         function deleteSelectedCompany() {
+            console.log('Törlés gomb megnyomva');
+            console.log('selectedCompanyId:', selectedCompanyId);
+            
             if (!selectedCompanyId) {
                 showModal({
                     title: 'Nincs kiválasztva',
-                    message: 'Nincs kiválasztott cég!',
+                    message: '❌ Nincs kiválasztott cég! Válassz ki egy céget a listából.',
                     type: 'warning',
                     confirmText: 'Rendben'
                 });
                 return;
             }
 
+            // Megkeressük a cég nevét a modal üzenethez
+            const companies = getCompanies();
+            const company = companies.find(c => c.id == selectedCompanyId);
+            const companyName = company ? company.name : 'a kiválasztott';
+
             showModal({
                 title: 'Cég törlése',
-                message: 'Biztosan törölni szeretnéd ezt a céget? A hozzá tartozó hirdetések is törlődnek!',
+                message: `Biztosan törölni szeretnéd a(z) "${companyName}" céget?\n\nA céghez tartozó összes hirdetés is törlődni fog!`,
                 type: 'confirm',
                 confirmText: 'Igen, törlöm',
                 cancelText: 'Mégsem',
                 onConfirm: () => {
+                    console.log('Törlés megerősítve, companyId:', selectedCompanyId);
+                    
+                    // Cég törlése
                     let companies = getCompanies();
-                    companies = companies.filter(c => c.id !== selectedCompanyId);
-                    saveCompanies(companies);
+                    const filteredCompanies = companies.filter(c => c.id != selectedCompanyId);
+                    saveCompanies(filteredCompanies);
+                    console.log('Cégek törlés után:', filteredCompanies);
 
                     // Kapcsolódó hirdetések törlése
                     const jobs = getJobs().filter(job => job.companyId != selectedCompanyId);
                     saveJobs(jobs);
+                    console.log('Hirdetések törlés után:', jobs);
 
+                    // Aktuális cég ID törlése
                     localStorage.removeItem("selectedCompanyId");
                     selectedCompanyId = null;
 
+                    // UI frissítése
                     document.getElementById("activeCompanyDisplay").innerHTML = 'Aktív cég: <span>Nincs kiválasztva</span>';
                     document.getElementById("deleteCompanyBtn").disabled = true;
 
+                    // Cégek újrarajzolása
                     renderCompanies();
+                    
+                    // Hirdetések újrarajzolása (üres lesz)
                     renderJobs();
                     
                     showModal({
-                        title: 'Törölve',
-                        message: 'A cég és a hozzá tartozó hirdetések sikeresen törölve!',
+                        title: 'Siker!',
+                        message: `✅ A cég és a hozzá tartozó hirdetések sikeresen törölve!`,
                         type: 'success',
                         confirmText: 'Rendben'
                     });
@@ -705,6 +1143,253 @@
                 }, 1000);
             }
         });
+
+        let editingCompanyId = null;
+
+function editSelectedCompany() {
+    console.log('Szerkesztés gomb megnyomva');
+    
+    if (!selectedCompanyId) {
+        showModal({
+            title: 'Nincs kiválasztva',
+            message: '❌ Nincs kiválasztott cég! Válassz ki egy céget a listából.',
+            type: 'warning',
+            confirmText: 'Rendben'
+        });
+        return;
+    }
+
+    const companies = getCompanies();
+    const company = companies.find(c => c.id == selectedCompanyId);
+    
+    if (!company) {
+        showModal({
+            title: 'Hiba',
+            message: '❌ A kiválasztott cég nem található!',
+            type: 'error',
+            confirmText: 'Rendben'
+        });
+        return;
+    }
+
+    editingCompanyId = company.id;
+    
+    // Adatok betöltése a formba
+    document.getElementById('editCompanyNameInput').value = company.name || '';
+    document.getElementById('editCompanyVatInput').value = company.vatNumber || '';
+    document.getElementById('editCompanyRegistrationInput').value = company.registrationNumber || '';
+    document.getElementById('editCompanyEmailInput').value = company.email || '';
+    document.getElementById('editCompanyPhoneInput').value = company.phone || '';
+    document.getElementById('editCompanyWebInput').value = company.website || '';
+    document.getElementById('editCompanyCountryInput').value = company.country || 'Magyarország';
+    document.getElementById('editCompanyZipInput').value = company.zipCode || '';
+    document.getElementById('editCompanyCityInput').value = company.city || '';
+    document.getElementById('editCompanyAddressInput').value = company.address || '';
+    document.getElementById('editCompanyIndustryInput').value = company.industry || '';
+    document.getElementById('editCompanySizeInput').value = company.size || '';
+    document.getElementById('editCompanyFoundedInput').value = company.founded || '';
+    document.getElementById('editCompanyDescriptionInput').value = company.description || '';
+    
+    // Modal megjelenítése
+    const modal = document.getElementById('editCompanyModal');
+    modal.style.display = 'flex';
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeEditCompanyModal() {
+    const modal = document.getElementById('editCompanyModal');
+    modal.style.display = 'none';
+    modal.classList.remove('show');
+    document.body.style.overflow = 'auto';
+    document.getElementById('editCompanyMessage').innerHTML = '';
+}
+
+function updateCompany() {
+    // Kötelező mezők ellenőrzése
+    const companyName = document.getElementById('editCompanyNameInput').value.trim();
+    
+    if (!companyName) {
+        document.getElementById('editCompanyMessage').innerHTML = '<div class="message error">A cég neve kötelező!</div>';
+        return;
+    }
+
+    const companies = getCompanies();
+    const companyIndex = companies.findIndex(c => c.id == editingCompanyId);
+    
+    if (companyIndex === -1) {
+        document.getElementById('editCompanyMessage').innerHTML = '<div class="message error">A cég nem található!</div>';
+        return;
+    }
+
+    // Frissített adatok összegyűjtése
+    const updatedCompany = {
+        ...companies[companyIndex], // Megtartjuk a régi adatokat (id, createdAt, createdBy)
+        name: companyName,
+        vatNumber: document.getElementById('editCompanyVatInput').value.trim() || null,
+        registrationNumber: document.getElementById('editCompanyRegistrationInput').value.trim() || null,
+        email: document.getElementById('editCompanyEmailInput').value.trim() || null,
+        phone: document.getElementById('editCompanyPhoneInput').value.trim() || null,
+        website: document.getElementById('editCompanyWebInput').value.trim() || null,
+        country: document.getElementById('editCompanyCountryInput').value.trim() || 'Magyarország',
+        zipCode: document.getElementById('editCompanyZipInput').value.trim() || null,
+        city: document.getElementById('editCompanyCityInput').value.trim() || null,
+        address: document.getElementById('editCompanyAddressInput').value.trim() || null,
+        industry: document.getElementById('editCompanyIndustryInput').value.trim() || null,
+        size: document.getElementById('editCompanySizeInput').value || null,
+        founded: document.getElementById('editCompanyFoundedInput').value || null,
+        description: document.getElementById('editCompanyDescriptionInput').value.trim() || null,
+        updatedAt: new Date().toISOString()
+    };
+
+    companies[companyIndex] = updatedCompany;
+    saveCompanies(companies);
+
+    closeEditCompanyModal();
+    renderCompanies();
+    
+    // Ha ez volt az aktív cég, frissítjük a kijelzőt
+    if (selectedCompanyId == editingCompanyId) {
+        document.getElementById("activeCompanyDisplay").innerHTML = `Aktív cég: <span>${updatedCompany.name}</span>`;
+    }
+    
+    showModal({
+        title: 'Siker!',
+        message: `✅ A(z) "${updatedCompany.name}" cég adatai sikeresen frissítve!`,
+        type: 'success',
+        confirmText: 'Rendben'
+    });
+}
+
+// Módosítsd a renderCompanies függvényt, hogy engedélyezze a szerkesztés gombot is
+function renderCompanies() {
+    const container = document.getElementById("companySwitcher");
+    container.innerHTML = "";
+
+    const companies = getCompanies();
+    
+    if (companies.length === 0) {
+        container.innerHTML = '<p class="no-data">Még nincs cég létrehozva</p>';
+        return;
+    }
+
+    companies.forEach(c => {
+        const chip = document.createElement("div");
+        chip.className = "company-chip";
+        chip.textContent = c.name;
+        
+        // Tooltip a részletes adatokhoz
+        let tooltip = `${c.name}\n`;
+        if (c.city) tooltip += `📍 ${c.city}\n`;
+        if (c.industry) tooltip += `🏭 ${c.industry}\n`;
+        if (c.email) tooltip += `📧 ${c.email}`;
+        chip.title = tooltip;
+
+        chip.onclick = () => {
+            selectedCompanyId = c.id;
+            localStorage.setItem("selectedCompanyId", c.id);
+            renderJobs();
+
+            document.querySelectorAll(".company-chip").forEach(el => el.classList.remove("active"));
+            chip.classList.add("active");
+
+            document.getElementById("activeCompanyDisplay").innerHTML = `Aktív cég: <span>${c.name}</span>`;
+            
+            // Mindkét gomb engedélyezése
+            document.getElementById("deleteCompanyBtn").disabled = false;
+            document.getElementById("editCompanyBtn").disabled = false;
+        };
+
+        container.appendChild(chip);
+    });
+
+    // Visszaállítjuk az aktív céget ha van
+    const savedId = localStorage.getItem("selectedCompanyId");
+    if (savedId) {
+        const active = companies.find(c => c.id == savedId);
+        if (active) {
+            selectedCompanyId = active.id;
+            document.getElementById("activeCompanyDisplay").innerHTML = `Aktív cég: <span>${active.name}</span>`;
+            
+            // Mindkét gomb engedélyezése
+            document.getElementById("deleteCompanyBtn").disabled = false;
+            document.getElementById("editCompanyBtn").disabled = false;
+
+            document.querySelectorAll(".company-chip").forEach(chip => {
+                if (chip.textContent === active.name) {
+                    chip.classList.add("active");
+                }
+            });
+        }
+    } else {
+        document.getElementById("deleteCompanyBtn").disabled = true;
+        document.getElementById("editCompanyBtn").disabled = true;
+    }
+}
+
+// Módosítsd a deleteSelectedCompany függvényt, hogy törlés után a szerkesztés gomb is tiltva legyen
+function deleteSelectedCompany() {
+    console.log('Törlés gomb megnyomva');
+    console.log('selectedCompanyId:', selectedCompanyId);
+    
+    if (!selectedCompanyId) {
+        showModal({
+            title: 'Nincs kiválasztva',
+            message: '❌ Nincs kiválasztott cég! Válassz ki egy céget a listából.',
+            type: 'warning',
+            confirmText: 'Rendben'
+        });
+        return;
+    }
+
+    const companies = getCompanies();
+    const company = companies.find(c => c.id == selectedCompanyId);
+    const companyName = company ? company.name : 'a kiválasztott';
+
+    showModal({
+        title: 'Cég törlése',
+        message: `Biztosan törölni szeretnéd a(z) "${companyName}" céget?\n\nA céghez tartozó összes hirdetés is törlődni fog!`,
+        type: 'confirm',
+        confirmText: 'Igen, törlöm',
+        cancelText: 'Mégsem',
+        onConfirm: () => {
+            console.log('Törlés megerősítve, companyId:', selectedCompanyId);
+            
+            // Cég törlése
+            let companies = getCompanies();
+            const filteredCompanies = companies.filter(c => c.id != selectedCompanyId);
+            saveCompanies(filteredCompanies);
+            console.log('Cégek törlés után:', filteredCompanies);
+
+            // Kapcsolódó hirdetések törlése
+            const jobs = getJobs().filter(job => job.companyId != selectedCompanyId);
+            saveJobs(jobs);
+            console.log('Hirdetések törlés után:', jobs);
+
+            // Aktuális cég ID törlése
+            localStorage.removeItem("selectedCompanyId");
+            selectedCompanyId = null;
+
+            // UI frissítése
+            document.getElementById("activeCompanyDisplay").innerHTML = 'Aktív cég: <span>Nincs kiválasztva</span>';
+            document.getElementById("deleteCompanyBtn").disabled = true;
+            document.getElementById("editCompanyBtn").disabled = true;
+
+            // Cégek újrarajzolása
+            renderCompanies();
+            
+            // Hirdetések újrarajzolása (üres lesz)
+            renderJobs();
+            
+            showModal({
+                title: 'Siker!',
+                message: `✅ A cég és a hozzá tartozó hirdetések sikeresen törölve!`,
+                type: 'success',
+                confirmText: 'Rendben'
+            });
+        }
+    });
+}
     </script>
     <script src="../js/jobs.js"></script>
 </body>
