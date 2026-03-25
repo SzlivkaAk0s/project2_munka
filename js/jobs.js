@@ -355,9 +355,7 @@ function filterCards() {
         // Típus szűrés
         const matchType = selectedTypes.length === 0 || selectedTypes.includes(cardType);
 
-        // Technológia szűrés (Pozíció névben keresés)
-        // matchTech igaz, ha: (nincs pipálva semmi VAGY valamelyik pipált szó benne van a névben)
-        // ÉS (nincs beírva semmi az egyedi keresőbe VAGY a beírt szó benne van a névben)
+        
         const matchTech = (selectedTechs.length === 0 || selectedTechs.some(t => cardTechStr.includes(t))) &&
                           (customTech === "" || cardTechStr.includes(customTech));
 
@@ -393,6 +391,17 @@ function renderDynamicJobs() {
     if (!jobsList) return;
 
     const jobs = JSON.parse(localStorage.getItem("jobs")) || [];
+    const favorites = JSON.parse(localStorage.getItem("favoriteJobs")) || [];
+    
+    // RENDEZÉS: A kedvencek kerüljenek az elejére
+    jobs.sort((a, b) => {
+        const aFav = favorites.includes(a.id.toString());
+        const bFav = favorites.includes(b.id.toString());
+        if (aFav && !bFav) return -1;
+        if (!aFav && bFav) return 1;
+        return 0;
+    });
+
     jobsList.innerHTML = "";
 
     if (jobs.length === 0) {
@@ -401,16 +410,18 @@ function renderDynamicJobs() {
     }
 
     jobs.forEach(job => {
+        const isFavorite = favorites.includes(job.id.toString());
         const card = document.createElement("div");
         card.className = "job-card";
         
-        // MÓDOSÍTÁS: A data-tech mostantól a pozíció nevét is tartalmazza
+        // Adatok a szűréshez
         card.setAttribute('data-location', job.location || "");
-        card.setAttribute('data-type', job.type || "Full-time");
-        // A pozíció nevét elmentjük kisbetűvel, hogy a szűrő megtalálja benne a technológiát
-        card.setAttribute('data-tech', (job.position || "").toLowerCase());
+        card.setAttribute('data-type', job.type || "full-time");
+        const techSearchStr = (job.position + " " + (job.tech || "")).toLowerCase();
+        card.setAttribute('data-tech', techSearchStr);
 
         card.innerHTML = `
+            <span class="favorite-star ${isFavorite ? 'active' : ''}" data-id="${job.id}">★</span>
             ${job.image ? `<img class="job-image" src="${job.image}" alt="">` : ""}
             <div class="job-content">
                 <h3>${job.position}</h3>
@@ -421,35 +432,84 @@ function renderDynamicJobs() {
             </div>
         `;
 
+        // CSILLAG KATTINTÁS
+        const star = card.querySelector('.favorite-star');
+        star.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation(); // Ez nagyon fontos, hogy ne nyíljon meg a modal!
+            toggleFavorite(job.id.toString());
+        });
+
+        // KÁRTYA KATTINTÁS (Modal megnyitása)
         card.addEventListener('click', function() {
-            // ... (a modal kódod marad változatlan)
-            localStorage.setItem("selectedJobId", job.id);
-            const modal = document.getElementById('jobModal');
-            if(!modal) return;
-            document.getElementById('modal-title').textContent = job.position;
-            document.getElementById('modal-location').textContent = `${job.company} • ${job.location}`;
-            document.getElementById('modal-description').textContent = job.description || "Nincs leírás.";
-            modal.classList.add('open');
-            document.body.classList.add('modal-open');
+            openJobModal(job);
         });
 
         jobsList.appendChild(card);
     });
 }
 
-const modal = document.getElementById('jobModal');
-const closeModalBtn = document.querySelector('.modal-close-btn');
+// Segédfüggvény a modalhoz, hogy ne legyen hiba
+function openJobModal(job) {
+    const modal = document.getElementById('jobModal');
+    if (!modal) return;
+    
+    localStorage.setItem("selectedJobId", job.id);
+    document.getElementById('modal-title').textContent = job.position;
+    document.getElementById('modal-location').textContent = `${job.company} • ${job.location}`;
+    document.getElementById('modal-description').textContent = job.description || "Nincs leírás.";
+    
+    modal.classList.add('open');
+    document.body.classList.add('modal-open');
+}
 
-if (closeModalBtn && modal) {
-    closeModalBtn.addEventListener('click', () => {
-        modal.classList.remove('open');
-        document.body.classList.remove('modal-open');
-    });
+// Kedvencek váltó funkció
+function toggleFavorite(jobId) {
+    let favorites = JSON.parse(localStorage.getItem("favoriteJobs")) || [];
+    const card = document.querySelector(`.job-card [data-id="${jobId}"]`).closest('.job-card');
+    
+    // 1. Megjegyezzük a kártya jelenlegi pozícióját (ahonnan indul a lift)
+    const oldRect = card.getBoundingClientRect();
 
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            modal.classList.remove('open');
-            document.body.classList.remove('modal-open');
-        }
-    });
+    if (favorites.includes(jobId)) {
+        favorites = favorites.filter(id => id !== jobId);
+    } else {
+        favorites.push(jobId);
+        
+        // 2. LIFT EFFEKT: Csak akkor csináljuk, ha épp kedvenccé tesszük
+        card.classList.add('lifting');
+        
+        // Egy kis vizuális trükk: picit megemeljük a kártyát
+        card.style.transform = "scale(1.05) translateY(-5px)";
+    }
+    
+    localStorage.setItem("favoriteJobs", JSON.stringify(favorites));
+
+    // Várunk egy picit, hogy a felhasználó lássa a csillag sárgulását
+    setTimeout(() => {
+        // 3. Újrarajzoljuk a listát (ekkor a kártya már az új helyén lesz a DOM-ban)
+        renderDynamicJobs();
+
+        // 4. Megkeressük az új helyét a kártyának
+        const newCard = document.querySelector(`.job-card [data-id="${jobId}"]`).closest('.job-card');
+        const newRect = newCard.getBoundingClientRect();
+
+        // 5. Kiszámoljuk a különbséget (mennyit kell "lifteznie")
+        const invertY = oldRect.top - newRect.top;
+
+        // 6. Azonnal visszatesszük az eredeti helyére, majd simán felúsztatjuk
+        newCard.style.transform = `translateY(${invertY}px)`;
+        newCard.style.transition = 'none'; // Rögtön az elejére ugrik láthatatlanul
+
+        requestAnimationFrame(() => {
+            newCard.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+            newCard.style.transform = ''; // Elindul a lift felfelé az 0-hoz (az új helyére)
+        });
+
+        // Takarítás az animáció végén
+        setTimeout(() => {
+            newCard.classList.remove('lifting');
+        }, 600);
+        
+    }, 200);
 }
