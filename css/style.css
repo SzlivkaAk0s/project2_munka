@@ -518,15 +518,17 @@ body.jobs-page .split-bg {
 }
 
 .job-modal.open .modal-content {
+    position: relative;
     transform: translateY(0) scale(1);
     opacity: 1;
 }
 
 .modal-close-btn {
     position: absolute;
-    top: 15px;
-    right: 20px;
-    font-size: 36px;
+    top: 10px;
+    right: 15px;
+    margin-bottom: 50%;
+    font-size: 24px;
     background: none;
     border: none;
     cursor: pointer;
@@ -544,9 +546,12 @@ body.jobs-page .split-bg {
     color: #ff4444;
     background: #f0f0f0;
     border-radius: 50%;
+    color: red;
+    transform: scale(1.2);
 }
 
 .modal-header {
+    position: relative;
     margin-bottom: 25px;
     padding-bottom: 20px;
     border-bottom: 2px solid #f0f0f0;
@@ -595,6 +600,12 @@ body.jobs-page .split-bg {
     color: #555;
     line-height: 1.5;
 }
+
+#modal-location {
+    font-size: 16px;
+    color: white;
+    margin-top: 10px;
+}  
 
 .modal-footer {
     text-align: center;

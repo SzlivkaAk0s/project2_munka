@@ -423,6 +423,7 @@ function renderDynamicJobs() {
 
         card.addEventListener('click', function() {
             // ... (a modal kódod marad változatlan)
+            localStorage.setItem("selectedJobId", job.id);
             const modal = document.getElementById('jobModal');
             if(!modal) return;
             document.getElementById('modal-title').textContent = job.position;

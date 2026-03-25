@@ -91,20 +91,8 @@
                     <h3>👥 Jelentkezések</h3>
                 </div>
                 <div class="card-body">
-                    <div class="applicant-card">
-                        <div class="applicant-name">Kiss Péter</div>
-                        <div class="applicant-date">2024.03.15. 14:30</div>
-                        <span class="applicant-badge">Új</span>
-                    </div>
-                    <div class="applicant-card">
-                        <div class="applicant-name">Nagy Anna</div>
-                        <div class="applicant-date">2024.03.14. 09:15</div>
-                    </div>
-                    <div class="applicant-card">
-                        <div class="applicant-name">Szabó Gábor</div>
-                        <div class="applicant-date">2024.03.12. 11:45</div>
-                    </div>
-                    <p style="text-align: center; color: #888; margin-top: 15px;">Összesen: 3 jelentkező</p>
+                    <div id="applicationsList"></div>
+                    <p id="noApplicationsText" class="no-data" style="display:none;">Nincs még jelentkező</p>
                 </div>
             </div>
 
@@ -673,6 +661,7 @@
 
                 jobCards.appendChild(card);
             });
+            renderApplications();
         }
 
         // ========== CÉG KEZELÉS ==========
@@ -953,6 +942,7 @@
                     selectedCompanyId = c.id;
                     localStorage.setItem("selectedCompanyId", c.id);
                     renderJobs();
+                    renderApplications();
 
                     document.querySelectorAll(".company-chip").forEach(el => el.classList.remove("active"));
                     chip.classList.add("active");
@@ -1064,6 +1054,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             renderCompanies();
             renderJobs();
+            renderApplications()
 
             const userType = localStorage.getItem('userType');
             const mainPageLink = document.querySelector('.dynamic-home');
@@ -1390,6 +1381,80 @@ function deleteSelectedCompany() {
         }
     });
 }
+
+    //Jelentkezők megjelenítése szkriptek
+    function getApplications() {
+        return JSON.parse(localStorage.getItem("applications")) || [];
+    }
+    function renderApplications() {
+        const container = document.getElementById("applicationsList");
+        const noText = document.getElementById("noApplicationsText");
+
+        const selectedCompanyId = localStorage.getItem("selectedCompanyId");
+
+        const jobs = getJobs(); // már van nálad
+        const applications = getApplications();
+
+        // csak az adott céghez tartozó jobok
+        const companyJobs = jobs.filter(j => j.companyId == selectedCompanyId);
+        const jobIds = companyJobs.map(j => String(j.id));
+
+        const filteredApps = applications.filter(app => 
+            jobIds.includes(String(app.jobId))
+        );
+
+        container.innerHTML = "";
+
+        if (filteredApps.length === 0) {
+            noText.style.display = "block";
+            return;
+        }
+
+        noText.style.display = "none";
+
+        // Limit a 3 jelentkezőre
+        const displayApps = filteredApps.slice(0, 2);
+
+        displayApps.forEach(app => {
+            const card = document.createElement("div");
+            card.className = "applicant-card";
+
+            const date = new Date(app.date);
+            const formattedDate = date.toLocaleString("hu-HU");
+
+            card.innerHTML = `
+                <div class="applicant-name">${app.name}</div>
+                <div class="applicant-date">${formattedDate}</div>
+                <span class="applicant-badge">Új</span>
+            `;
+
+            container.appendChild(card);
+        });
+
+        // Gomb a többi megtekintéséhez, ha több van
+        if (filteredApps.length > 3) {
+            const showAllBtn = document.createElement("button");
+            showAllBtn.className = "dash-btn";
+            showAllBtn.textContent = "Összes jelentkező megtekintése";
+            showAllBtn.onclick = () => {
+                // Modal vagy új oldal/jelenet, ahol az összes jelentkező van
+                showAllApplications(filteredApps);
+            };
+            container.appendChild(showAllBtn);
+        }
+    }
+
+    // Függvény a teljes lista megjelenítéséhez egy modal-ben
+    function showAllApplications(apps) {
+        // Létrehozunk egy modal-t (vagy használjuk a meglévőt)
+        showModal({
+            title: 'Összes jelentkező',
+            message: apps.map(a => `${a.name} - ${new Date(a.date).toLocaleString("hu-HU")}`).join('\n'),
+            type: 'info',
+            confirmText: 'Bezár'
+        });
+    }
+    
     </script>
     <script src="../js/jobs.js"></script>
 </body>

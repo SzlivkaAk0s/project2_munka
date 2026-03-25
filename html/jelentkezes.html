@@ -246,6 +246,26 @@
                 }
                 
                                 if (isValid) {
+                                    const jobId = localStorage.getItem("selectedJobId");
+
+                                    const applications = JSON.parse(localStorage.getItem("applications")) || [];
+
+                                    const applicationData = {
+                                        id: Date.now(),
+                                        jobId: jobId, // melyik állásra ment
+                                        applicant: localStorage.getItem("currentUser"),
+                                        name: document.getElementById("name").value.trim(),
+                                        email: document.getElementById("email").value.trim(),
+                                        phone: document.getElementById("phone").value.trim(),
+                                        address: document.getElementById("address").value.trim(),
+                                        message: document.getElementById("message").value.trim(),
+                                        date: new Date().toISOString()
+                                    };
+
+                                    applications.push(applicationData);
+                                    localStorage.setItem("applications", JSON.stringify(applications));
+
+                                    console.log("Mentett jelentkezések:", applications);
                     // Sikeres küldés - mutasd a popup-ot
                     successPopup.classList.add('show');
                     

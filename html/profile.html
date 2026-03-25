@@ -1314,14 +1314,28 @@ document.addEventListener('DOMContentLoaded', function() {
     // Statisztikák
     const statsKey = `user_stats_${username}`;
     const statsJSON = localStorage.getItem(statsKey);
+    const allJobs = JSON.parse(localStorage.getItem("jobs")) || [];
+    const allApplications = JSON.parse(localStorage.getItem("applications")) || [];
+    const selectedCompanyId = localStorage.getItem("selectedCompanyId");
+
+    // csak a saját cég hirdetései
+    const myJobs = allJobs.filter(job => job.companyId == selectedCompanyId);
+    const myJobIds = myJobs.map(job => job.id);
+    const myApplications = allApplications.filter(app => 
+        myJobIds.includes(parseInt(app.jobId))
+    );
+
     let stats = statsJSON ? JSON.parse(statsJSON) : {
         loginCount: 1,
         lastLogin: new Date().toISOString(),
         jobsApplied: 0,
         profileViews: Math.floor(Math.random() * 50),
-        jobsPosted: userType === 'employer' ? Math.floor(Math.random() * 5) : 0,
-        applicationsReceived: userType === 'employer' ? Math.floor(Math.random() * 20) : 0
+        jobsPosted: myJobs.length, 
+        applicationsReceived: 0 
     };
+
+    stats.jobsPosted = myJobs.length;
+    stats.applicationsReceived = myApplications.length;
     
     stats.lastLogin = new Date().toISOString();
     stats.loginCount = (stats.loginCount || 0) + 1;
